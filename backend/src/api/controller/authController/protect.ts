@@ -31,4 +31,11 @@ export const protect = catchAsync(async (req, res, next) => {
       )
     );
   }
+
+  // Check if password change AFTER token was created
+  if (user.changedPasswordAfter((decode as { iat: number }).iat)) {
+    return next(
+      new AppError("User recently changed password! Please log in again.", 401)
+    );
+  }
 });

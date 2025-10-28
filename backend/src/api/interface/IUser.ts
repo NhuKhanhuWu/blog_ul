@@ -24,4 +24,5 @@ export interface IUserDocument extends Document {
 
   // methobs
   checkPassword(candidatePassword: string): Promise<boolean>;
+  changedPasswordAfter(JWTTimestamp: number): boolean;
 }
