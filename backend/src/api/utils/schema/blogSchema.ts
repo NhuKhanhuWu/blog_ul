@@ -15,7 +15,9 @@ const ImageBlockSchema = z.object({
 // Union of both types
 export const ContentBlockSchema = z.union([TextBlockSchema, ImageBlockSchema]);
 
-export const BlogSchema = z.object({
+export type IBlogContent = z.infer<typeof ContentBlockSchema>;
+
+export const ValidateBlogSchema = z.object({
   title: z.string().min(1, "Title is required"),
   content: z.array(ContentBlockSchema).nonempty("Content cannot be empty"),
   categories: z.array(z.string()).optional(),

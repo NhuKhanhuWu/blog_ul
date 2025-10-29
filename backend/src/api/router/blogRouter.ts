@@ -5,6 +5,8 @@ import {
   getMultBlog,
   getSingleBlog,
 } from "../controller/blogController/getBlogController";
+import { createBlog } from "../controller/blogController/createBlogController";
+import { protect } from "../controller/authController/protect";
 
 const blogRouter = express.Router();
 
@@ -13,6 +15,6 @@ blogRouter.get("/", getMultBlog); // get multiple blogs with query
 blogRouter.get("/:id", getSingleBlog); // get single blog by id
 
 // create blog
-// blogRouter.post("/", createBlog);
+blogRouter.post("/", protect, createBlog);
 
 export default blogRouter;
