@@ -1,6 +1,6 @@
 /** @format */
 // The shape required when creating a new user
-import { Document, Types } from "mongoose";
+import mongoose, { Document, mongo, Types } from "mongoose";
 
 export interface IUserInput {
   name: string;

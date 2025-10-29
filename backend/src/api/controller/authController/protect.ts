@@ -1,8 +1,4 @@
 /** @format */
-
-import { promisify } from "util";
-import jwt from "jsonwebtoken";
-
 import AppError from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
 import getToken from "../../utils/token/getToken";
@@ -38,4 +34,8 @@ export const protect = catchAsync(async (req, res, next) => {
       new AppError("User recently changed password! Please log in again.", 401)
     );
   }
+
+  // set user to req object
+  req.user = user;
+  next();
 });
