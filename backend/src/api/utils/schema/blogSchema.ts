@@ -17,9 +17,20 @@ export const ContentBlockSchema = z.union([TextBlockSchema, ImageBlockSchema]);
 
 export type IBlogContent = z.infer<typeof ContentBlockSchema>;
 
-export const ValidateBlogSchema = z.object({
+export const BlogCreateSchema = z.object({
   title: z.string().min(1, "Title is required"),
   content: z.array(ContentBlockSchema).nonempty("Content cannot be empty"),
   categories: z.array(z.string()).optional(),
   authors: z.array(z.string()).optional(),
 });
+
+export const BlogUpdateSchema = z
+  .object({
+    title: z.string().min(1).optional(),
+    content: z.array(ContentBlockSchema).optional(),
+    categories: z.array(z.string()).optional(),
+    authors: z.array(z.string()).optional(),
+  })
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "Request body cannot be empty",
+  });
