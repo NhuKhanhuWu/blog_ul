@@ -3,6 +3,8 @@
 import { Schema, model } from "mongoose";
 import { IBlogDocument } from "../interface/IBlog";
 import { IBlogContent } from "../utils/schema/blogSchema";
+import slugify from "slugify";
+import { title } from "process";
 
 const contentBlockSchema = new Schema<IBlogContent>(
   {
@@ -54,6 +56,11 @@ const BlogSchema = new Schema<IBlogDocument>(
       required: [true, "title is required"],
       trim: true,
     },
+    slug: {
+      type: String,
+      // index: true,
+      unique: true,
+    },
     authors: {
       type: [String],
       default: [],
@@ -76,8 +83,20 @@ const BlogSchema = new Schema<IBlogDocument>(
   }
 );
 
+BlogSchema.index({ slug: "text" }); // text index for searching in slug
+
 BlogSchema.index({ title: "text" }); // text index for searching in title
 
+// add slug before saving
+BlogSchema.pre("save", function (next) {
+  if (this.isModified("title") || !this.slug) {
+    this.slug = slugify(this.title, { lower: true, strict: true });
+  }
+
+  next();
+});
+
+// add pub_date before saving
 BlogSchema.pre("save", function (next) {
   this.pub_date = new Date();
   next();
