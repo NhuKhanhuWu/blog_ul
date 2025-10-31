@@ -51,7 +51,7 @@ const BlogSchema = new Schema<IBlogDocument>(
     },
     title: {
       type: String,
-      required: true,
+      required: [true, "title is required"],
       trim: true,
     },
     authors: {
@@ -75,6 +75,8 @@ const BlogSchema = new Schema<IBlogDocument>(
     timestamps: true, // adds createdAt, updatedAt
   }
 );
+
+BlogSchema.index({ title: "text" }); // text index for searching in title
 
 BlogSchema.pre("save", function (next) {
   this.pub_date = new Date();
