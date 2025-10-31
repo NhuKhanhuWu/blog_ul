@@ -3,6 +3,7 @@
 import { Query } from "mongoose";
 import { ParsedQs } from "qs";
 import AppError from "./AppError";
+import { de } from "zod/v4/locales";
 
 /** @format */
 const EXCLUDED_FIELDS = [
@@ -100,18 +101,29 @@ class ApiQueryHelper {
 
   // -------------------- Public Methods --------------------
 
+  findbyUser() {
+    const userId = this.queryString.userId;
+    if (userId) {
+      this.query = this.query.find({ userId });
+    }
+
+    delete this.queryString.userId;
+
+    return this;
+  }
+
   filter(allowedFields: string[] = []) {
     const mongoQuery = this._buildMongoQuery(allowedFields);
     this.query = this.query.find(mongoQuery);
     return this;
   }
 
-  search() {
-    const { name } = this.queryString;
+  searchByTitle() {
+    const { title } = this.queryString;
+    if (!title) return this;
 
-    if (!name) return this;
-
-    this.query = this.query.find({ $text: { $search: String(name) } });
+    this.query = this.query.find({ $text: { $search: String(title) } });
+    delete this.queryString.title;
 
     return this;
   }

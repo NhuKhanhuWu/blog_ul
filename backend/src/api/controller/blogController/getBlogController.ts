@@ -7,7 +7,7 @@ import catchAsync from "../../utils/catchAsync";
 import { getOne } from "../../utils/crudFactory";
 
 // Fields to project (return to client)
-const SELECTED_FIELDS = "id url title authors categories pub_date";
+const SELECTED_FIELDS = "id url title authors categories pub_date slug";
 
 // Fields allowed for sorting
 const SORT_FIELDS = [
@@ -19,7 +19,6 @@ const SORT_FIELDS = [
 
 // Fields allowed for filtering
 const FILTER_FIELDS = [
-  //   "authors", // filter by author
   "pub_date", // filter by date range
 ];
 
@@ -52,7 +51,8 @@ export const getMultBlog = catchAsync(async (req, res) => {
     queryString: queryObject,
   });
   queryInstance
-    .search()
+    .findbyUser()
+    .searchByTitle()
     .filter(FILTER_FIELDS)
     .sort(SORT_FIELDS, "-pub_date") // default sort by newest
     .limitedFields(SELECTED_FIELDS);
@@ -70,13 +70,16 @@ export const getMultBlog = catchAsync(async (req, res) => {
   });
 });
 
-export const getOneBlog = catchAsync(async (req, res) => {
-  const id = req.params.id;
-  const blog = await BlogModel.findById(id);
+export const getOneBlogById = catchAsync(async (req, res) => {
+  getOne(BlogModel)(req, res);
+});
 
-  //check if blog exists
+export const getOneBlogBySlug = catchAsync(async (req, res, next) => {
+  const slug = req.params.slug;
+  const blog = await BlogModel.findOne({ slug: slug });
+
   if (!blog) {
-    throw new AppError("No blog found with that ID", 404);
+    throw new AppError("Blog not found", 404);
   }
 
   res.status(200).json({
@@ -85,4 +88,26 @@ export const getOneBlog = catchAsync(async (req, res) => {
   });
 });
 
-export const getSingleBlog = getOne(BlogModel);
+export const getCategories = catchAsync(async (req, res) => {
+  const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+  if (page < 1) {
+    throw new AppError("Page number must be greater than 0", 400);
+  }
+
+  const skip = (page - 1) * 15;
+  const limit = 15;
+
+  const categories = await BlogModel.aggregate([
+    { $unwind: "$categories" },
+    { $group: { _id: "$categories" } },
+    { $sort: { _id: 1 } },
+    { $skip: skip },
+    { $limit: limit },
+  ]);
+
+  res.status(200).json({
+    status: "success",
+    result: categories.length,
+    data: categories,
+  });
+});

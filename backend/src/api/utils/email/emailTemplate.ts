@@ -83,5 +83,6 @@ export const resetPasswordEmail = function (token: string) {
     <p>If you didn’t request this, please ignore this email — your account is safe.</p>
     <p>Thank you,<br />The MFlix Team</p>
   `;
+
   return wrapEmail(content);
 };
