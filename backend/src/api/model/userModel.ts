@@ -72,7 +72,7 @@ userSchema.pre<IUserDocument>("save", async function (next) {
   // hash password before save
   this.password = await bcrypt.hash(this.password, 12);
 
-  // removie password comfirm
+  // remove password comfirm
   this.passwordConfirm = undefined;
 
   next();
