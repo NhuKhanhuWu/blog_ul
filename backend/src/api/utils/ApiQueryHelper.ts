@@ -3,6 +3,7 @@
 import { Query } from "mongoose";
 import { ParsedQs } from "qs";
 import AppError from "./AppError";
+import { de } from "zod/v4/locales";
 
 /** @format */
 const EXCLUDED_FIELDS = [
@@ -117,12 +118,12 @@ class ApiQueryHelper {
     return this;
   }
 
-  search() {
+  searchByTitle() {
     const { title } = this.queryString;
-
     if (!title) return this;
 
     this.query = this.query.find({ $text: { $search: String(title) } });
+    delete this.queryString.title;
 
     return this;
   }

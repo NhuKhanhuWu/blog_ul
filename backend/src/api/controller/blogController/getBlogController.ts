@@ -7,7 +7,7 @@ import catchAsync from "../../utils/catchAsync";
 import { getOne } from "../../utils/crudFactory";
 
 // Fields to project (return to client)
-const SELECTED_FIELDS = "id url title authors categories pub_date";
+const SELECTED_FIELDS = "id url title authors categories pub_date slug";
 
 // Fields allowed for sorting
 const SORT_FIELDS = [
@@ -52,7 +52,7 @@ export const getMultBlog = catchAsync(async (req, res) => {
   });
   queryInstance
     .findbyUser()
-    .search()
+    .searchByTitle()
     .filter(FILTER_FIELDS)
     .sort(SORT_FIELDS, "-pub_date") // default sort by newest
     .limitedFields(SELECTED_FIELDS);
@@ -70,8 +70,22 @@ export const getMultBlog = catchAsync(async (req, res) => {
   });
 });
 
-export const getOneBlog = catchAsync(async (req, res) => {
+export const getOneBlogById = catchAsync(async (req, res) => {
   getOne(BlogModel)(req, res);
+});
+
+export const getOneBlogBySlug = catchAsync(async (req, res, next) => {
+  const slug = req.params.slug;
+  const blog = await BlogModel.findOne({ slug: slug });
+
+  if (!blog) {
+    throw new AppError("Blog not found", 404);
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: blog,
+  });
 });
 
 export const getCategories = catchAsync(async (req, res) => {

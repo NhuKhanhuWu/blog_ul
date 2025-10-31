@@ -16,8 +16,12 @@ import {
   forgotPasswordOtpLimiterIP,
   resetPassword,
 } from "../controller/authController/forgotPasswordController";
+import { getMeController } from "../controller/userController/getMeController";
+import { protect } from "../controller/authController/protect";
+import { changePassController } from "../controller/userController/changePassController";
 const userRouter = express.Router();
 
+// -------------------- Auth Routes -------------------- //
 // sign up route
 userRouter.post("/signup", signupEmailLimiter, signupIpLimiter, sendSignUpOtp);
 userRouter.post("/signup/verify", checkOtp);
@@ -38,5 +42,12 @@ userRouter.patch(
   checkResetPasswordToken,
   resetPassword
 );
+// -------------------- Auth Routes -------------------- //
+
+// -------------------- User Routes -------------------- //
+userRouter.get("/me", protect, getMeController);
+
+userRouter.patch("/change-password", protect, changePassController);
+// -------------------- User Routes -------------------- //
 
 export default userRouter;

@@ -4,7 +4,8 @@ import express from "express";
 import {
   getCategories,
   getMultBlog,
-  getOneBlog,
+  getOneBlogById,
+  getOneBlogBySlug,
 } from "../controller/blogController/getBlogController";
 import { createBlog } from "../controller/blogController/createBlogController";
 import { protect } from "../controller/authController/protect";
@@ -13,20 +14,19 @@ import { deleteBlog } from "../controller/blogController/deleteBlogController";
 
 const blogRouter = express.Router();
 
-// get blogs
-blogRouter.get("/", getMultBlog); // get multiple blogs with query
-blogRouter.get("/:id", getOneBlog); // get single blog by id
-
-// create blog
-blogRouter.post("/", protect, createBlog);
-
-// update blog
-blogRouter.patch("/:id", protect, updateBlog);
-
-// delete blog
-blogRouter.delete("/:id", protect, deleteBlog);
-
 // get categories
-blogRouter.get("/categories/list", getCategories);
+blogRouter.route("/categories/list").get(getCategories);
+
+// get single blog by slug
+blogRouter.route("/slug/:slug").get(getOneBlogBySlug);
+
+// get multiple blogs with query
+blogRouter.route("/").get(getMultBlog).post(protect, createBlog);
+
+blogRouter
+  .route("/:id")
+  .get(getOneBlogById) //get one blog by id
+  .patch(protect, updateBlog) // update blog
+  .delete(protect, deleteBlog); // get single blog by id
 
 export default blogRouter;
