@@ -60,22 +60,21 @@ export const forgotPassword = catchAsync(
     const token = signToken({ id: user._id }, "5m");
 
     // 3. send email
-    // const message = resetPasswordEmail(token);
-    // await sendTokenEmail(
-    //   {
-    //     email,
-    //     subject: "Your password reset link (valid for 5 mins)",
-    //     htmlMessage: message,
-    //   },
-    //   res,
-    //   next
-    // );
+    const message = resetPasswordEmail(token);
+    await sendTokenEmail(
+      {
+        email,
+        subject: "Your password reset link (valid for 5 mins)",
+        htmlMessage: message,
+      },
+      res,
+      next
+    );
 
     // send response
     res.status(200).json({
       status: "success",
       message: "Reset link sent to email!",
-      token, // TODO: remove this line in production
     });
   }
 );

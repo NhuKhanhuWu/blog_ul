@@ -19,7 +19,6 @@ const SORT_FIELDS = [
 
 // Fields allowed for filtering
 const FILTER_FIELDS = [
-  //   "authors", // filter by author
   "pub_date", // filter by date range
 ];
 
@@ -52,6 +51,7 @@ export const getMultBlog = catchAsync(async (req, res) => {
     queryString: queryObject,
   });
   queryInstance
+    .findbyUser()
     .search()
     .filter(FILTER_FIELDS)
     .sort(SORT_FIELDS, "-pub_date") // default sort by newest
@@ -71,18 +71,29 @@ export const getMultBlog = catchAsync(async (req, res) => {
 });
 
 export const getOneBlog = catchAsync(async (req, res) => {
-  const id = req.params.id;
-  const blog = await BlogModel.findById(id);
+  getOne(BlogModel)(req, res);
+});
 
-  //check if blog exists
-  if (!blog) {
-    throw new AppError("No blog found with that ID", 404);
+export const getCategories = catchAsync(async (req, res) => {
+  const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+  if (page < 1) {
+    throw new AppError("Page number must be greater than 0", 400);
   }
+
+  const skip = (page - 1) * 15;
+  const limit = 15;
+
+  const categories = await BlogModel.aggregate([
+    { $unwind: "$categories" },
+    { $group: { _id: "$categories" } },
+    { $sort: { _id: 1 } },
+    { $skip: skip },
+    { $limit: limit },
+  ]);
 
   res.status(200).json({
     status: "success",
-    data: blog,
+    result: categories.length,
+    data: categories,
   });
 });
-
-export const getSingleBlog = getOne(BlogModel);

@@ -100,6 +100,17 @@ class ApiQueryHelper {
 
   // -------------------- Public Methods --------------------
 
+  findbyUser() {
+    const userId = this.queryString.userId;
+    if (userId) {
+      this.query = this.query.find({ userId });
+    }
+
+    delete this.queryString.userId;
+
+    return this;
+  }
+
   filter(allowedFields: string[] = []) {
     const mongoQuery = this._buildMongoQuery(allowedFields);
     this.query = this.query.find(mongoQuery);
@@ -107,11 +118,11 @@ class ApiQueryHelper {
   }
 
   search() {
-    const { name } = this.queryString;
+    const { title } = this.queryString;
 
-    if (!name) return this;
+    if (!title) return this;
 
-    this.query = this.query.find({ $text: { $search: String(name) } });
+    this.query = this.query.find({ $text: { $search: String(title) } });
 
     return this;
   }
