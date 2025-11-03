@@ -19,18 +19,18 @@ import verifyToken from "../../utils/token/verifyToken";
 // For forgot-password OTP: limit 1 request per 3 mins by email
 export const forgotPasswordOtpLimiterEmail = createLimiter({
   max: 1,
-  windowMs: 3 * 60 * 1000,
+  windowMs: 60 * 1000,
   message:
-    "You can only request a password reset once every 3 minutes with this email.",
+    "You can only request a password reset once every 1 minute with this email.",
   keyGenerator: (req) => req.body.email,
 });
 
 // For forgot-password OTP: limit 10 request per 1 hour by IP
 export const forgotPasswordOtpLimiterIP = createLimiter({
-  max: 10,
+  max: 15,
   windowMs: 60 * 60 * 1000,
   message:
-    "You can only request a password reset 10 times every 1 hour with your device.",
+    "You can only request a password reset 15 times every 1 hour with your device.",
   keyGenerator: (req) => req.ip || "",
 });
 
@@ -57,14 +57,14 @@ export const forgotPassword = catchAsync(
     }
 
     // 2. create token, expire in 5min
-    const token = signToken({ id: user._id }, "5m");
+    const token = signToken({ id: user._id }, "10m");
 
     // 3. send email
     const message = resetPasswordEmail(token);
     await sendTokenEmail(
       {
         email,
-        subject: "Your password reset link (valid for 5 mins)",
+        subject: "Your password reset link in Blogie",
         htmlMessage: message,
       },
       res,
