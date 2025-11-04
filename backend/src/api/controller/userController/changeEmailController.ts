@@ -26,6 +26,7 @@ export const changeEmailLimiterByIP = createLimiter({
     "You can only request change email 15 times every 1 hour with your device.",
   keyGenerator: (req) => req.ip || "",
 });
+
 // --------------------------- limiters ---------------------------
 
 // --------------------------- controllers ---------------------------
@@ -56,7 +57,7 @@ export const changeEmailController = catchAsync(async (req, res, next) => {
   }
 
   // send reset email
-  const token = signToken({ userId: user.id, newEmail }, "1s");
+  const token = signToken({ userId: user.id, newEmail }, "10m");
   const message = changeEmailEmail(token);
   await sendTokenEmail(
     {
