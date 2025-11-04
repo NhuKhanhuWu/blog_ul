@@ -19,6 +19,12 @@ import {
 import { getMeController } from "../controller/userController/getMeController";
 import { protect } from "../controller/authController/protect";
 import { changePassController } from "../controller/userController/changePassController";
+import {
+  changeEmailController,
+  changeEmailLimiterByIP,
+  changeEmailLimiterByUser,
+  checkChangeEmailController,
+} from "../controller/userController/changeEmailController";
 const userRouter = express.Router();
 
 // -------------------- Auth Routes -------------------- //
@@ -48,6 +54,16 @@ userRouter.patch(
 userRouter.get("/me", protect, getMeController);
 
 userRouter.patch("/change-password", protect, changePassController);
+
+userRouter.post(
+  "/change-email",
+  protect,
+  changeEmailLimiterByUser,
+  changeEmailLimiterByIP,
+  changeEmailController
+);
+
+userRouter.post("/change-email/verify", checkChangeEmailController);
 // -------------------- User Routes -------------------- //
 
 export default userRouter;

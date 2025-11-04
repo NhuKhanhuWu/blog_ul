@@ -21,18 +21,18 @@ interface DecodedToken extends JwtPayload {
 // by email
 export const signupEmailLimiter = createLimiter({
   max: 1, // 1 request
-  windowMs: 3 * 60 * 1000, // 3 mins,
+  windowMs: 60 * 1000, // 3 mins,
   message:
-    "You can only request signup OTP once every 3 minutes with this email.",
+    "You can only request signup OTP once every 1 minute with this email.",
   keyGenerator: (req) => req.body.email,
 });
 
 // by IP
 export const signupIpLimiter = createLimiter({
-  max: 10, // 10 request
+  max: 15, // 15 request
   windowMs: 60 * 60 * 1000, // 1 hour,
   message:
-    "You can only request signup OTP 10 times every 1 hour with this IP.",
+    "You can only request signup OTP 15 times every 1 hour with this IP.",
 });
 // CREATE RATE LIMITTER: END
 
@@ -53,7 +53,7 @@ export const sendSignUpOtp = catchAsync(
 
     // 2. create otp
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = Date.now() + 5 * 60 * 1000; // 5 mins
+    const otpExpires = Date.now() + 10 * 60 * 1000; // 5 mins
 
     // 3. save request to db
     await PendingEmailsModel.findOneAndUpdate(
@@ -69,7 +69,7 @@ export const sendSignUpOtp = catchAsync(
     await sendTokenEmail(
       {
         email,
-        subject: "Your sign up OTP (valid for 5 mins)",
+        subject: "Your sign up OTP in Blogie",
         htmlMessage: emailMessage,
       },
       res,
