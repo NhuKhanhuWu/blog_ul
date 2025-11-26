@@ -9,8 +9,8 @@
     // See also https://aka.ms/tsconfig/module
     "module": "commonjs",
     "target": "ES2020",
-    "types": ["node"],
-    "typeRoots": ["./node_modules/@types"],
+    // "types": ["node"],
+    // "typeRoots": ["./node_modules/@types"],
 
     // Other Outputs
     "sourceMap": true,
