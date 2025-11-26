@@ -1,7 +1,7 @@
 /** @format */
 
 function App() {
-  return <></>;
+  return <>TEST FRONT END</>;
 }
 
 export default App;
