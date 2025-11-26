@@ -6,6 +6,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { Request, Response, NextFunction } from "express";
 
 import AppError from "./api/utils/AppError";
 import globalErrHandler from "./api/controller/errorController";
@@ -30,7 +31,7 @@ app.use("/api/v1/blogs", blogRouter);
 
 // ERROR
 // must use /* not *
-app.all(/.*/, (req, res, next) => {
+app.all(/.*/, (req: Request, res: Response, next: NextFunction) => {
   next(new AppError(`Can't find ${req.originalUrl}`, 400));
 });
 
