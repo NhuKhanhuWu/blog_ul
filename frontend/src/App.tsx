@@ -4,7 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 function App() {
-  const [blog, setBlog] = useState({});
+  const [blog, setBlog] = useState(123);
 
   useEffect(() => {
     async function fetchData() {
@@ -15,7 +15,9 @@ function App() {
     fetchData();
   }, []);
 
-  return <>{blog}</>;
+  console.log(blog);
+
+  return <>TEST CALL API</>;
 }
 
 export default App;
