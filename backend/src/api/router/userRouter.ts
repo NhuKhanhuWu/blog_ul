@@ -25,6 +25,7 @@ import {
   changeEmailLimiterByUser,
   checkChangeEmailController,
 } from "../controller/userController/changeEmailController";
+import logout from "../controller/authController/logoutController";
 const userRouter = express.Router();
 
 // -------------------- Auth Routes -------------------- //
@@ -35,6 +36,9 @@ userRouter.post("/signup/create-user", createUser);
 
 // login route
 userRouter.post("/login", login);
+
+// logout route
+userRouter.post("/logout", logout);
 
 // forgot password route
 userRouter.post(

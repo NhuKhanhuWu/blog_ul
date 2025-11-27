@@ -7,16 +7,16 @@ import UserModel from "../../model/userModel";
 
 export const protect = catchAsync(async (req, res, next) => {
   //   get token and check it's there
-  const token = getToken(req);
+  const refreshToken = getToken(req);
 
-  if (!token) {
+  if (!refreshToken) {
     return next(
       new AppError("You are not logged in! Please log in to get access.", 401)
     );
   }
 
   //   check if user exists
-  const decode = await verifyToken(token, process.env.JWT_SECRET || "");
+  const decode = await verifyToken(refreshToken, process.env.JWT_SECRET || "");
   const user = await UserModel.findById((decode as { id: string }).id);
 
   if (!user) {

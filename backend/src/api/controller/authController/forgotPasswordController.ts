@@ -5,7 +5,7 @@ import UserModel from "../../model/userModel";
 import catchAsync from "../../utils/catchAsync";
 import { sendTokenEmail } from "../../utils/email/emailService";
 import { createLimiter } from "../../utils/createLimiter";
-import createSendToken from "../../utils/token/createSendToken";
+import { createAccessToken } from "../../utils/token/createToken";
 import signToken from "../../utils/token/signToken";
 import { resetPasswordEmail } from "../../utils/email/emailTemplate";
 import { IUserDocument } from "../../interface/IUser";
@@ -122,5 +122,5 @@ export const resetPassword = catchAsync(async (req: Request, res: Response) => {
   user.passwordChangedAt = new Date();
   await user.save();
 
-  createSendToken(user, 200, res);
+  createAccessToken(user, 200, res);
 });
