@@ -10,7 +10,7 @@ import { otpEmail } from "../../utils/email/emailTemplate";
 import { sendTokenEmail } from "../../utils/email/emailService";
 import signToken from "../../utils/token/signToken";
 import getToken from "../../utils/token/getToken";
-import createSendToken from "../../utils/token/createSendToken";
+import { createAccessToken } from "../../utils/token/createToken";
 import { createLimiter } from "../../utils/createLimiter";
 
 interface DecodedToken extends JwtPayload {
@@ -135,6 +135,10 @@ export const createUser = catchAsync(async (req, res, next) => {
   // delete request in PendingUser
   await PendingEmailsModel.findOneAndDelete({ email });
 
-  createSendToken(newUser, 200, res);
+  res.status(201).json({
+    status: "success",
+    data: { user: newUser },
+  });
+  // createAccessToken(newUser, 200, res);
 });
 // SIGN UP CONTROLLERS: END

@@ -8,7 +8,7 @@ import {
   getOneBlogBySlug,
 } from "../controller/blogController/getBlogController";
 import { createBlog } from "../controller/blogController/createBlogController";
-import { protect } from "../controller/authController/protect";
+import { protect } from "../controller/authController/protectController";
 import { updateBlog } from "../controller/blogController/updateBlogController";
 import { deleteBlog } from "../controller/blogController/deleteBlogController";
 

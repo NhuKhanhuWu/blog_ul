@@ -1,7 +1,7 @@
 /** @format */
 
 // TODO: learn about cookie
-// TODO: config fullstack proj in render
+// TODO: update send access token on create, update, delete blog and change password, email
 
 import express from "express";
 import cookieParser from "cookie-parser";
