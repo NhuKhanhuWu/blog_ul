@@ -8,6 +8,7 @@ import { BlogCreateSchema } from "../../utils/schema/blogSchema";
 export const createBlog = catchAsync(async (req, res) => {
   // check blog content
   const isValid = BlogCreateSchema.safeParse(req.body);
+  const accessToken = req.accessToken;
 
   if (!isValid.success) {
     throw new AppError("Invalid blog data", 400);
@@ -22,5 +23,6 @@ export const createBlog = catchAsync(async (req, res) => {
   res.status(201).json({
     status: "success",
     data: newBlog,
+    accessToken,
   });
 });
