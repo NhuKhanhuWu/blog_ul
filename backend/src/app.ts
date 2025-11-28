@@ -1,7 +1,6 @@
 /** @format */
 
-// TODO: learn about cookie
-// TODO: update send access token on create, update, delete blog and change password, email
+// TODO: learn about life circle in react
 
 import express from "express";
 import cookieParser from "cookie-parser";
