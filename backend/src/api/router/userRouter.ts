@@ -17,8 +17,15 @@ import {
   resetPassword,
 } from "../controller/authController/forgotPasswordController";
 import { getMeController } from "../controller/userController/getMeController";
-import { protect } from "../controller/authController/protect";
+import { protect } from "../controller/authController/protectController";
 import { changePassController } from "../controller/userController/changePassController";
+import {
+  changeEmailController,
+  changeEmailLimiterByIP,
+  changeEmailLimiterByUser,
+  checkChangeEmailController,
+} from "../controller/userController/changeEmailController";
+import logout from "../controller/authController/logoutController";
 const userRouter = express.Router();
 
 // -------------------- Auth Routes -------------------- //
@@ -29,6 +36,9 @@ userRouter.post("/signup/create-user", createUser);
 
 // login route
 userRouter.post("/login", login);
+
+// logout route
+userRouter.post("/logout", logout);
 
 // forgot password route
 userRouter.post(
@@ -48,6 +58,16 @@ userRouter.patch(
 userRouter.get("/me", protect, getMeController);
 
 userRouter.patch("/change-password", protect, changePassController);
+
+userRouter.post(
+  "/change-email",
+  protect,
+  changeEmailLimiterByUser,
+  changeEmailLimiterByIP,
+  changeEmailController
+);
+
+userRouter.post("/change-email/verify", checkChangeEmailController);
 // -------------------- User Routes -------------------- //
 
 export default userRouter;

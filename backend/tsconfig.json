@@ -9,7 +9,8 @@
     // See also https://aka.ms/tsconfig/module
     "module": "commonjs",
     "target": "ES2020",
-    "types": ["@types/node", "node"],
+    // "types": ["node"],
+    // "typeRoots": ["./node_modules/@types"],
 
     // Other Outputs
     "sourceMap": true,
@@ -28,6 +29,7 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
+    "noEmitOnError": true,
 
     "esModuleInterop": true,
 

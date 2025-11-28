@@ -4,7 +4,6 @@ import { Schema, model } from "mongoose";
 import { IBlogDocument } from "../interface/IBlog";
 import { IBlogContent } from "../utils/schema/blogSchema";
 import slugify from "slugify";
-import { title } from "process";
 
 const contentBlockSchema = new Schema<IBlogContent>(
   {
