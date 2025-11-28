@@ -17,7 +17,7 @@ import {
   resetPassword,
 } from "../controller/authController/forgotPasswordController";
 import { getMeController } from "../controller/userController/getMeController";
-import { protect } from "../controller/authController/protect";
+import { protect } from "../controller/authController/protectController";
 import { changePassController } from "../controller/userController/changePassController";
 import {
   changeEmailController,

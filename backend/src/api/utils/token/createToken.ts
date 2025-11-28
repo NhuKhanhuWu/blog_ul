@@ -32,14 +32,14 @@ const createAccessToken = (
   statusCode: number,
   res: Response
 ): void => {
-  const token = signToken({ id: user._id });
+  const accessToken = signToken({ id: user._id });
 
   // remove password from output
   user.password = undefined;
 
   res.status(statusCode).json({
     status: "success",
-    token,
+    accessToken,
     data: { user },
   });
 };

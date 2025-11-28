@@ -1,10 +1,10 @@
 /** @format */
 
 import { NextFunction } from "express";
-import { IRefreshToken } from "../interface/IRefreshToken";
+import { IToken } from "../interface/IToken";
 import mongoose, { Schema } from "mongoose";
 
-const RefreshTokenSchema = new Schema<IRefreshToken>({
+const RefreshTokenSchema = new Schema<IToken>({
   token: {
     type: String,
     require: [true, "Token required"],
