@@ -6,6 +6,7 @@ import catchAsync from "../../utils/catchAsync";
 
 export const changePassController = catchAsync(async (req, res, next) => {
   const { password, passwordConfirm, currentPassword } = req.body;
+  const { accessToken } = req;
 
   // check if data is present
   if (!password || !passwordConfirm || !currentPassword) {
@@ -46,5 +47,6 @@ export const changePassController = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: "Password changed successfully",
+    accessToken,
   });
 });

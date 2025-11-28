@@ -33,6 +33,8 @@ export const changeEmailLimiterByIP = createLimiter({
 export const changeEmailController = catchAsync(async (req, res, next) => {
   // check if password and new email are provided
   const { password, newEmail } = req.body;
+  const { accessToken } = req;
+
   if (!password || !newEmail) {
     throw new AppError("Please provide password and new email", 400);
   }
@@ -73,6 +75,7 @@ export const changeEmailController = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: "Validate link sent to email!",
+    accessToken,
   });
 });
 

@@ -10,6 +10,7 @@ export const updateBlog = catchAsync(async (req, res) => {
   const blogId = req.params.id;
   const user = req.user;
   const blog = await BlogModel.findById(blogId);
+  const { accessToken } = req;
 
   // check if blog exists
   if (!blog) {
@@ -42,5 +43,6 @@ export const updateBlog = catchAsync(async (req, res) => {
   res.status(200).json({
     status: "success",
     data: updatedBlog,
+    accessToken,
   });
 });

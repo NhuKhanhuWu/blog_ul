@@ -9,6 +9,7 @@ export const deleteBlog = catchAsync(async (req, res) => {
   const blogId = req.params.id;
   const user = req.user;
   const blog = await BlogModel.findById(blogId);
+  const { accessToken } = req;
 
   // check if blog exists
   if (!blog) {
@@ -27,5 +28,6 @@ export const deleteBlog = catchAsync(async (req, res) => {
   res.status(204).json({
     status: "success",
     data: null,
+    accessToken,
   });
 });
