@@ -71,6 +71,10 @@ const BlogSchema = new Schema<IBlogDocument>(
       default: [],
       index: true, // for filtering
     },
+    isHidden: {
+      type: Boolean,
+      default: false,
+    },
     pub_date: {
       type: Date,
       index: true, // for sorting/filtering by date
