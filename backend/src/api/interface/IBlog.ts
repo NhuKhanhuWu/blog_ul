@@ -16,4 +16,5 @@ export interface IBlogDocument extends IBlogInput {
   url?: string;
   slug: string;
   pub_date: Date;
+  isHidden: boolean;
 }

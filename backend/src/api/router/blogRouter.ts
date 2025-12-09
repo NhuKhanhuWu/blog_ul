@@ -22,6 +22,8 @@ blogRouter.route("/slug/:slug").get(getOneBlogBySlug);
 
 // get multiple blogs with query
 blogRouter.route("/").get(getMultBlog).post(protect, createBlog);
+// get blog by user (with auth)
+blogRouter.route("/my-blog").get(protect, getMultBlog);
 
 blogRouter
   .route("/:id")
