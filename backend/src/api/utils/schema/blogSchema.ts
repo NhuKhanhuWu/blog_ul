@@ -86,6 +86,7 @@ export const BlogCreateSchema = z
     authors: authorsValidator,
     categories: categoriesValidator,
     content: contentValidator,
+    isPrivate: z.boolean().optional(),
   })
   .strict();
 
@@ -95,6 +96,7 @@ export const BlogUpdateSchema = z
     authors: authorsValidator.optional(),
     categories: categoriesValidator.optional(),
     content: contentValidator.optional(),
+    isPrivate: z.boolean().optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {
     message: "Request body cannot be empty",
