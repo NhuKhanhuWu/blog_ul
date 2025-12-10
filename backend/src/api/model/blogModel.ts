@@ -71,7 +71,7 @@ const BlogSchema = new Schema<IBlogDocument>(
       default: [],
       index: true, // for filtering
     },
-    isHidden: {
+    isPrivate: {
       type: Boolean,
       default: false,
     },

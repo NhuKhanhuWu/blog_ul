@@ -11,6 +11,7 @@ import AppError from "./api/utils/AppError";
 import globalErrHandler from "./api/controller/errorController";
 import userRouter from "./api/router/userRouter";
 import blogRouter from "./api/router/blogRouter";
+import blogListRouter from "./api/router/blogListRouter";
 
 const app = express();
 app.use(express.json());
@@ -27,6 +28,7 @@ app.use(
 // ROUTER
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/blogs", blogRouter);
+app.use("/api/v1/blog-list", blogListRouter);
 
 // ERROR
 // must use /* not *

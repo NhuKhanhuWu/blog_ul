@@ -5,8 +5,7 @@ import { BlogModel } from "../../model/blogModel";
 import ApiQueryHelper from "../../utils/ApiQueryHelper";
 import AppError from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
-import { getOne } from "../../utils/crudFactory";
-import { Request } from "express";
+import { buildVisibilityFilter, getOne } from "../../utils/crudFactory";
 
 // -------------constants-------------
 // Fields to project (return to client)
@@ -28,20 +27,6 @@ const FILTER_FIELDS = [
 // -------------constants-------------
 
 // -------------helpers-------------
-function buildVisibilityFilter(req: Request) {
-  const filter: Record<string, any> = {};
-
-  if (!req.user) {
-    // Not logged in → only show blogs that are not hidden
-    filter.isHidden = { $ne: true };
-  } else {
-    // Show all blogs of the logged-in user
-    filter.userId = req.user._id;
-  }
-
-  return filter;
-}
-
 function applyCategoryFilter(
   baseQuery: mongoose.Query<any, any>,
   queryObject: Record<string, any>
