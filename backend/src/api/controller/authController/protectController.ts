@@ -2,10 +2,12 @@
 import AppError from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
 import getToken from "../../utils/token/getToken";
-import verifyToken from "../../utils/token/verifyToken";
 import UserModel from "../../model/userModel";
 import RefreshToken from "../../model/refreshModel";
 import signToken from "../../utils/token/signToken";
+import { promisify } from "util";
+import { Jwt, verify } from "jsonwebtoken";
+import verifyToken from "../../utils/token/verifyToken";
 
 interface JwtPayload {
   id: string;
@@ -27,8 +29,10 @@ export const protect = catchAsync(async (req, res, next) => {
   //   check if user exists
   const decode = (await verifyToken(
     accessToken,
-    process.env.JWT_SECRET || ""
+    process.env.JWT_SECRET || "",
+    true
   )) as JwtPayload;
+
   const user = await UserModel.findById((decode as { id: string }).id);
 
   if (!user) {
