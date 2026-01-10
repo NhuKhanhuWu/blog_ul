@@ -120,6 +120,7 @@ class ApiQueryHelper {
 
   searchByTitle() {
     const { title } = this.queryString;
+
     if (!title) return this;
 
     this.query = this.query.find({ $text: { $search: String(title) } });
@@ -158,7 +159,7 @@ class ApiQueryHelper {
 
   async paginate() {
     const page = Number(this.queryString.page) || 1;
-    const limit = Number(this.queryString.limit) || 10;
+    const limit = Number(this.queryString.limit) || 20;
     const skip = (page - 1) * limit;
 
     // Get total count before applying pagination

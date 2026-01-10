@@ -22,3 +22,20 @@ export const getOne =
       data: doc,
     });
   };
+
+export function buildVisibilityFilter(req: Request) {
+  const filter: Record<string, any> = {};
+
+  if (!req.user) {
+    // Not logged in → only show blogs that are not hidden
+    filter.isPrivate = { $ne: true };
+  } else {
+    // Logged in:
+    // Show:
+    // - All public documents
+    // - All documents of current user (regardless of private or not)
+    filter.$or = [{ isPrivate: false }, { userId: req.user._id }];
+  }
+
+  return filter;
+}
