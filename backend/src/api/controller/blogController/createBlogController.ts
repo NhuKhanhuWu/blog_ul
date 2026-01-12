@@ -5,7 +5,7 @@ import AppError from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
 import { BlogCreateSchema } from "../../utils/schema/blogSchema";
 
-export const createBlog = catchAsync(async (req, res) => {
+export const createBlog = catchAsync(async (req, res, next) => {
   // check blog content
   const isValid = BlogCreateSchema.safeParse(req.body);
   const accessToken = req.accessToken;

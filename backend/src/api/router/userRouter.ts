@@ -26,6 +26,7 @@ import {
   checkChangeEmailController,
 } from "../controller/userController/changeEmailController";
 import logout from "../controller/authController/logoutController";
+import { refreshToken } from "../controller/authController/refreshTokenController";
 const userRouter = express.Router();
 
 // -------------------- Auth Routes -------------------- //
@@ -52,6 +53,9 @@ userRouter.patch(
   checkResetPasswordToken,
   resetPassword
 );
+
+// refresh token route
+userRouter.post("/refresh-token", refreshToken);
 // -------------------- Auth Routes -------------------- //
 
 // -------------------- User Routes -------------------- //
