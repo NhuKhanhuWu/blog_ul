@@ -76,6 +76,14 @@ const BlogSchema = new Schema<IBlogDocument>(
       index: true, // for sorting/filtering by date
     },
     content: [contentBlockSchema],
+    upVotes: {
+      type: Number,
+      default: 0,
+    },
+    downVotes: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true, // adds createdAt, updatedAt

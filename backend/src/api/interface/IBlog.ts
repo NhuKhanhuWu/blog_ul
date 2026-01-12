@@ -16,4 +16,6 @@ export interface IBlogDocument extends IBlogInput {
   url?: string;
   slug: string;
   pub_date: Date;
+  upVotes: Number;
+  downVotes: Number;
 }
