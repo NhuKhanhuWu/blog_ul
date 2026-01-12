@@ -4,17 +4,17 @@ import { BlogListModel } from "../../model/blogListModel";
 import catchAsync from "../../utils/catchAsync";
 import { buildVisibilityFilter } from "../../utils/crudFactory";
 
-const SELECTED_FIELDS = "id name description isPrivate";
+const SELECTED_FIELDS = "id userId name description isPrivate";
 
 // -------------controllers-------------
 export const getBlogListByUser = catchAsync(async (req, res) => {
   // get filter based on user authentication
-  const filter = buildVisibilityFilter(req);
+  const filter = buildVisibilityFilter(req, res);
 
-  //   get blog lists
+  // get blog lists
   const blogLists = await BlogListModel.find(filter).select(SELECTED_FIELDS);
 
-  //   respond
+  // respond
   res.status(200).json({
     status: "success",
     data: blogLists,

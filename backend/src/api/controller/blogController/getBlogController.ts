@@ -34,10 +34,14 @@ function applyCategoryFilter(
   const categories = queryObject.categories as string | undefined;
   if (!categories) return baseQuery;
 
-  const values = categories.split(",").map((v) => v.trim());
-  const logic = queryObject.logic || "or";
+  const values = categories
+    .split(",")
+    .map((v) => v.trim())
+    .filter(Boolean);
 
-  if (logic !== "or" && logic !== "and") {
+  const logic = queryObject.logic ?? "or";
+
+  if (!["or", "and"].includes(logic)) {
     throw new AppError("Logic must be either 'or' or 'and'", 400);
   }
 
@@ -46,28 +50,27 @@ function applyCategoryFilter(
       ? baseQuery.find({ categories: { $all: values } })
       : baseQuery.find({ categories: { $in: values } });
 
-  // Remove used keys to avoid interfering with ApiQueryHelper
+  // cleanup query params
   delete queryObject.categories;
   delete queryObject.logic;
 
   return baseQuery;
 }
+
 // -------------helpers-------------
 
 // -------------controllers-------------
 export const getMultBlog = catchAsync(async (req, res) => {
-  const queryObject = { ...req.query }; // shallow clone
+  // Shallow clone để tránh mutate req.query
+  const queryObject = { ...req.query };
 
-  // 1. Build base filter (hidden blogs or user's own blogs)
-  const filter = buildVisibilityFilter(req);
+  // 1. Start base query (KHÔNG còn filter private)
+  let baseQuery = BlogModel.find();
 
-  // Start base query
-  let baseQuery = BlogModel.find(filter);
-
-  // 2. Process categories filtering (if any)
+  // 2. Apply category filter
   baseQuery = applyCategoryFilter(baseQuery, queryObject);
 
-  // 3. Pass into API Query Helper
+  // 3. Apply common API query helpers
   const queryInstance = new ApiQueryHelper({
     query: baseQuery,
     queryString: queryObject,
@@ -82,15 +85,15 @@ export const getMultBlog = catchAsync(async (req, res) => {
 
   await queryInstance.paginate();
 
-  // 4. Execute final query
+  // 4. Execute query
   const blogs = await queryInstance.query;
-  const amount = blogs.length;
+  const amount = blogs.length || 1;
 
   res.status(200).json({
     status: "success",
     totalResult: queryInstance.totalResults,
     totalPages: Math.ceil(queryInstance.totalResults / amount),
-    amount,
+    amount: blogs.length,
     data: blogs,
   });
 });

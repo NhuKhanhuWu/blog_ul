@@ -1,7 +1,5 @@
 /** @format */
 
-// TODO: learn about life circle in react
-
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -17,10 +15,16 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-// same origin only
+// trust origin only
+const allowedOrigins = ["https://blog-uk-frontend.onrender.com"];
+
 app.use(
   cors({
-    origin: true,
+    origin: (og, cb) => {
+      if (!og || allowedOrigins.includes(og)) {
+        cb(null, og);
+      } else cb(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );
