@@ -1,6 +1,6 @@
 /** @format */
 
-import RefreshToken from "../../model/refreshModel";
+import RefreshToken from "../../model/refreshTokenModel";
 import catchAsync from "../../utils/catchAsync";
 
 const logout = catchAsync(async (req, res) => {

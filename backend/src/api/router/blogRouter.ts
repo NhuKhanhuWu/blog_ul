@@ -11,7 +11,6 @@ import { createBlog } from "../controller/blogController/createBlogController";
 import { protect } from "../controller/authController/protectController";
 import { updateBlog } from "../controller/blogController/updateBlogController";
 import { deleteBlog } from "../controller/blogController/deleteBlogController";
-import { loadUser } from "../controller/authController/loadUserController";
 
 const blogRouter = express.Router();
 
@@ -21,8 +20,8 @@ blogRouter.route("/categories/list").get(getCategories);
 // get single blog by slug
 blogRouter.route("/slug/:slug").get(getOneBlogBySlug);
 
-// get multiple blogs with query
-blogRouter.route("/").get(loadUser, getMultBlog).post(protect, createBlog);
+// get multiple blogs with query & create blog
+blogRouter.route("/").get(getMultBlog).post(protect, createBlog);
 
 blogRouter
   .route("/:id")

@@ -1,47 +1,108 @@
 /** @format */
 
-import { JwtPayload } from "jsonwebtoken";
 import catchAsync from "../../utils/catchAsync";
 import getToken from "../../utils/token/getToken";
 import verifyToken from "../../utils/token/verifyToken";
 import UserModel from "../../model/userModel";
-import RefreshToken from "../../model/refreshModel";
-import signToken from "../../utils/token/signToken";
+import RefreshToken from "../../model/refreshTokenModel";
+import {
+  createAccessToken,
+  createRefreshToken,
+} from "../../utils/token/createToken";
+import { IJwtPayload } from "../../interface/IJwtPayload";
 
 export const loadUser = catchAsync(async (req, res, next) => {
   const accessToken = getToken(req);
-  const { refreshToken } = req.cookies;
+  const refreshToken = req.cookies.refreshToken;
 
-  // No token -> public user
-  if (!accessToken || !refreshToken) return next();
+  // 1. Chưa đăng nhập → public
+  if (!accessToken) return next();
 
-  // Decode token
-  const decode = (await verifyToken(
-    accessToken,
-    process.env.JWT_SECRET || ""
-  )) as JwtPayload;
-
-  // Find user with token's user id
-  const user = await UserModel.findById((decode as { id: string }).id);
-  if (!user) return next(); // not valid -> public
-
-  // Access token expired → try refresh token
-  if (decode.exp && Date.now() > decode.exp * 1000) {
-    const isRefreshAble = await RefreshToken.findOne({ token: refreshToken });
-    if (!isRefreshAble) return next(); // không refresh được → xem như public
-
-    // create new access token
-    req.accessToken = signToken(
-      { id: decode.id },
-      process.env.JWT_ACCESS_EXPIRES_IN
-    );
+  // 2. Verify access token
+  let accessPayload: IJwtPayload;
+  try {
+    accessPayload = verifyToken(
+      accessToken,
+      process.env.JWT_SECRET!
+    ) as IJwtPayload;
+  } catch {
+    // access token sai → public
+    return next();
   }
 
-  // Check if user changed password after the token was issued
-  if (user.changedPasswordAfter((decode as { iat: number }).iat)) return next();
+  // 3. Find user
+  const user = await UserModel.findById(accessPayload.id);
+  if (!user) return next();
 
-  // Gán user vào req
+  // 4. Check password change
+  if (accessPayload.iat && user.changedPasswordAfter(accessPayload.iat)) {
+    return next();
+  }
+
+  // 5. Access token còn hạn → attach user
+  if (!accessPayload.exp || Date.now() < accessPayload.exp * 1000) {
+    req.user = user;
+    return next();
+  }
+
+  // 6. Access token hết hạn → thử refresh
+  if (!refreshToken) return next();
+
+  const curRefreshToken = await RefreshToken.findOne({
+    token: refreshToken,
+    revoked: false,
+  });
+
+  if (!curRefreshToken) return next();
+
+  // check session expire
+  if (new Date(curRefreshToken.sessionExpiresAt) < new Date()) {
+    return next();
+  }
+
+  // verify refresh token
+  let refreshPayload: IJwtPayload;
+  try {
+    refreshPayload = verifyToken(
+      refreshToken,
+      process.env.JWT_SECRET!,
+      true
+    ) as IJwtPayload;
+  } catch {
+    return next();
+  }
+
+  // refresh token không khớp user
+  if (refreshPayload.id !== user.id) return next();
+
+  // 7. Rotate refresh token + cấp access token mới
+  const newAccessToken = createAccessToken(user.id);
+  const newRefreshToken = createRefreshToken(user.id);
+
+  await Promise.all([
+    RefreshToken.findByIdAndUpdate(curRefreshToken._id, {
+      revoked: true,
+      revokedAt: new Date(),
+    }),
+    RefreshToken.create({
+      token: newRefreshToken,
+      userId: user.id,
+      sessionExpiresAt: curRefreshToken.sessionExpiresAt,
+    }),
+  ]);
+
+  // set refresh token cookie
+  res.cookie("refreshToken", newRefreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 20 * 24 * 60 * 60 * 1000,
+    path: "/",
+  });
+
+  // attach
   req.user = user;
+  req.accessToken = newAccessToken;
 
   next();
 });

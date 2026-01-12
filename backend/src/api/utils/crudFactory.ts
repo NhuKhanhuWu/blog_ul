@@ -2,7 +2,9 @@
 
 // utils/handlerFactory.ts
 import { Request, Response } from "express";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import AppError from "./AppError";
 
 export const getOne =
   <T>(Model: Model<T>) =>
@@ -23,18 +25,25 @@ export const getOne =
     });
   };
 
-export function buildVisibilityFilter(req: Request) {
-  const filter: Record<string, any> = {};
+export function buildVisibilityFilter(req: Request, res: Response) {
+  const rawUserId = req.query.userId;
 
-  if (!req.user) {
-    // Not logged in → only show blogs that are not hidden
+  if (!rawUserId || Array.isArray(rawUserId)) {
+    throw new AppError("Invalid userId", 400);
+  }
+
+  let userId: Types.ObjectId;
+  try {
+    userId = new Types.ObjectId(rawUserId as string);
+  } catch (err) {
+    throw new AppError("Invalid userId", 400);
+  }
+
+  const filter: Record<string, any> = { userId };
+
+  // Not logged in / not owner → only show blogs that are not hidden
+  if (!req.user || req.user._id.toString() !== userId.toString()) {
     filter.isPrivate = { $ne: true };
-  } else {
-    // Logged in:
-    // Show:
-    // - All public documents
-    // - All documents of current user (regardless of private or not)
-    filter.$or = [{ isPrivate: false }, { userId: req.user._id }];
   }
 
   return filter;
