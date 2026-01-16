@@ -5,7 +5,7 @@ import { BlogModel } from "../../model/blogModel";
 import ApiQueryHelper from "../../utils/ApiQueryHelper";
 import AppError from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
-import { buildVisibilityFilter, getOne } from "../../utils/crudFactory";
+import { getOne } from "../../utils/crudFactory";
 
 // -------------constants-------------
 // Fields to project (return to client)
