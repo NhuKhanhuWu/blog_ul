@@ -14,7 +14,7 @@ const getCmt = (baseQuery: Query<any, any>) =>
     // get blog id & sort request
     const queryObject = { ...req.query };
 
-    // repare query
+    // prepare query
     const queryInstance = new ApiQueryHelper({
       query: baseQuery,
       queryString: queryObject,
@@ -23,7 +23,7 @@ const getCmt = (baseQuery: Query<any, any>) =>
     queryInstance.filter(FILTER_FIELDS).sort(SORT_FIELDS, "createdAt");
     await queryInstance.paginate();
 
-    //   query
+    // query
     const cmt = await queryInstance.query;
     const amount = cmt.length || 1;
 
@@ -40,7 +40,7 @@ const getCmt = (baseQuery: Query<any, any>) =>
 export const getCmtByBlog = catchAsync(async (req, res, next) => {
   const blogId = req.params.id;
 
-  const baseQuery = CommentModel.find({ blogId });
+  const baseQuery = CommentModel.find({ blogId, isDeleted: false });
   await getCmt(baseQuery)(req, res, next);
 });
 
