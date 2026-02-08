@@ -21,7 +21,7 @@ const voteSchema = new Schema<IVote>(
     targetType: {
       type: String,
       required: true,
-      enum: ["post", "comment"], // mở rộng sau
+      enum: ["blog", "comment"], // mở rộng sau
       index: true,
     },
 
@@ -33,7 +33,7 @@ const voteSchema = new Schema<IVote>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // make sure each vote is unique
@@ -45,7 +45,7 @@ voteSchema.index(
   },
   {
     unique: true,
-  }
+  },
 );
 
 // get total votes of target

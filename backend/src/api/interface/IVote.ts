@@ -19,4 +19,5 @@ export interface IVote {
   voteType: VoteType;
   createdAt?: Date;
   updatedAt?: Date;
+  _id: Types.ObjectId;
 }
