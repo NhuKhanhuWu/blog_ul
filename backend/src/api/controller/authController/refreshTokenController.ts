@@ -1,5 +1,4 @@
 /** @format */
-// TODO: write refresh token logic
 
 import { IJwtPayload } from "../../interface/IJwtPayload";
 import RefreshToken from "../../model/refreshTokenModel";
