@@ -100,18 +100,31 @@ class ApiQueryHelper {
 
   // -------------------- Public Methods --------------------
 
-  filter(allowedFields: string[] = []) {
-    const mongoQuery = this._buildMongoQuery(allowedFields);
-    this.query = this.query.find(mongoQuery);
+  findbyUser() {
+    const userId = this.queryString.userId;
+    if (userId) {
+      this.query = this.query.find({ userId });
+    }
+
+    delete this.queryString.userId;
+
     return this;
   }
 
-  search() {
-    const { name } = this.queryString;
+  filter(allowedFields: string[] = []) {
+    const mongoQuery = this._buildMongoQuery(allowedFields);
+    this.query = this.query.find(mongoQuery);
 
-    if (!name) return this;
+    return this;
+  }
 
-    this.query = this.query.find({ $text: { $search: String(name) } });
+  searchByTitle() {
+    const { title } = this.queryString;
+
+    if (!title) return this;
+
+    this.query = this.query.find({ $text: { $search: String(title) } });
+    delete this.queryString.title;
 
     return this;
   }
@@ -146,7 +159,7 @@ class ApiQueryHelper {
 
   async paginate() {
     const page = Number(this.queryString.page) || 1;
-    const limit = Number(this.queryString.limit) || 10;
+    const limit = Number(this.queryString.limit) || 20;
     const skip = (page - 1) * limit;
 
     // Get total count before applying pagination

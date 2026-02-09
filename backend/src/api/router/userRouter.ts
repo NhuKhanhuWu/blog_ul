@@ -16,8 +16,21 @@ import {
   forgotPasswordOtpLimiterIP,
   resetPassword,
 } from "../controller/authController/forgotPasswordController";
+import { getMeController } from "../controller/userController/getMeController";
+import { protect } from "../controller/authController/protectController";
+import { changePassController } from "../controller/userController/changePassController";
+import {
+  changeEmailController,
+  changeEmailLimiterByIP,
+  changeEmailLimiterByUser,
+  checkChangeEmailController,
+} from "../controller/userController/changeEmailController";
+import logout from "../controller/authController/logoutController";
+import { refreshToken } from "../controller/authController/refreshTokenController";
+import { getUserBlogVote } from "../controller/voteController/getVote";
 const userRouter = express.Router();
 
+// -------------------- Auth Routes -------------------- //
 // sign up route
 userRouter.post("/signup", signupEmailLimiter, signupIpLimiter, sendSignUpOtp);
 userRouter.post("/signup/verify", checkOtp);
@@ -26,17 +39,44 @@ userRouter.post("/signup/create-user", createUser);
 // login route
 userRouter.post("/login", login);
 
+// logout route
+userRouter.post("/logout", logout);
+
 // forgot password route
 userRouter.post(
   "/forgot-password",
   forgotPasswordOtpLimiterEmail,
   forgotPasswordOtpLimiterIP,
-  forgotPassword
+  forgotPassword,
 );
 userRouter.patch(
   "/forgot-password/reset-password",
   checkResetPasswordToken,
-  resetPassword
+  resetPassword,
 );
+
+// refresh token route
+userRouter.post("/refresh-token", refreshToken);
+// -------------------- Auth Routes -------------------- //
+
+// -------------------- User Routes -------------------- //
+userRouter.get("/me", protect, getMeController);
+
+userRouter.patch("/change-password", protect, changePassController);
+
+userRouter.post(
+  "/change-email",
+  protect,
+  changeEmailLimiterByUser,
+  changeEmailLimiterByIP,
+  changeEmailController,
+);
+
+userRouter.post("/change-email/verify", checkChangeEmailController);
+// -------------------- User Routes -------------------- //
+
+// -------------------- Vote Routes -------------------- //
+userRouter.route("/me/my-vote").get(protect, getUserBlogVote);
+// -------------------- Vote Routes -------------------- //
 
 export default userRouter;

@@ -3,6 +3,7 @@
 import { Schema, model } from "mongoose";
 import { IBlogDocument } from "../interface/IBlog";
 import { IBlogContent } from "../utils/schema/blogSchema";
+import slugify from "slugify";
 
 const contentBlockSchema = new Schema<IBlogContent>(
   {
@@ -39,7 +40,7 @@ const contentBlockSchema = new Schema<IBlogContent>(
       type: String,
     },
   },
-  { _id: false } // no _id for subdocuments
+  { _id: false }, // no _id for subdocuments
 );
 
 const BlogSchema = new Schema<IBlogDocument>(
@@ -51,8 +52,13 @@ const BlogSchema = new Schema<IBlogDocument>(
     },
     title: {
       type: String,
-      required: true,
+      required: [true, "title is required"],
       trim: true,
+    },
+    slug: {
+      type: String,
+      // index: true,
+      unique: true,
     },
     authors: {
       type: [String],
@@ -70,12 +76,30 @@ const BlogSchema = new Schema<IBlogDocument>(
       index: true, // for sorting/filtering by date
     },
     content: [contentBlockSchema],
+    voteScore: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true, // adds createdAt, updatedAt
-  }
+  },
 );
 
+BlogSchema.index({ slug: "text" }); // text index for searching in slug
+
+BlogSchema.index({ title: "text" }); // text index for searching in title
+
+// add slug before saving
+BlogSchema.pre("save", function (next) {
+  if (this.isModified("title") || !this.slug) {
+    this.slug = slugify(this.title, { lower: true, strict: true });
+  }
+
+  next();
+});
+
+// add pub_date before saving
 BlogSchema.pre("save", function (next) {
   this.pub_date = new Date();
   next();

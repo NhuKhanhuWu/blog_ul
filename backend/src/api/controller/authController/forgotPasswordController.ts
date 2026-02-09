@@ -5,13 +5,13 @@ import UserModel from "../../model/userModel";
 import catchAsync from "../../utils/catchAsync";
 import { sendTokenEmail } from "../../utils/email/emailService";
 import { createLimiter } from "../../utils/createLimiter";
-import createSendToken from "../../utils/token/createSendToken";
 import signToken from "../../utils/token/signToken";
 import { resetPasswordEmail } from "../../utils/email/emailTemplate";
 import { IUserDocument } from "../../interface/IUser";
 import getToken from "../../utils/token/getToken";
 import AppError from "../../utils/AppError";
 import verifyToken from "../../utils/token/verifyToken";
+import { IJwtPayload } from "../../interface/IJwtPayload";
 
 // ---------------------------
 // Rate Limiters
@@ -19,18 +19,18 @@ import verifyToken from "../../utils/token/verifyToken";
 // For forgot-password OTP: limit 1 request per 3 mins by email
 export const forgotPasswordOtpLimiterEmail = createLimiter({
   max: 1,
-  windowMs: 3 * 60 * 1000,
+  windowMs: 60 * 1000,
   message:
-    "You can only request a password reset once every 3 minutes with this email.",
+    "You can only request a password reset once every 1 minute with this email.",
   keyGenerator: (req) => req.body.email,
 });
 
 // For forgot-password OTP: limit 10 request per 1 hour by IP
 export const forgotPasswordOtpLimiterIP = createLimiter({
-  max: 10,
+  max: 15,
   windowMs: 60 * 60 * 1000,
   message:
-    "You can only request a password reset 10 times every 1 hour with your device.",
+    "You can only request a password reset 15 times every 1 hour with your device.",
   keyGenerator: (req) => req.ip || "",
 });
 
@@ -57,14 +57,14 @@ export const forgotPassword = catchAsync(
     }
 
     // 2. create token, expire in 5min
-    const token = signToken({ id: user._id }, "5m");
+    const token = signToken({ id: user._id }, "10m");
 
     // 3. send email
     const message = resetPasswordEmail(token);
     await sendTokenEmail(
       {
         email,
-        subject: "Your password reset link (valid for 5 mins)",
+        subject: "Your password reset link in Blogie",
         htmlMessage: message,
       },
       res,
@@ -89,15 +89,15 @@ export const checkResetPasswordToken = catchAsync(
     }
 
     // verify token
-    let decoded;
+    let decode: IJwtPayload;
     try {
-      decoded = await verifyToken(token, process.env.JWT_SECRET || "");
+      decode = verifyToken(token, process.env.JWT_SECRET!, true) as IJwtPayload;
     } catch (err) {
-      return next(new AppError("Token is invalid or has expired!", 400));
+      return next(new AppError("Invalid or expired token", 401));
     }
 
     // get user from token
-    const user = await UserModel.findById((decoded as { id: string }).id);
+    const user = await UserModel.findById((decode as { id: string }).id);
     if (!user) {
       return next(new AppError("The user no longer exists.", 400));
     }
@@ -122,5 +122,9 @@ export const resetPassword = catchAsync(async (req: Request, res: Response) => {
   user.passwordChangedAt = new Date();
   await user.save();
 
-  createSendToken(user, 200, res);
+  //  response
+  res.status(201).json({
+    status: "success",
+    message: "Password reset successfully!",
+  });
 });
