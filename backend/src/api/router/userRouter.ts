@@ -27,7 +27,10 @@ import {
 } from "../controller/userController/changeEmailController";
 import logout from "../controller/authController/logoutController";
 import { refreshToken } from "../controller/authController/refreshTokenController";
-import { getUserBlogVote } from "../controller/voteController/getVote";
+import {
+  getUserBlogVote,
+  getUserCmtVote,
+} from "../controller/voteController/getVoteController";
 const userRouter = express.Router();
 
 // -------------------- Auth Routes -------------------- //
@@ -76,7 +79,8 @@ userRouter.post("/change-email/verify", checkChangeEmailController);
 // -------------------- User Routes -------------------- //
 
 // -------------------- Vote Routes -------------------- //
-userRouter.route("/me/my-vote").get(protect, getUserBlogVote);
+userRouter.route("/me/my-blog-vote").get(protect, getUserBlogVote);
+userRouter.route("/me/my-cmt-vote").get(protect, getUserCmtVote);
 // -------------------- Vote Routes -------------------- //
 
 export default userRouter;
