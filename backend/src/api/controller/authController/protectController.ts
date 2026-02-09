@@ -17,11 +17,7 @@ export const protect = catchAsync(async (req, res, next) => {
   // check if token expired
   let decode: IJwtPayload;
   try {
-    decode = verifyToken(
-      accessToken,
-      process.env.JWT_SECRET!,
-      true
-    ) as IJwtPayload;
+    decode = verifyToken(accessToken, process.env.JWT_SECRET!) as IJwtPayload;
   } catch (err) {
     return next(new AppError("Invalid or expired token", 401));
   }

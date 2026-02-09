@@ -27,6 +27,7 @@ import {
 } from "../controller/userController/changeEmailController";
 import logout from "../controller/authController/logoutController";
 import { refreshToken } from "../controller/authController/refreshTokenController";
+import { getUserBlogVote } from "../controller/voteController/getVote";
 const userRouter = express.Router();
 
 // -------------------- Auth Routes -------------------- //
@@ -46,12 +47,12 @@ userRouter.post(
   "/forgot-password",
   forgotPasswordOtpLimiterEmail,
   forgotPasswordOtpLimiterIP,
-  forgotPassword
+  forgotPassword,
 );
 userRouter.patch(
   "/forgot-password/reset-password",
   checkResetPasswordToken,
-  resetPassword
+  resetPassword,
 );
 
 // refresh token route
@@ -68,10 +69,14 @@ userRouter.post(
   protect,
   changeEmailLimiterByUser,
   changeEmailLimiterByIP,
-  changeEmailController
+  changeEmailController,
 );
 
 userRouter.post("/change-email/verify", checkChangeEmailController);
 // -------------------- User Routes -------------------- //
+
+// -------------------- Vote Routes -------------------- //
+userRouter.route("/me/my-vote").get(protect, getUserBlogVote);
+// -------------------- Vote Routes -------------------- //
 
 export default userRouter;
