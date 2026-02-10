@@ -76,6 +76,16 @@ const BlogSchema = new Schema<IBlogDocument>(
       index: true, // for sorting/filtering by date
     },
     content: [contentBlockSchema],
+    images: {
+      type: [String],
+      default: [],
+      validate: {
+        validator: function (value: string[]) {
+          return value.length <= 5;
+        },
+        message: "A blog can have at most 5 images",
+      },
+    },
     voteScore: {
       type: Number,
       default: 0,

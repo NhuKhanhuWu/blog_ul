@@ -49,20 +49,19 @@ const userSchema = new Schema<IUserDocument>(
       default: "user",
     },
 
-    profile_image: {
+    avatar: {
       type: String, // URL to avatar
       validate: {
         validator: (v: string) => !v || validator.isURL(v),
         message: "Invalid image URL",
       },
-      default: "https://i.pravatar.cc/150",
     },
 
     passwordChangedAt: Date,
   },
   {
     timestamps: true, // createdAt, updatedAt
-  }
+  },
 );
 
 // Middleware to hash password before saving
@@ -87,7 +86,7 @@ userSchema.methods.checkPassword = async function (candidatePassword: string) {
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
   if (this.passwordChangedAt) {
     const changedTimestamp = Math.floor(
-      this.passwordChangedAt.getTime() / 1000
+      this.passwordChangedAt.getTime() / 1000,
     );
     return JWTTimestamp < changedTimestamp;
   }
