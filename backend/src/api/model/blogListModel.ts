@@ -35,7 +35,7 @@ const blogListSchema = new Schema<IBlogList>(
   {
     timestamps: true,
     versionKey: false,
-  }
+  },
 );
 
 // send unique error for duplicate blog list name per user
@@ -47,7 +47,7 @@ blogListSchema.post(
     }
 
     next(error);
-  }
+  },
 );
 
 blogListSchema.index({ userId: 1, name: 1 }, { unique: true });

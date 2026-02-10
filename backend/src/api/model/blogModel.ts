@@ -40,7 +40,7 @@ const contentBlockSchema = new Schema<IBlogContent>(
       type: String,
     },
   },
-  { _id: false } // no _id for subdocuments
+  { _id: false }, // no _id for subdocuments
 );
 
 const BlogSchema = new Schema<IBlogDocument>(
@@ -80,10 +80,21 @@ const BlogSchema = new Schema<IBlogDocument>(
       index: true, // for sorting/filtering by date
     },
     content: [contentBlockSchema],
+
+    images: {
+      type: [String],
+      default: [],
+      validate: {
+        validator: function (value: string[]) {
+          return value.length <= 5;
+        },
+        message: "A blog can have at most 5 images",
+      },
+    },
   },
   {
     timestamps: true, // adds createdAt, updatedAt
-  }
+  },
 );
 
 BlogSchema.index({ slug: "text" }); // text index for searching in slug

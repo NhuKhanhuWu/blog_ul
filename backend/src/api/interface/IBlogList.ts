@@ -10,4 +10,5 @@ export interface IBlogList extends Document {
   isPrivate: boolean;
   createdAt: Date;
   updatedAt: Date;
+  images: string[];
 }
