@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
+import "./index.css";
 
 function App() {
   const [blog, setBlog] = useState(123);
