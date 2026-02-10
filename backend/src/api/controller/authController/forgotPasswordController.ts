@@ -5,13 +5,13 @@ import UserModel from "../../model/userModel";
 import catchAsync from "../../utils/catchAsync";
 import { sendTokenEmail } from "../../utils/email/emailService";
 import { createLimiter } from "../../utils/createLimiter";
-import createSendToken from "../../utils/token/createSendToken";
 import signToken from "../../utils/token/signToken";
 import { resetPasswordEmail } from "../../utils/email/emailTemplate";
 import { IUserDocument } from "../../interface/IUser";
 import getToken from "../../utils/token/getToken";
 import AppError from "../../utils/AppError";
 import verifyToken from "../../utils/token/verifyToken";
+import { IJwtPayload } from "../../interface/IJwtPayload";
 
 // ---------------------------
 // Rate Limiters
@@ -89,15 +89,15 @@ export const checkResetPasswordToken = catchAsync(
     }
 
     // verify token
-    let decoded;
+    let decode: IJwtPayload;
     try {
-      decoded = await verifyToken(token, process.env.JWT_SECRET || "");
+      decode = verifyToken(token, process.env.JWT_SECRET!, true) as IJwtPayload;
     } catch (err) {
-      return next(new AppError("Token is invalid or has expired!", 400));
+      return next(new AppError("Invalid or expired token", 401));
     }
 
     // get user from token
-    const user = await UserModel.findById((decoded as { id: string }).id);
+    const user = await UserModel.findById((decode as { id: string }).id);
     if (!user) {
       return next(new AppError("The user no longer exists.", 400));
     }
@@ -122,5 +122,9 @@ export const resetPassword = catchAsync(async (req: Request, res: Response) => {
   user.passwordChangedAt = new Date();
   await user.save();
 
-  createSendToken(user, 200, res);
+  //  response
+  res.status(201).json({
+    status: "success",
+    message: "Password reset successfully!",
+  });
 });

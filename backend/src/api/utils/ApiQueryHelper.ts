@@ -3,7 +3,6 @@
 import { Query } from "mongoose";
 import { ParsedQs } from "qs";
 import AppError from "./AppError";
-import { de } from "zod/v4/locales";
 
 /** @format */
 const EXCLUDED_FIELDS = [
@@ -115,11 +114,13 @@ class ApiQueryHelper {
   filter(allowedFields: string[] = []) {
     const mongoQuery = this._buildMongoQuery(allowedFields);
     this.query = this.query.find(mongoQuery);
+
     return this;
   }
 
   searchByTitle() {
     const { title } = this.queryString;
+
     if (!title) return this;
 
     this.query = this.query.find({ $text: { $search: String(title) } });
@@ -158,7 +159,7 @@ class ApiQueryHelper {
 
   async paginate() {
     const page = Number(this.queryString.page) || 1;
-    const limit = Number(this.queryString.limit) || 10;
+    const limit = Number(this.queryString.limit) || 20;
     const skip = (page - 1) * limit;
 
     // Get total count before applying pagination

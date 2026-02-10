@@ -1,11 +1,13 @@
 /** @format */
 
+import mongoose from "mongoose";
 import { BlogModel } from "../../model/blogModel";
 import ApiQueryHelper from "../../utils/ApiQueryHelper";
 import AppError from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
 import { getOne } from "../../utils/crudFactory";
 
+// -------------constants-------------
 // Fields to project (return to client)
 const SELECTED_FIELDS = "id url title authors categories pub_date slug";
 
@@ -20,53 +22,79 @@ const SORT_FIELDS = [
 // Fields allowed for filtering
 const FILTER_FIELDS = [
   "pub_date", // filter by date range
+  "userId", // filter by user
 ];
+// -------------constants-------------
 
-export const getMultBlog = catchAsync(async (req, res) => {
-  // filter by category first
-  const queryObject = { ...req.query }; // shallow clone
-  let baseQuery = BlogModel.find();
+// -------------helpers-------------
+function applyCategoryFilter(
+  baseQuery: mongoose.Query<any, any>,
+  queryObject: Record<string, any>
+) {
   const categories = queryObject.categories as string | undefined;
+  if (!categories) return baseQuery;
 
-  if (categories) {
-    const values = categories.split(",").map((v: string) => v.trim());
-    const logic = queryObject.logic || "or";
+  const values = categories
+    .split(",")
+    .map((v) => v.trim())
+    .filter(Boolean);
 
-    // check if logic is valid
-    if (logic !== "or" && logic !== "and")
-      throw new AppError("Logic must be either 'or' or 'and'", 400);
+  const logic = queryObject.logic ?? "or";
 
-    baseQuery =
-      logic === "and"
-        ? baseQuery.find({ categories: { $all: values } })
-        : baseQuery.find({ categories: { $in: values } });
-
-    // remove categories and logic from query to avoid issues in ApiQueryHelper
-    delete queryObject.categories;
-    delete queryObject.logic;
+  if (!["or", "and"].includes(logic)) {
+    throw new AppError("Logic must be either 'or' or 'and'", 400);
   }
 
+  baseQuery =
+    logic === "and"
+      ? baseQuery.find({ categories: { $all: values } })
+      : baseQuery.find({ categories: { $in: values } });
+
+  // cleanup query params
+  delete queryObject.categories;
+  delete queryObject.logic;
+
+  return baseQuery;
+}
+
+// -------------helpers-------------
+
+// -------------controllers-------------
+export const getMultBlog = catchAsync(async (req, res) => {
+  // Shallow clone để tránh mutate req.query
+  const queryObject = { ...req.query };
+
+  // 1. Start base query (KHÔNG còn filter private)
+  let baseQuery = BlogModel.find();
+
+  // 2. Apply category filter
+  baseQuery = applyCategoryFilter(baseQuery, queryObject);
+
+  // 3. Apply common API query helpers
   const queryInstance = new ApiQueryHelper({
     query: baseQuery,
     queryString: queryObject,
   });
+
   queryInstance
     .findbyUser()
     .searchByTitle()
     .filter(FILTER_FIELDS)
-    .sort(SORT_FIELDS, "-pub_date") // default sort by newest
+    .sort(SORT_FIELDS, "-pub_date")
     .limitedFields(SELECTED_FIELDS);
+
   await queryInstance.paginate();
 
-  const companies = await queryInstance.query;
-  const currAmount = companies.length;
+  // 4. Execute query
+  const blogs = await queryInstance.query;
+  const amount = blogs.length || 1;
 
   res.status(200).json({
     status: "success",
     totalResult: queryInstance.totalResults,
-    totalPages: Math.ceil(queryInstance.totalResults / currAmount),
-    amount: currAmount,
-    data: companies,
+    totalPages: Math.ceil(queryInstance.totalResults / amount),
+    amount: blogs.length,
+    data: blogs,
   });
 });
 
@@ -111,3 +139,4 @@ export const getCategories = catchAsync(async (req, res) => {
     data: categories,
   });
 });
+// -------------controllers-------------

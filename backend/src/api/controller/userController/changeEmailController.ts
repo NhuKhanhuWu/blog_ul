@@ -33,6 +33,8 @@ export const changeEmailLimiterByIP = createLimiter({
 export const changeEmailController = catchAsync(async (req, res, next) => {
   // check if password and new email are provided
   const { password, newEmail } = req.body;
+  const { accessToken } = req;
+
   if (!password || !newEmail) {
     throw new AppError("Please provide password and new email", 400);
   }
@@ -73,6 +75,7 @@ export const changeEmailController = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: "Validate link sent to email!",
+    accessToken,
   });
 });
 
@@ -84,15 +87,14 @@ export const checkChangeEmailController = catchAsync(async (req, res, next) => {
     throw new AppError("Token is missing", 400);
   }
 
-  // verify token
-  let decoded;
+  let decode;
   try {
-    decoded = await verifyToken(token, process.env.JWT_SECRET || "");
+    decode = verifyToken(token, process.env.JWT_SECRET!, true);
   } catch (err) {
-    return next(new AppError("Token is invalid or has expired!", 400));
+    throw new AppError("Invalid or expired token", 401);
   }
 
-  const { userId, newEmail } = decoded as { userId: string; newEmail: string };
+  const { userId, newEmail } = decode as { userId: string; newEmail: string };
 
   // update email
   await UserModel.findByIdAndUpdate(userId, { email: newEmail });

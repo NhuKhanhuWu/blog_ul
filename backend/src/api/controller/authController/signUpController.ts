@@ -10,7 +10,6 @@ import { otpEmail } from "../../utils/email/emailTemplate";
 import { sendTokenEmail } from "../../utils/email/emailService";
 import signToken from "../../utils/token/signToken";
 import getToken from "../../utils/token/getToken";
-import createSendToken from "../../utils/token/createSendToken";
 import { createLimiter } from "../../utils/createLimiter";
 
 interface DecodedToken extends JwtPayload {
@@ -42,14 +41,13 @@ export const sendSignUpOtp = catchAsync(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     // 1. get & check email
     const { email } = req.body as { email?: string };
-    if (!email) return next(new AppError("Email required", 400));
+    if (!email) throw new AppError("Email required", 400);
 
-    if (!validator.isEmail(email))
-      return next(new AppError("Invalid email", 400));
+    if (!validator.isEmail(email)) throw new AppError("Invalid email", 400);
 
     // 1.1 check if already in use
     const userExists = await UserModel.findOne({ email });
-    if (userExists) return next(new AppError("Email already in use", 409));
+    if (userExists) throw new AppError("Email already in use", 409);
 
     // 2. create otp
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -79,18 +77,18 @@ export const sendSignUpOtp = catchAsync(
 );
 
 // 2. check otp
-export const checkOtp = catchAsync(async (req, res, next) => {
+export const checkOtp = catchAsync(async (req, res) => {
   // 1. check if otp and email is sended
   const { otp, email } = req.body;
-  if (!otp || !email) return next(new AppError("Otp and email required", 400));
+  if (!otp || !email) throw new AppError("Otp and email required", 400);
 
   // 2. check if otp, email is valid
   const pendingEmail = await PendingEmailsModel.findOne({ email });
 
   if (!pendingEmail || pendingEmail.otpExpires.getTime() < Date.now())
-    return next(new AppError("Invalid email/otp", 400));
+    throw new AppError("Invalid email/otp", 400);
 
-  if (pendingEmail.otp !== otp) return next(new AppError("Invalid otp", 400));
+  if (pendingEmail.otp !== otp) throw new AppError("Invalid otp", 400);
 
   // 3. create jwt
   const token = signToken({ email }, "30m");
@@ -104,13 +102,14 @@ export const checkOtp = catchAsync(async (req, res, next) => {
 });
 
 // 3. create user
-export const createUser = catchAsync(async (req, res, next) => {
+export const createUser = catchAsync(async (req, res) => {
   // get email from token
   const token = getToken(req);
   // chek if token is sended
   if (!token)
-    return next(
-      new AppError("Please validate for email before execute this action!", 401)
+    throw new AppError(
+      "Please validate for email before execute this action!",
+      401
     );
 
   // check email
@@ -121,7 +120,7 @@ export const createUser = catchAsync(async (req, res, next) => {
   const { email } = decoded;
 
   const existsUser = await UserModel.findOne({ email });
-  if (existsUser) return next(new AppError("Email already in used", 401));
+  if (existsUser) throw new AppError("Email already in used", 401);
 
   // create user
   const newUser = await UserModel.create({
@@ -135,6 +134,10 @@ export const createUser = catchAsync(async (req, res, next) => {
   // delete request in PendingUser
   await PendingEmailsModel.findOneAndDelete({ email });
 
-  createSendToken(newUser, 200, res);
+  res.status(201).json({
+    status: "success",
+    data: { user: newUser },
+  });
+  // createAccessToken(newUser, 200, res);
 });
 // SIGN UP CONTROLLERS: END
