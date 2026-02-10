@@ -1,5 +1,7 @@
 /** @format */
 
+// TODO: update to add new img in supabase
+
 import { BlogModel } from "../../model/blogModel";
 import AppError from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
