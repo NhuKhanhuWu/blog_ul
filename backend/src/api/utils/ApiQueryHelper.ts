@@ -3,7 +3,6 @@
 import { Query } from "mongoose";
 import { ParsedQs } from "qs";
 import AppError from "./AppError";
-import { de } from "zod/v4/locales";
 
 /** @format */
 const EXCLUDED_FIELDS = [
@@ -115,6 +114,7 @@ class ApiQueryHelper {
   filter(allowedFields: string[] = []) {
     const mongoQuery = this._buildMongoQuery(allowedFields);
     this.query = this.query.find(mongoQuery);
+
     return this;
   }
 
