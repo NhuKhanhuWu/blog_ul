@@ -63,12 +63,11 @@ const commentSchema = new Schema<IComment>(
     isDeleted: {
       type: Boolean,
       default: false,
-      index: true,
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 /* ================= INDEX ================= */
