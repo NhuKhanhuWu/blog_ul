@@ -1,13 +1,13 @@
 /** @format */
 // The shape required when creating a new user
-import mongoose, { Document, mongo, Types } from "mongoose";
+import { Document, Types } from "mongoose";
 
 export interface IUserInput {
   name: string;
   email: string;
   password: string; // required when creating
   role?: "user" | "admin" | "moderator"; // optional, defaults to "user"
-  profile_image?: string;
+  avatar?: string;
 }
 
 export interface IUserDocument extends Document {
@@ -17,7 +17,7 @@ export interface IUserDocument extends Document {
   password?: string | undefined; // select: false makes it optional
   passwordConfirm?: string | undefined; // deleted after creation => optional
   role: "user" | "admin" | "moderator";
-  profile_image?: string | undefined;
+  avatar?: string | undefined;
   passwordChangedAt?: Date | undefined;
   createdAt: Date;
   updatedAt: Date;
