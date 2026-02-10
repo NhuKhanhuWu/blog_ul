@@ -9,7 +9,6 @@ const voteSchema = new Schema<IVote>(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      index: true,
     },
 
     targetId: {
