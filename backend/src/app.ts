@@ -11,6 +11,7 @@ import userRouter from "./api/router/userRouter";
 import blogRouter from "./api/router/blogRouter";
 import blogListRouter from "./api/router/blogListRouter";
 import cmtRouter from "./api/router/cmtRouter";
+import voteRouter from "./api/router/voteRouter";
 
 const app = express();
 app.use(express.json());
@@ -27,7 +28,7 @@ app.use(
       } else cb(new Error("Not allowed by CORS"));
     },
     credentials: true,
-  })
+  }),
 );
 
 // ROUTER
@@ -35,6 +36,7 @@ app.use("/api/v1/user", userRouter);
 app.use("/api/v1/blogs", blogRouter);
 app.use("/api/v1/blog-list", blogListRouter);
 app.use("/api/v1/cmt", cmtRouter);
+app.use("/api/v1/votes", voteRouter);
 
 // ERROR
 // must use /* not *
