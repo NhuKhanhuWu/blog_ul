@@ -66,11 +66,12 @@ const BlogSchema = new Schema<IBlogDocument>(
       index: true, // for filtering
     },
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    categories: {
-      type: [String],
-      default: [],
-      index: true, // for filtering
-    },
+    categories: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Categories",
+      },
+    ],
     pub_date: {
       type: Date,
       index: true, // for sorting/filtering by date

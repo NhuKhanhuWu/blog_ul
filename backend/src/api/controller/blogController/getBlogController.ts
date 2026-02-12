@@ -6,10 +6,11 @@ import ApiQueryHelper from "../../utils/ApiQueryHelper";
 import AppError from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
 import { getOne } from "../../utils/crudFactory";
+import { CategoryModel } from "../../model/categoryModel";
 
 // -------------constants-------------
 // Fields to project (return to client)
-const SELECTED_FIELDS = "id url title authors categories pub_date slug";
+const SELECTED_FIELDS = "id title authors pub_date slug";
 
 // Fields allowed for sorting
 const SORT_FIELDS = [
@@ -29,7 +30,7 @@ const FILTER_FIELDS = [
 // -------------helpers-------------
 function applyCategoryFilter(
   baseQuery: mongoose.Query<any, any>,
-  queryObject: Record<string, any>
+  queryObject: Record<string, any>,
 ) {
   const categories = queryObject.categories as string | undefined;
   if (!categories) return baseQuery;
@@ -45,12 +46,21 @@ function applyCategoryFilter(
     throw new AppError("Logic must be either 'or' or 'and'", 400);
   }
 
-  baseQuery =
-    logic === "and"
-      ? baseQuery.find({ categories: { $all: values } })
-      : baseQuery.find({ categories: { $in: values } });
+  // 🔥 Validate ObjectId
+  const categoryIds = values.map((id) => {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new AppError(`Invalid category id: ${id}`, 400);
+    }
+    return new mongoose.Types.ObjectId(id);
+  });
 
-  // cleanup query params
+  // 🔥 Apply filter
+  if (logic === "and") {
+    baseQuery.find({ categories: { $all: categoryIds } });
+  } else {
+    baseQuery.find({ categories: { $in: categoryIds } });
+  }
+
   delete queryObject.categories;
   delete queryObject.logic;
 
@@ -93,7 +103,7 @@ export const getMultBlog = catchAsync(async (req, res) => {
     status: "success",
     totalResult: queryInstance.totalResults,
     totalPages: Math.ceil(queryInstance.totalResults / amount),
-    amount: blogs.length,
+    amount,
     data: blogs,
   });
 });
@@ -113,30 +123,6 @@ export const getOneBlogBySlug = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     data: blog,
-  });
-});
-
-export const getCategories = catchAsync(async (req, res) => {
-  const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-  if (page < 1) {
-    throw new AppError("Page number must be greater than 0", 400);
-  }
-
-  const skip = (page - 1) * 15;
-  const limit = 15;
-
-  const categories = await BlogModel.aggregate([
-    { $unwind: "$categories" },
-    { $group: { _id: "$categories" } },
-    { $sort: { _id: 1 } },
-    { $skip: skip },
-    { $limit: limit },
-  ]);
-
-  res.status(200).json({
-    status: "success",
-    result: categories.length,
-    data: categories,
   });
 });
 // -------------controllers-------------
