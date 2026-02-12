@@ -8,7 +8,7 @@ export interface IBlogInput {
   title: string;
   content: IBlogContent;
   authors: string[];
-  categories: string[];
+  categories: Types.ObjectId[];
 }
 
 // export interface IBlogDocument extends IBlogInput {}
