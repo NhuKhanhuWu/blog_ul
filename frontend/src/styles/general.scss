@@ -1,0 +1,44 @@
+/** @format */
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  background-color: #f7ebe6;
+
+  font-size: 1.4rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: var(--dark-900);
+}
+
+button {
+  border: none;
+  background-color: transparent;
+}
+
+input {
+  outline: none;
+}
+
+:root {
+  font-family: "Parkinsans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.error-mgs {
+  color: rgb(188, 69, 69);
+  font-style: italic;
+  font-size: 1.2rem;
+  font-weight: 300;
+}

@@ -1,0 +1,126 @@
+/** @format */
+
+// =============================
+// SCSS VARIABLES
+// =============================
+
+// Blue
+$blue-100: #d9f3f1;
+$blue-200: #cdefec;
+$blue-300: #b3e8e2;
+$blue-400: #9ae0d9;
+$blue-500: #81d8cf;
+$blue-600: #74c2ba;
+$blue-700: #5a9791;
+$blue-800: #416c68;
+$blue-900: #345653;
+
+// Orange
+$orange-100: #fbefea;
+$orange-200: #f3d8cc;
+$orange-300: #eabfaf;
+$orange-400: #e2a892;
+$orange-500: #d99d81;
+$orange-600: #c38d74;
+$orange-700: #a86d55;
+$orange-800: #7e5240;
+$orange-900: #54372a;
+
+// Dark
+$dark-100: #d6d5d3;
+$dark-200: #b3b1ae;
+$dark-300: #8f8c88;
+$dark-400: #6b6863;
+$dark-500: #47443e;
+$dark-600: #2f2c27;
+$dark-700: #171510;
+$dark-800: #0f0e0b;
+$dark-900: #070605;
+
+// Purple
+$purple-100: #f3ecfb;
+$purple-200: #e7daf4;
+$purple-300: #cdb5ec;
+$purple-400: #bb99e4;
+$purple-500: #ae84da;
+$purple-600: #9d77c4;
+$purple-700: #7751a2;
+$purple-800: #5b3b7d;
+$purple-900: #3e2656;
+
+// Light
+$light-100: #ffffff;
+$light-200: #fcfcff;
+$light-300: #f8f8ff;
+$light-400: #e6e6f0;
+$light-500: #d4d4e0;
+$light-600: #b1b1bd;
+$light-700: #8e8e99;
+$light-800: #6b6b75;
+$light-900: #474750;
+
+// Spacing
+$spacing-sm: 0.8rem;
+$spacing-md: 1.6rem;
+$spacing-lg: 2.4rem;
+
+// =============================
+// EXPORT TO CSS VARIABLES
+// =============================
+
+:root {
+  // Blue
+  --blue-100: #{$blue-100};
+  --blue-200: #{$blue-200};
+  --blue-300: #{$blue-300};
+  --blue-400: #{$blue-400};
+  --blue-500: #{$blue-500};
+  --blue-600: #{$blue-600};
+  --blue-700: #{$blue-700};
+  --blue-800: #{$blue-800};
+  --blue-900: #{$blue-900};
+
+  // Orange
+  --orange-100: #{$orange-100};
+  --orange-200: #{$orange-200};
+  --orange-300: #{$orange-300};
+  --orange-400: #{$orange-400};
+  --orange-500: #{$orange-500};
+  --orange-600: #{$orange-600};
+  --orange-700: #{$orange-700};
+  --orange-800: #{$orange-800};
+  --orange-900: #{$orange-900};
+
+  // Dark
+  --dark-100: #{$dark-100};
+  --dark-200: #{$dark-200};
+  --dark-300: #{$dark-300};
+  --dark-400: #{$dark-400};
+  --dark-500: #{$dark-500};
+  --dark-600: #{$dark-600};
+  --dark-700: #{$dark-700};
+  --dark-800: #{$dark-800};
+  --dark-900: #{$dark-900};
+
+  // Purple
+  --purple-100: #{$purple-100};
+  --purple-200: #{$purple-200};
+  --purple-300: #{$purple-300};
+  --purple-400: #{$purple-400};
+  --purple-500: #{$purple-500};
+  --purple-600: #{$purple-600};
+  --purple-700: #{$purple-700};
+  --purple-800: #{$purple-800};
+  --purple-900: #{$purple-900};
+
+  // Light
+  --light-100: #{$light-100};
+  --light-200: #{$light-200};
+  --light-300: #{$light-300};
+  --light-400: #{$light-400};
+  --light-500: #{$light-500};
+  --light-600: #{$light-600};
+  --light-700: #{$light-700};
+  --light-800: #{$light-800};
+  --light-900: #{$light-900};
+}

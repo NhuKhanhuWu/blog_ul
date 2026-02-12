@@ -4,7 +4,6 @@ import { Request } from "express";
 import { PipelineStage, Types } from "mongoose";
 import catchAsync from "../../utils/catchAsync";
 import VoteModel from "../../model/voteModel";
-import AppError from "../../utils/AppError";
 
 // -------- INTERFACE ---------
 interface IGetPineline {
