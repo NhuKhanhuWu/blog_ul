@@ -2,10 +2,11 @@
 
 import axios from "axios";
 
-export async function getBlogList(query: string) {
+export async function getBlogs(query: string) {
   try {
-    const data = await axios.get(`${process.env.SERVER_URL}/api/v1/${query}`);
-    console.log(query);
+    const data = await axios.get(
+      `${process.env.VITE_SERVER_URL}/api/v1/blog/${query}`,
+    );
 
     return data;
   } catch (err: unknown) {

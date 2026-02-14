@@ -72,10 +72,12 @@ export const getCategories = catchAsync(async (req, res) => {
 
   const categories = result[0]?.data || [];
   const total = result[0]?.total || 0;
+  const hasNextPage = limit + skip < total;
 
   res.status(200).json({
     status: "success",
     totalResult: total,
     data: categories,
+    hasNext: hasNextPage,
   });
 });

@@ -1,12 +1,13 @@
 /** @format */
 
-import SearchBar from "../component/SearchBar/SearchBar";
+import SearchBarMobile from "../component/Search/Search";
+import { SearchProvider } from "../context/SearchContext";
 
 function Homepage() {
   return (
-    <>
-      <SearchBar></SearchBar>
-    </>
+    <SearchProvider>
+      <SearchBarMobile></SearchBarMobile>
+    </SearchProvider>
   );
 }
 
