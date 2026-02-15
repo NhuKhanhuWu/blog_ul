@@ -54,7 +54,7 @@ class ApiQueryHelper {
   _validateField(
     field: string,
     allowedFields: string | any[],
-    invalidFields: any[]
+    invalidFields: any[],
   ) {
     if (allowedFields.length && !allowedFields.includes(field)) {
       invalidFields.push(field);
@@ -89,9 +89,9 @@ class ApiQueryHelper {
     if (invalidFields.length > 0) {
       throw new AppError(
         `Filtering by the following fields is not allowed: ${invalidFields.join(
-          ", "
+          ", ",
         )}`,
-        400
+        400,
       );
     }
 
@@ -141,7 +141,7 @@ class ApiQueryHelper {
     if (!allowedFields.includes(String(sortBy))) {
       throw new AppError(
         `Sorting by the following field is not allowed: ${sortBy}`,
-        400
+        400,
       );
     }
 
@@ -151,7 +151,7 @@ class ApiQueryHelper {
     return this;
   }
 
-  limitedFields(fields: string) {
+  limitedFields(fields: any) {
     this.query = this.query.select(fields);
 
     return this;
@@ -164,7 +164,7 @@ class ApiQueryHelper {
 
     // Get total count before applying pagination
     this.totalResults = await this.query.model.countDocuments(
-      this.query.getQuery()
+      this.query.getQuery(),
     );
 
     // Apply pagination
