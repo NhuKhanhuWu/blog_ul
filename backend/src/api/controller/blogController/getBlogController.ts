@@ -6,11 +6,18 @@ import ApiQueryHelper from "../../utils/ApiQueryHelper";
 import AppError from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
 import { getOne } from "../../utils/crudFactory";
-import { CategoryModel } from "../../model/categoryModel";
 
 // -------------constants-------------
 // Fields to project (return to client)
-const SELECTED_FIELDS = "id title authors pub_date slug";
+const SELECTED_FIELDS = {
+  _id: 1,
+  title: 1,
+  authors: 1,
+  pub_date: 1,
+  slug: 1,
+  voteScore: 1,
+  preview: { $arrayElemAt: ["$content", 0] },
+};
 
 // Fields allowed for sorting
 const SORT_FIELDS = [
