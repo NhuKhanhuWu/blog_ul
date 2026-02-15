@@ -17,6 +17,7 @@ const SELECTED_FIELDS = {
   slug: 1,
   voteScore: 1,
   preview: { $arrayElemAt: ["$content", 0] },
+  image: { $arrayElemAt: ["$images", 0] },
 };
 
 // Fields allowed for sorting
