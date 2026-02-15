@@ -1,5 +1,11 @@
 /** @format */
 
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
 .hamburger {
   width: 3.6rem;
   height: 2.8rem;
@@ -17,8 +23,7 @@
     display: block;
     height: 4px;
     width: 100%;
-    background-color: $blue-900;
-    border-radius: 4px;
+    background-color: $dark-900;
     transition: all 0.3s ease;
   }
 
@@ -46,6 +51,7 @@
     align-items: center;
     padding: 0.4rem 1rem;
     background-color: $light-200;
+    border-bottom: 1px $dark-900 solid;
 
     img {
       width: 12rem;
@@ -69,12 +75,10 @@
     transition: all 0.3s;
     font-weight: 500;
     font-size: 1.6rem;
-    background-color: $orange-100;
+    background-color: $dark-800;
 
     .link-item {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
+      color: $light-100;
     }
 
     &.open {

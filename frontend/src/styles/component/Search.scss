@@ -1,0 +1,126 @@
+/** @format */
+
+.search-mobile-container {
+  position: sticky;
+  top: 6rem;
+  background-color: $light-200;
+  padding: 1rem;
+
+  &.hide {
+    position: fixed; // 👈 đổi sang fixed
+    top: 7rem;
+    left: 1rem;
+    background: transparent; // 👈 bỏ nền
+    padding: 0;
+    width: auto;
+  }
+
+  .toggle-btn {
+    width: 3rem;
+    height: 3rem;
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $light-200;
+  }
+
+  .search-mobile {
+    border-bottom: 1px $dark-900 solid;
+    background-color: $light-200;
+    padding: 1.5rem;
+    flex-direction: column;
+    gap: 2rem;
+    display: flex;
+    position: absolute;
+    z-index: 888;
+    right: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s;
+
+    &.show {
+      right: 2rem;
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .search-option {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      font-size: 1.4rem;
+      font-weight: 400;
+
+      // filter
+      .filter-option {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex: 1;
+        gap: 1rem;
+      }
+    }
+
+    // title
+    .search-title {
+      max-width: 30rem;
+      width: 100%;
+
+      input {
+        flex: 1;
+      }
+
+      button {
+        color: $dark-900;
+        background-color: $light-200;
+        border: none;
+        width: 2.5rem;
+        height: 2.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.8rem;
+      }
+    }
+
+    // categories
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      height: 20rem;
+      overflow-y: scroll;
+      margin-top: 2rem;
+      column-gap: 1rem;
+      row-gap: 0.5rem;
+      position: relative;
+
+      .load-more {
+        position: sticky;
+        width: 100%;
+        padding: 1rem;
+        bottom: 0;
+        left: 50%;
+        grid-column: span 2;
+        text-align: center;
+        background-image: linear-gradient(to top, #ffffff, #fefefe61);
+      }
+    }
+  }
+
+  .form-btn {
+    display: flex;
+    gap: 1rem;
+
+    button {
+      padding: 0.5rem;
+      width: 50%;
+    }
+  }
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}

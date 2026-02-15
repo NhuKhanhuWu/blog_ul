@@ -2,7 +2,7 @@
 
 import { Dispatch, SetStateAction, useState } from "react";
 import { Link } from "react-router";
-import "../styles/component/NavbarStyle.scss";
+import "../styles/component/Navbar.scss";
 
 const navItemsGeneral = [
   { text: "Home", link: "/" },
@@ -107,9 +107,9 @@ function NavBarMobile() {
 
 function NavBar() {
   return (
-    <>
+    <div className="nav">
       <NavBarMobile></NavBarMobile>
-    </>
+    </div>
   );
 }
 
