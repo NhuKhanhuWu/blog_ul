@@ -1,17 +1,10 @@
 /** @format */
 
-import axios from "axios";
+import { IBlogSimplify } from "../../interface/blog";
+import axiosInstance from "../../utils/axiosInstance";
 
-export async function getBlogs(query: string) {
-  try {
-    const data = await axios.get(
-      `${process.env.VITE_SERVER_URL}/api/v1/blog/${query}`,
-    );
+export async function getBlogs(query: string): Promise<IBlogSimplify[]> {
+  const data = await axiosInstance.get(`/blogs?${query}`);
 
-    return data;
-  } catch (err: unknown) {
-    throw new Error(
-      err instanceof Error ? err.message : "Unknown error occurred",
-    );
-  }
+  return data.data.data;
 }

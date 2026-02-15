@@ -15,10 +15,10 @@ const formSchema = yup.object({
   title: yup.string().default(""),
 
   sort: yup
-    .mixed<"popular" | "newest" | "oldest">()
-    .oneOf(["popular", "newest", "oldest"])
+    .mixed<"-voteScore" | "-pub_date" | "pub_date">()
+    .oneOf(["-voteScore", "-pub_date", "pub_date"])
     .required()
-    .default("newest"),
+    .default("-pub_date"),
 
   logic: yup
     .mixed<"and" | "or">()
@@ -58,7 +58,7 @@ export default function SearchBarMobile() {
   const methods = useForm({
     defaultValues: {
       title: "",
-      sort: "newest",
+      sort: "-voteScore",
       logic: "or",
       categoryName: "",
       categories: [],
@@ -71,13 +71,11 @@ export default function SearchBarMobile() {
       type: "SET_SEARCH",
       payload: {
         title: data.title ?? "",
-        sort: data.sort ?? "newest",
+        sort: data.sort ?? "-pub_date",
         logic: data.logic ?? "or",
         categories: data.categories ?? [],
       },
     });
-
-    // console.log(data);
   };
 
   return (

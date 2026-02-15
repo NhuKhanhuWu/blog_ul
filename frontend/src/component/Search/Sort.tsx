@@ -14,9 +14,9 @@ function Sort() {
         className="flex-1"
         style={{ width: "235px" }}
         {...register("sort")}>
-        <option value="newest">Newest</option>
-        <option value="popular">Popular</option>
-        <option value="oldest">Oldest</option>
+        <option value="-pub_date">Newest</option>
+        <option value="-voteScore">Popular</option>
+        <option value="pub_date">Oldest</option>
       </select>
     </div>
   );
