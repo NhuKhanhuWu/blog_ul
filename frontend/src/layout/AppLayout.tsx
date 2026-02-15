@@ -5,7 +5,7 @@ import NavBar from "../component/NavBar";
 
 function AppLayout() {
   return (
-    <>
+    <div className="light">
       <NavBar></NavBar>
 
       <main>
@@ -13,7 +13,7 @@ function AppLayout() {
       </main>
 
       {/* TODO: footer here */}
-    </>
+    </div>
   );
 }
 

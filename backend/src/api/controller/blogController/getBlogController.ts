@@ -71,8 +71,12 @@ function applyCategoryFilter(
 
 // -------------controllers-------------
 export const getMultBlog = catchAsync(async (req, res) => {
-  // Shallow clone để tránh mutate req.query
   const queryObject = { ...req.query };
+
+  //  logic nếu không có categories
+  if (!queryObject.categories) {
+    delete queryObject.logic;
+  }
 
   // 1. Start base query (KHÔNG còn filter private)
   let baseQuery = BlogModel.find();

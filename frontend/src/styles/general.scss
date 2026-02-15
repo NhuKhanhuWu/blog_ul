@@ -5,14 +5,14 @@ html {
 }
 
 body {
-  background-color: #f7ebe6;
-
+  background-color: var(--light-200);
   font-size: 1.4rem;
 }
 
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 a {
@@ -29,16 +29,107 @@ input {
   outline: none;
 }
 
+input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 1px solid $dark-900;
+  border-radius: 0px;
+  cursor: pointer;
+}
+
+input[type="radio"] {
+  width: 18px;
+  height: 18px;
+}
+
+select {
+  height: 3.8rem;
+  border: none;
+  padding: 0.6rem 1.6rem;
+}
+
 :root {
-  font-family: "Parkinsans", sans-serif;
+  font-family: "Domine", serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
 }
 
-.error-mgs {
-  color: rgb(188, 69, 69);
-  font-style: italic;
-  font-size: 1.2rem;
-  font-weight: 300;
+.flex-1 {
+  flex: 1;
+}
+
+.link {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.input {
+  border: none;
+  border-bottom: 1px $dark-900 solid;
+  padding: 0.4rem 1.4rem;
+  width: 100%;
+  max-width: 30rem;
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+  height: 2.6rem;
+}
+
+.light {
+  input[type="checkbox"]:checked {
+    background-color: $dark-900;
+  }
+
+  input[type="radio"] {
+    accent-color: $dark-900;
+  }
+
+  select {
+    border-bottom: 1px solid $dark-900;
+  }
+
+  .error-mgs {
+    color: rgb(188, 69, 69);
+    font-style: italic;
+    font-size: 1.2rem;
+    font-weight: 300;
+  }
+
+  .btn-secondary,
+  .btn-primary:hover {
+    border: 1px solid;
+    transition: all 0.3s;
+    background-color: $light-200;
+    color: $dark-900;
+    border-color: $dark-900;
+    font-family: "Domine", serif;
+  }
+
+  .btn-secondary:hover,
+  .btn-primary {
+    background-color: $dark-900;
+    color: $light-200;
+    font-family: "Domine", serif;
+  }
+
+  .disabled {
+    color: $dark-400;
+    font-style: italic;
+    pointer-events: none;
+  }
+}
+
+.btn-dark {
+  background-color: $dark-900;
+  border: 1px solid;
+  color: $light-200;
+  transition: all 0.3s;
+}
+
+.btn-dark:hover {
+  background-color: $light-900;
+  color: $dark-200;
+  transition: all 0.3s;
 }
