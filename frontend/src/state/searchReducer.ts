@@ -9,7 +9,7 @@ export interface SearchState {
 
 export const initSearchState: SearchState = {
   title: "",
-  sort: "-pub_date",
+  sort: "-voteScore",
   logic: "or",
   categories: [],
 };

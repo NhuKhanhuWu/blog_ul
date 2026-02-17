@@ -2,9 +2,9 @@
 
 import { ReactNode, useEffect, useRef } from "react";
 import { ICategory } from "../../interface/category";
-import "../../styles/component/Search.scss";
+import styles from "../../styles/component/SearchBar.module.scss";
 import { useFormContext } from "react-hook-form";
-import { SearchFormValues } from "./Search";
+import { SearchFormValues } from "./SearchBar";
 import { useCategories } from "../../hook/useCategories";
 import { useDebounce } from "../../hook/useDebounce";
 
@@ -34,7 +34,8 @@ function Category({ category }: ICategoryInput) {
         id={category._id}
         type="checkbox"
         value={category._id}
-        {...register("categories")}></input>
+        {...register("categories")}
+      />
       <label htmlFor={category._id}>{category.name}</label>
     </div>
   );
@@ -47,13 +48,13 @@ function Categories({ categories, isPending, loadMoreBtn }: ICategories) {
     if (!isPending && lastItemRef.current) {
       lastItemRef.current.scrollIntoView({
         behavior: "smooth",
-        block: "start",
+        block: "nearest",
       });
     }
   }, [categories.length, isPending]);
 
   return (
-    <div className="categories">
+    <div className={styles.categories}>
       {categories.map((item, index) => {
         const isLast = index === categories.length - 1;
 
@@ -73,13 +74,12 @@ function CategorySearch() {
   const { register } = useFormContext<SearchFormValues>();
 
   return (
-    <div className="search-title" style={{ width: "175px" }}>
-      <input
-        className="input"
-        type="text"
-        placeholder="Search..."
-        {...register("categoryName")}></input>
-    </div>
+    <input
+      className={`${styles.categoryInput} input`}
+      type="text"
+      placeholder="Search..."
+      {...register("categoryName")}
+    />
   );
 }
 
@@ -87,19 +87,17 @@ function CategoriesOption() {
   const { register } = useFormContext<SearchFormValues>();
 
   return (
-    <div className="filter-option">
-      {/* filter logic */}
+    <div className={styles.filterOption}>
       <div className="checkbox">
-        <input type="radio" value="and" id="and" {...register("logic")}></input>
+        <input type="radio" value="and" id="and" {...register("logic")} />
         <label htmlFor="and">and</label>
       </div>
 
       <div className="checkbox">
-        <input type="radio" value="or" id="or" {...register("logic")}></input>
+        <input type="radio" value="or" id="or" {...register("logic")} />
         <label htmlFor="or">or</label>
       </div>
 
-      {/* category search */}
       <CategorySearch />
     </div>
   );
@@ -112,6 +110,7 @@ function LoadMoreBtn({
   fetchNextPage,
 }: ILoadMoreBtn) {
   const cantLoadMore = isFetchingNextPage || !hasNextPage || !navigator.onLine;
+
   const handleClick = () => {
     if (!cantLoadMore) fetchNextPage();
   };
@@ -119,12 +118,14 @@ function LoadMoreBtn({
   return (
     <>
       <div
-        className={`link ${isFetchingNextPage && "disabled"} load-more`}
-        onClick={() => handleClick()}>
+        className={`${styles.link} ${
+          isFetchingNextPage && styles.disabled
+        } ${styles.loadMoreBtn} link`}
+        onClick={handleClick}>
         {isFetchingNextPage ? "Loading..." : "Load more"}
       </div>
 
-      {isError && <p className="error-mgs">Something went wrong</p>}
+      {isError && <p className={styles.errorMsg}>Something went wrong</p>}
     </>
   );
 }
@@ -133,6 +134,7 @@ function Filter() {
   const { watch } = useFormContext<SearchFormValues>();
   const categoryName = watch("categoryName");
   const debouncedCategoryName = useDebounce(categoryName, 500);
+
   const {
     data,
     fetchNextPage,
@@ -141,11 +143,12 @@ function Filter() {
     isFetchingNextPage,
     isFetchNextPageError,
   } = useCategories(debouncedCategoryName);
+
   const categories = data?.pages.flatMap((page) => page.data) || [];
 
   return (
     <div>
-      <div className="search-option ">
+      <div className={styles.searchOption}>
         <span>Cat.: </span>
         <CategoriesOption />
       </div>

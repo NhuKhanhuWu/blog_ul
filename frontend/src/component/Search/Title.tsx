@@ -1,21 +1,19 @@
 /** @format */
 import { useFormContext } from "react-hook-form";
-import "../../styles/component/Search.scss";
-import { SearchFormValues } from "./Search";
+import styles from "../../styles/component/SearchBar.module.scss";
+import { SearchFormValues } from "./SearchBar";
 
 export default function Title() {
   const { register } = useFormContext<SearchFormValues>();
 
   return (
-    <div className="search-option">
+    <div className={styles.searchOption}>
       <span>Title:</span>
-      <div className="search-title">
-        <input
-          {...register("title")}
-          className="input"
-          type="text"
-          placeholder="Search..."></input>
-      </div>
+      <input
+        {...register("title")}
+        className="input"
+        type="text"
+        placeholder="Search..."></input>
     </div>
   );
 }
