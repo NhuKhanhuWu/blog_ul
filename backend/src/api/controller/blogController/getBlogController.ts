@@ -24,8 +24,7 @@ const SELECTED_FIELDS = {
 const SORT_FIELDS = [
   "pub_date", // newest/oldest
   "-pub_date",
-  "title", // alphabetical"title",
-  "-title",
+  "-voteScore", // alphabetical"title",
 ];
 
 // Fields allowed for filtering
