@@ -21,7 +21,6 @@ function getQuery(state: SearchState) {
 function BlogList() {
   const { state } = useSearch();
   const query = getQuery(state);
-  console.log(query);
   const {
     data: blogs,
     isPending,

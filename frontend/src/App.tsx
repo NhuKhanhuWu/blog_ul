@@ -2,7 +2,7 @@
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools/production";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools/production";
 import { lazy } from "react";
 import "./styles/general.scss";
 
@@ -24,7 +24,7 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       <RouterProvider router={router}></RouterProvider>
     </QueryClientProvider>
   );
