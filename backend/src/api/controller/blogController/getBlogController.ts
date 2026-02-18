@@ -15,7 +15,7 @@ const SELECTED_FIELDS = {
   authors: 1,
   pub_date: 1,
   slug: 1,
-  voteScore: 1,
+  upVotes: 1,
   preview: { $arrayElemAt: ["$content", 0] },
   image: { $arrayElemAt: ["$images", 0] },
 };
@@ -24,7 +24,7 @@ const SELECTED_FIELDS = {
 const SORT_FIELDS = [
   "pub_date", // newest/oldest
   "-pub_date",
-  "-voteScore", // alphabetical"title",
+  "-upVotes", // alphabetical"title",
 ];
 
 // Fields allowed for filtering
