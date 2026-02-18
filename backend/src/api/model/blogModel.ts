@@ -86,7 +86,11 @@ const BlogSchema = new Schema<IBlogDocument>(
         message: "A blog can have at most 5 images",
       },
     },
-    voteScore: {
+    upVotes: {
+      type: Number,
+      default: 0,
+    },
+    downVotes: {
       type: Number,
       default: 0,
     },
