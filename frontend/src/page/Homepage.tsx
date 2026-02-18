@@ -11,9 +11,9 @@ function Homepage() {
       <SearchProvider>
         <SearchBar></SearchBar>
 
-        {/* <BlogList /> */}
+        <BlogList />
 
-        <div className="test">
+        {/* <div className="test">
           {Array.from({ length: 1000 }).map((_, i) => (
             <p key={i}>
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
@@ -22,7 +22,7 @@ function Homepage() {
               quae commodi nobis.
             </p>
           ))}
-        </div>
+        </div> */}
       </SearchProvider>
     </div>
   );

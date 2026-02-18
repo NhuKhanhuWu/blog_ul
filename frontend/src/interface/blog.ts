@@ -5,8 +5,11 @@ export interface IBlogSimplify {
   title: string;
   slug: string;
   voteScore?: number;
-  pub_date: Date;
+  pub_date: string;
   authors: string[];
+  preview: {
+    text: string;
+  };
 }
 
 export interface IBlogCard {

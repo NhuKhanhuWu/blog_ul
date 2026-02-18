@@ -8,6 +8,7 @@ import BlogCard from "./BlogCard";
 import { getBlogs } from "../../api/blog/getBlog";
 import Loader from "../Loader";
 import Error from "../Error";
+import styles from "../../styles/component/BlogList.module.scss";
 
 function getQuery(state: SearchState) {
   const { title, sort, categories, logic } = state;
@@ -36,7 +37,7 @@ function BlogList() {
   return (
     <div>
       {blogs?.map((blog) => (
-        <BlogCard blog={blog} />
+        <BlogCard blog={blog} key={blog._id} />
       ))}
     </div>
   );
