@@ -18,5 +18,6 @@ export interface IBlogDocument extends IBlogInput {
   pub_date: Date;
   isPrivate: boolean;
   images: [String];
-  voteScore: Number;
+  upVotes: Number;
+  downVotes: Number;
 }
