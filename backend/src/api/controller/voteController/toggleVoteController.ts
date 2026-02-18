@@ -23,20 +23,6 @@ interface IUpdateVoteScore {
   action: "create" | "delete" | "update";
 }
 
-// const updateVoteScore = async ({
-//   targetType,
-//   targetId,
-//   voteType,
-//   action,
-// }: IUpdateVoteScore) => {
-//   const TargetModel = (
-//     targetType === "blog" ? BlogModel : CommentModel
-//   ) as mongoose.Model<any>;
-
-//   const result = await TargetModel.updateOne({ _id: targetId });
-
-//   if (result.matchedCount === 0) throw new AppError("Target not found", 404);
-// };
 const updateVoteScore = async ({
   targetType,
   targetId,
