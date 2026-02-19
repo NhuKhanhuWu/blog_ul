@@ -35,7 +35,7 @@ function BlogList() {
   if (isError) return <Error />;
 
   return (
-    <div>
+    <div className={styles.blogList}>
       {blogs?.map((blog) => (
         <BlogCard blog={blog} key={blog._id} />
       ))}

@@ -1,6 +1,6 @@
 /** @format */
 
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode } from "react";
 import { ICategory } from "../../interface/category";
 import styles from "../../styles/component/SearchBar.module.scss";
 import { useFormContext } from "react-hook-form";
@@ -41,25 +41,12 @@ function Category({ category }: ICategoryInput) {
   );
 }
 
-function Categories({ categories, isPending, loadMoreBtn }: ICategories) {
-  const lastItemRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (!isPending && lastItemRef.current) {
-      lastItemRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-      });
-    }
-  }, [categories.length, isPending]);
-
+function Categories({ categories, loadMoreBtn }: ICategories) {
   return (
     <div className={styles.categories}>
-      {categories.map((item, index) => {
-        const isLast = index === categories.length - 1;
-
+      {categories.map((item) => {
         return (
-          <div key={item._id} ref={isLast ? lastItemRef : null}>
+          <div key={item._id}>
             <Category category={item} />
           </div>
         );

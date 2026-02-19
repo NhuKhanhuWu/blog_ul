@@ -53,7 +53,7 @@ select {
 }
 
 :root {
-  font-family: "Domine", serif;
+  font-family: "Parkinsans", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
@@ -62,6 +62,11 @@ select {
 .checkbox {
   display: flex;
   gap: 0.5rem;
+}
+
+.vertical-center {
+  display: flex;
+  align-items: center;
 }
 
 .flex-1 {
@@ -148,4 +153,12 @@ select {
   background-color: $light-900;
   color: $dark-200;
   transition: all 0.3s;
+}
+
+.font-serif {
+  font-family: "Forum", serif;
+}
+
+.font-sans--serif {
+  font-family: "Parkinsans", sans-serif;
 }
