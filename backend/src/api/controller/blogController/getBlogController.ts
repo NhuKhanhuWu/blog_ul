@@ -108,12 +108,18 @@ export const getMultBlog = catchAsync(async (req, res) => {
 
   // 4. Execute query
   const blogs = await queryInstance.query;
-  const amount = blogs.length || 1;
+  const amount = blogs.length || 0;
+
+  // 5. Get next page
+  const page = Number(queryObject.page) || 0;
+  const totalPages = Math.ceil(queryInstance.totalResults / amount);
+  const nextPage = page < totalPages ? page + 1 : undefined;
 
   res.status(200).json({
     status: "success",
     totalResult: queryInstance.totalResults,
-    totalPages: Math.ceil(queryInstance.totalResults / amount),
+    totalPages,
+    nextPage,
     amount,
     data: blogs,
   });
