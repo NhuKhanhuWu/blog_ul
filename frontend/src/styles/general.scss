@@ -1,10 +1,19 @@
 /** @format */
-$mobile: 480px;
-$tablet: 768px;
-$desktop: 1024px;
+// sm: 480px,
+// md: 768px,
+// lg: 1024px,
+// xl: 1280px,
 
 html {
-  font-size: 62.5%;
+  font-size: 50%; // 1rem = 8px
+
+  @include respond(md) {
+    font-size: 56.25%; // 1rem = 9px
+  }
+
+  @include respond(lg) {
+    font-size: 62.5%; // 1rem = 10px
+  }
 }
 
 body {
@@ -116,11 +125,11 @@ select {
     background-color: $light-200;
     color: $dark-900;
     border-color: $dark-900;
-    font-family: "Domine", serif;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: "Parkinsans", sans-serif;
   }
 
   .btn-secondary:hover,
@@ -128,11 +137,11 @@ select {
     border: 1px solid $dark-900;
     background-color: $dark-900;
     color: $light-200;
-    font-family: "Domine", serif;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: "Parkinsans", sans-serif;
   }
 
   .disabled {
