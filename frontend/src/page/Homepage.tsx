@@ -3,11 +3,11 @@
 import BlogList from "../component/Blog/BlogList";
 import SearchBar from "../component/Search/SearchBar";
 import { SearchProvider } from "../context/SearchContext";
-import "../styles/page/Homepage.scss";
+import styles from "../styles/page/Homepage.module.scss";
 
 function Homepage() {
   return (
-    <div className="homepage-container">
+    <div className={styles.homepageContainer}>
       <SearchProvider>
         <SearchBar></SearchBar>
         <BlogList />

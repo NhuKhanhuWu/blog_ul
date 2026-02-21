@@ -68,6 +68,7 @@ function SearchForm({ onClose, closeBtn }: ISearchForm) {
   const methods = useForm<SearchFormValues>({
     resolver: yupResolver(formSchema),
     defaultValues: state,
+    shouldUnregister: false,
   });
 
   const onSubmit = (data: SearchFormValues) => {
@@ -117,20 +118,23 @@ function SearchBar() {
       </button>
 
       {/* Mobile Modal */}
-      <Modal isShow={isMobileOpen} setIsShow={setIsMobileOpen}>
-        <div className={styles.searchModal}>
-          <SearchForm
-            onClose={() => setIsMobileOpen(false)}
-            closeBtn={
-              <button
-                className="btn-secondary"
-                onClick={() => setIsMobileOpen(false)}>
-                Close
-              </button>
-            }
-          />
-        </div>
-      </Modal>
+      <div className={`${!isMobileOpen && "hidden"}`}>
+        <Modal isShow={true} setIsShow={setIsMobileOpen}>
+          <div className={styles.searchModal}>
+            <SearchForm
+              onClose={() => setIsMobileOpen(false)}
+              closeBtn={
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => setIsMobileOpen(false)}>
+                  Close
+                </button>
+              }
+            />
+          </div>
+        </Modal>
+      </div>
 
       {/* Desktop Sidebar */}
       <aside
@@ -143,7 +147,9 @@ function SearchBar() {
           <IoSearchSharp />
         </button>
 
-        {!isCollapsed && <SearchForm />}
+        <div className={`${isCollapsed && "hidden"}`}>
+          <SearchForm />
+        </div>
       </aside>
     </>
   );
