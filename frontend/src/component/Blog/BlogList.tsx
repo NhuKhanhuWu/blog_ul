@@ -49,7 +49,6 @@ function BlogList() {
   if (isError) return <Error />;
 
   const blogs = data?.pages.flatMap((page) => page.data) ?? [];
-  console.log(blogs);
 
   if (blogs.length === 0) return <NotFound message="No result found" />;
 
