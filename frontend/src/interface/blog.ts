@@ -4,9 +4,13 @@ export interface IBlogSimplify {
   _id: string;
   title: string;
   slug: string;
-  voteScore?: number;
-  pub_date: Date;
+  upVotes?: number;
+  pub_date: string;
   authors: string[];
+  img?: string;
+  preview: {
+    text: string;
+  };
 }
 
 export interface IBlogCard {
