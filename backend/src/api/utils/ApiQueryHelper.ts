@@ -158,9 +158,9 @@ class ApiQueryHelper {
   }
 
   async paginate() {
-    const page = Number(this.queryString.page) || 1;
+    const page = Number(this.queryString.page) || 0;
     const limit = Number(this.queryString.limit) || 20;
-    const skip = (page - 1) * limit;
+    const skip = page * limit;
 
     // Get total count before applying pagination
     this.totalResults = await this.query.model.countDocuments(
