@@ -120,8 +120,9 @@ class ApiQueryHelper {
 
   searchByTitle() {
     const { title } = this.queryString;
+    const checkedTitle = title.trim();
 
-    if (!title) return this;
+    if (!checkedTitle) return this;
 
     this.query = this.query.find({ $text: { $search: String(title) } });
     delete this.queryString.title;
@@ -146,7 +147,7 @@ class ApiQueryHelper {
     }
 
     // sort
-    this.query = this.query.sort(sortBy);
+    this.query = this.query.sort(`${sortBy} _id`);
 
     return this;
   }
