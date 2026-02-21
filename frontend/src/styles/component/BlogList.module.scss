@@ -82,3 +82,10 @@
     margin-top: auto;
   }
 }
+
+// ===== DESKTOP (>=1024px) ====
+@include respond(lg) {
+  .blogList {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
