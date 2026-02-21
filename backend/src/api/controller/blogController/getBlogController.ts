@@ -112,8 +112,9 @@ export const getMultBlog = catchAsync(async (req, res) => {
 
   // 5. Get next page
   const page = Number(queryObject.page) || 0;
-  const totalPages = Math.ceil(queryInstance.totalResults / amount);
-  const nextPage = page < totalPages ? page + 1 : undefined;
+  const limit = Number(queryObject.limit) || 20;
+  const totalPages = Math.ceil(queryInstance.totalResults / limit);
+  const nextPage = page + 1 < totalPages ? page + 1 : undefined;
 
   res.status(200).json({
     status: "success",
