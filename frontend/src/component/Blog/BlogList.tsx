@@ -1,13 +1,16 @@
 /** @format */
 
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSearch } from "../../context/SearchContext";
-import { IBlogSimplify } from "../../interface/blog";
 import { SearchState } from "../../state/searchReducer";
 import BlogCard from "./BlogCard";
 import { getBlogs } from "../../api/blog/getBlog";
 import Loader from "../Loader";
 import Error from "../Error";
+import styles from "../../styles/component/BlogList.module.scss";
+import InfinityObserver from "../InfinityObserver";
+import { useIntersectionObserver } from "../../hook/useIntersectionObserver";
+import NotFound from "../NotFound";
 
 function getQuery(state: SearchState) {
   const { title, sort, categories, logic } = state;
@@ -21,24 +24,44 @@ function getQuery(state: SearchState) {
 function BlogList() {
   const { state } = useSearch();
   const query = getQuery(state);
-  console.log(query);
   const {
-    data: blogs,
+    data,
     isPending,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     isError,
-  } = useQuery<IBlogSimplify[]>({
+  } = useInfiniteQuery({
     queryKey: ["blogs", query],
-    queryFn: () => getBlogs(query),
+    queryFn: ({ pageParam = 0 }) => getBlogs({ query, pageParam }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
   });
+
+  // infinity scoll
+  const { lastElementRef } = useIntersectionObserver(
+    fetchNextPage,
+    isFetchingNextPage || isPending,
+    hasNextPage,
+  );
 
   if (isPending) return <Loader />;
   if (isError) return <Error />;
 
+  const blogs = data?.pages.flatMap((page) => page.data) ?? [];
+  console.log(blogs);
+
+  if (blogs.length === 0) return <NotFound message="No result found" />;
+
   return (
-    <div>
+    <div className={styles.blogList}>
       {blogs?.map((blog) => (
-        <BlogCard blog={blog} />
+        <BlogCard blog={blog} key={blog._id} />
       ))}
+
+      <InfinityObserver lastElementRef={lastElementRef}>
+        {isFetchingNextPage && <Loader />}
+      </InfinityObserver>
     </div>
   );
 }

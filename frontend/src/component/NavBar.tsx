@@ -1,8 +1,8 @@
 /** @format */
 
 import { Dispatch, SetStateAction, useState } from "react";
-import { Link } from "react-router";
-import "../styles/component/Navbar.scss";
+import { Link, NavLink } from "react-router";
+import styles from "../styles/component/Navbar.module.scss";
 
 const navItemsGeneral = [
   { text: "Home", link: "/" },
@@ -10,25 +10,13 @@ const navItemsGeneral = [
 ];
 
 const navItemsLogin = [
-  {
-    text: "Account",
-    link: "/account",
-  },
-  {
-    text: "Log out",
-    link: "/logout",
-  },
+  { text: "Account", link: "/account" },
+  { text: "Log out", link: "/logout" },
 ];
 
 const navItemsGuest = [
-  {
-    text: "Login",
-    link: "/login",
-  },
-  {
-    text: "Sign up",
-    link: "/signup",
-  },
+  { text: "Login", link: "/login" },
+  { text: "Sign up", link: "/signup" },
 ];
 
 interface IHamburgerBtn {
@@ -36,34 +24,41 @@ interface IHamburgerBtn {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-// including links in mobile navbar
-function LinksMobile({ isLogin }: { isLogin: boolean }) {
+// including links in navbar
+function NavLinks({ isLogin }: { isLogin: boolean }) {
   return (
     <>
-      {/* ---- general links ----*/}
-      {navItemsGeneral.map((item, i) => (
-        <Link to={item.link} key={`general-nav-${i}`} className="link-item">
-          <span>{item.text}</span>
-        </Link>
-      ))}
-      {/* ---- general links ----*/}
+      <div className={styles.navLink}>
+        {/* ---- general links ----*/}
+        {navItemsGeneral.map((item, i) => (
+          <NavLink
+            to={item.link}
+            key={`general-nav-${i}`}
+            className={styles.linkItem}>
+            <span>{item.text}</span>
+          </NavLink>
+        ))}
+      </div>
 
-      {isLogin
-        ? //   ---- login links ----
-          navItemsLogin.map((item, i) => (
-            <Link to={item.link} key={`login-nav-${i}`} className="link-item">
-              <span>{item.text}</span>
-            </Link>
-          ))
-        : //   ---- login links ----
-
-          // ---- guest link ----
-          navItemsGuest.map((item, i) => (
-            <Link to={item.link} key={`guest-nav-${i}`} className="link-item">
-              <span>{item.text}</span>
-            </Link>
-            // ---- guest link ----
-          ))}
+      <div className={styles.navLink}>
+        {isLogin
+          ? navItemsLogin.map((item, i) => (
+              <NavLink
+                to={item.link}
+                key={`login-nav-${i}`}
+                className={styles.linkItem}>
+                <span>{item.text}</span>
+              </NavLink>
+            ))
+          : navItemsGuest.map((item, i) => (
+              <NavLink
+                to={item.link}
+                key={`guest-nav-${i}`}
+                className={styles.linkItem}>
+                <span>{item.text}</span>
+              </NavLink>
+            ))}
+      </div>
     </>
   );
 }
@@ -72,7 +67,7 @@ function LinksMobile({ isLogin }: { isLogin: boolean }) {
 function HamburgerButton({ isOpen, setIsOpen }: IHamburgerBtn) {
   return (
     <button
-      className={`hamburger ${isOpen ? "open" : ""}`}
+      className={`${styles.hamburger} ${isOpen ? styles.open : ""}`}
       onClick={() => setIsOpen(!isOpen)}
       aria-label="Toggle menu">
       <span></span>
@@ -88,27 +83,46 @@ function NavBarMobile() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="nav-mobile">
+    <div className={styles.navBar}>
       {/* show part */}
-      <div className="show-mobile">
-        <Link to="/">
+      <div className={`${styles.navBar} ${styles.showBar}`}>
+        <Link to="/" className={styles.logo}>
           <img src="/logo-full-light-mode.png" loading="lazy" />
         </Link>
         <HamburgerButton isOpen={isOpen} setIsOpen={setIsOpen} />
       </div>
 
       {/* hidden part */}
-      <div className={`hidden-mobile ${isOpen && "open"}`}>
-        <LinksMobile isLogin={isLogin}></LinksMobile>
+      <div className={`${styles.collapsed} ${isOpen ? styles.expand : ""}`}>
+        <NavLinks isLogin={isLogin} />
       </div>
+    </div>
+  );
+}
+
+function NavBarDesktop() {
+  const isLogin = false;
+
+  return (
+    <div className={`${styles.showBar} ${styles.navBar}`}>
+      <Link to="/" className={styles.logo}>
+        <img src="/logo-full-light-mode.png" loading="lazy" />
+      </Link>
+      <NavLinks isLogin={isLogin} />
     </div>
   );
 }
 
 function NavBar() {
   return (
-    <div className="nav">
-      <NavBarMobile></NavBarMobile>
+    <div className={`${styles.navContainer}`}>
+      <div className={styles.navMobile}>
+        <NavBarMobile />
+      </div>
+
+      <div className={styles.navDesktop}>
+        <NavBarDesktop />
+      </div>
     </div>
   );
 }

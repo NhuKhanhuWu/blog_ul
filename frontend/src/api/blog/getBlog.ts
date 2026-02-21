@@ -3,8 +3,21 @@
 import { IBlogSimplify } from "../../interface/blog";
 import axiosInstance from "../../utils/axiosInstance";
 
-export async function getBlogs(query: string): Promise<IBlogSimplify[]> {
-  const data = await axiosInstance.get(`/blogs?${query}`);
+interface IGetBlogs {
+  query: string;
+  pageParam: number;
+}
 
-  return data.data.data;
+interface IGetBlogsRes {
+  data: IBlogSimplify[];
+  nextPage: number | undefined;
+}
+
+export async function getBlogs({
+  query,
+  pageParam,
+}: IGetBlogs): Promise<IGetBlogsRes> {
+  const data = await axiosInstance.get(`/blogs?${query}&page=${pageParam}`);
+
+  return data.data;
 }

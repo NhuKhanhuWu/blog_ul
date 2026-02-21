@@ -2,22 +2,24 @@
 
 export interface SearchState {
   title: string;
-  sort: "-voteScore" | "-pub_date" | "pub_date";
+  sort: "-upVotes" | "-pub_date" | "pub_date";
   logic: "or" | "and";
   categories: string[];
+  categoryName: string;
 }
 
 export const initSearchState: SearchState = {
   title: "",
-  sort: "-pub_date",
+  sort: "-upVotes",
   logic: "or",
   categories: [],
+  categoryName: "",
 };
 
 export type SearchAction =
   | { type: "SET_CATEGORY"; payload: string[] }
   | { type: "SET_LOGIC"; payload: "and" | "or" }
-  | { type: "SET_SORT"; payload: "-voteScore" | "-pub_date" | "pub_date" }
+  | { type: "SET_SORT"; payload: "-upVotes" | "-pub_date" | "pub_date" }
   | { type: "SET_TITLE"; payload: string }
   | { type: "SET_SEARCH"; payload: SearchState }
   | { type: "RESET" };

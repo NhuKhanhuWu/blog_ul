@@ -1,15 +1,18 @@
 /** @format */
 
 import BlogList from "../component/Blog/BlogList";
-import SearchBarMobile from "../component/Search/Search";
+import SearchBar from "../component/Search/SearchBar";
 import { SearchProvider } from "../context/SearchContext";
+import styles from "../styles/page/Homepage.module.scss";
 
 function Homepage() {
   return (
-    <SearchProvider>
-      <SearchBarMobile></SearchBarMobile>
-      <BlogList />
-    </SearchProvider>
+    <div className={styles.homepageContainer}>
+      <SearchProvider>
+        <SearchBar></SearchBar>
+        <BlogList />
+      </SearchProvider>
+    </div>
   );
 }
 
