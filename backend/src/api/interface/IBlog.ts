@@ -8,7 +8,7 @@ export interface IBlogInput {
   title: string;
   content: IBlogContent;
   authors: string[];
-  categories: string[];
+  categories: Types.ObjectId[];
 }
 
 // export interface IBlogDocument extends IBlogInput {}
@@ -16,5 +16,8 @@ export interface IBlogDocument extends IBlogInput {
   url?: string;
   slug: string;
   pub_date: Date;
-  voteScore: Number;
+  isPrivate: boolean;
+  images: [String];
+  upVotes: Number;
+  downVotes: Number;
 }

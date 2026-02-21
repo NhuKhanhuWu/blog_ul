@@ -54,7 +54,7 @@ class ApiQueryHelper {
   _validateField(
     field: string,
     allowedFields: string | any[],
-    invalidFields: any[]
+    invalidFields: any[],
   ) {
     if (allowedFields.length && !allowedFields.includes(field)) {
       invalidFields.push(field);
@@ -89,9 +89,9 @@ class ApiQueryHelper {
     if (invalidFields.length > 0) {
       throw new AppError(
         `Filtering by the following fields is not allowed: ${invalidFields.join(
-          ", "
+          ", ",
         )}`,
-        400
+        400,
       );
     }
 
@@ -120,8 +120,9 @@ class ApiQueryHelper {
 
   searchByTitle() {
     const { title } = this.queryString;
+    const checkedTitle = title.trim();
 
-    if (!title) return this;
+    if (!checkedTitle) return this;
 
     this.query = this.query.find({ $text: { $search: String(title) } });
     delete this.queryString.title;
@@ -141,30 +142,30 @@ class ApiQueryHelper {
     if (!allowedFields.includes(String(sortBy))) {
       throw new AppError(
         `Sorting by the following field is not allowed: ${sortBy}`,
-        400
+        400,
       );
     }
 
     // sort
-    this.query = this.query.sort(sortBy);
+    this.query = this.query.sort(`${sortBy} _id`);
 
     return this;
   }
 
-  limitedFields(fields: string) {
+  limitedFields(fields: any) {
     this.query = this.query.select(fields);
 
     return this;
   }
 
   async paginate() {
-    const page = Number(this.queryString.page) || 1;
+    const page = Number(this.queryString.page) || 0;
     const limit = Number(this.queryString.limit) || 20;
-    const skip = (page - 1) * limit;
+    const skip = page * limit;
 
     // Get total count before applying pagination
     this.totalResults = await this.query.model.countDocuments(
-      this.query.getQuery()
+      this.query.getQuery(),
     );
 
     // Apply pagination

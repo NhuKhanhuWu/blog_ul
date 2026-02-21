@@ -66,17 +66,32 @@ const BlogSchema = new Schema<IBlogDocument>(
       index: true, // for filtering
     },
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    categories: {
-      type: [String],
-      default: [],
-      index: true, // for filtering
-    },
+    categories: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Categories",
+      },
+    ],
     pub_date: {
       type: Date,
       index: true, // for sorting/filtering by date
     },
     content: [contentBlockSchema],
-    voteScore: {
+    images: {
+      type: [String],
+      default: [],
+      validate: {
+        validator: function (value: string[]) {
+          return value.length <= 5;
+        },
+        message: "A blog can have at most 5 images",
+      },
+    },
+    upVotes: {
+      type: Number,
+      default: 0,
+    },
+    downVotes: {
       type: Number,
       default: 0,
     },

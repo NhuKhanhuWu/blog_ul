@@ -1,0 +1,177 @@
+/** @format */
+// sm: 480px,
+// md: 768px,
+// lg: 1024px,
+// xl: 1280px,
+
+html {
+  font-size: 50%; // 1rem = 8px
+
+  @include respond(md) {
+    font-size: 56.25%; // 1rem = 9px
+  }
+
+  @include respond(lg) {
+    font-size: 62.5%; // 1rem = 10px
+  }
+}
+
+body {
+  background-color: var(--light-200);
+  font-size: 1.4rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: var(--dark-900);
+}
+
+button {
+  border: none;
+  background-color: transparent;
+}
+
+input {
+  outline: none;
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 1px solid $dark-900;
+  border-radius: 0px;
+  cursor: pointer;
+}
+
+input[type="radio"] {
+  width: 18px;
+  height: 18px;
+}
+
+select {
+  height: 3.8rem;
+  border: none;
+  padding: 0.6rem 1.6rem;
+}
+
+:root {
+  font-family: "Parkinsans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.checkbox {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.vertical-center {
+  display: flex;
+  align-items: center;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.link {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.input {
+  border: none;
+  border-bottom: 1px $dark-900 solid;
+  padding: 0.4rem 1.4rem;
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+  height: 2.6rem;
+}
+
+.light {
+  input[type="checkbox"]:checked {
+    background-color: $dark-900;
+  }
+
+  input[type="radio"] {
+    accent-color: $dark-900;
+  }
+
+  select {
+    border-bottom: 1px solid $dark-900;
+  }
+
+  .error-mgs {
+    color: rgb(188, 69, 69);
+    font-style: italic;
+    font-size: 1.2rem;
+    font-weight: 300;
+  }
+
+  .btn-secondary,
+  .btn-primary:hover {
+    border: 1px solid $dark-900;
+    transition: all 0.3s;
+    background-color: $light-200;
+    color: $dark-900;
+    border-color: $dark-900;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Parkinsans", sans-serif;
+  }
+
+  .btn-secondary:hover,
+  .btn-primary {
+    border: 1px solid $dark-900;
+    background-color: $dark-900;
+    color: $light-200;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Parkinsans", sans-serif;
+  }
+
+  .disabled {
+    color: $dark-400;
+    font-style: italic;
+    pointer-events: none;
+  }
+}
+
+.btn-dark {
+  background-color: $dark-900;
+  border: 1px solid;
+  color: $light-200;
+  transition: all 0.3s;
+}
+
+.btn-dark:hover {
+  background-color: $light-900;
+  color: $dark-200;
+  transition: all 0.3s;
+}
+
+.font-serif {
+  font-family: "Forum", serif;
+}
+
+.font-sans--serif {
+  font-family: "Parkinsans", sans-serif;
+}
+
+.hidden {
+  display: none !important;
+}
