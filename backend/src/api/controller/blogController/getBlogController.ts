@@ -107,7 +107,7 @@ export const getMultBlog = catchAsync(async (req, res) => {
   await queryInstance.paginate();
 
   // 4. Execute query
-  const blogs = await queryInstance.query;
+  const blogs = await queryInstance.query.populate("categories");
   const amount = blogs.length || 0;
 
   // 5. Get next page

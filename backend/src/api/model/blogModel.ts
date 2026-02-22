@@ -69,7 +69,7 @@ const BlogSchema = new Schema<IBlogDocument>(
     categories: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Categories",
+        ref: "Category",
       },
     ],
     pub_date: {
