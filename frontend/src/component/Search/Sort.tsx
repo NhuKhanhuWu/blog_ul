@@ -1,7 +1,7 @@
 /** @format */
 
 import { useFormContext } from "react-hook-form";
-import { SearchFormValues } from "./SearchBar";
+import { SearchFormValues } from "../../interface/search";
 import styles from "../../styles/component/SearchBar.module.scss";
 
 function Sort() {

@@ -2,7 +2,6 @@
 import { ReactNode, useState } from "react";
 import { IoSearchSharp } from "react-icons/io5";
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
-import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSearch } from "../../context/SearchContext";
 import Modal from "../Modal";
@@ -10,24 +9,10 @@ import Title from "./Title";
 import Sort from "./Sort";
 import Filter from "./Filter";
 import styles from "../../styles/component/SearchBar.module.scss";
-
-const formSchema = yup.object({
-  title: yup.string().default(""),
-  sort: yup
-    .mixed<"-upVotes" | "-pub_date" | "pub_date">()
-    .oneOf(["-upVotes", "-pub_date", "pub_date"])
-    .required()
-    .default("-upVotes"),
-  logic: yup
-    .mixed<"and" | "or">()
-    .oneOf(["and", "or"])
-    .required()
-    .default("or"),
-  categoryName: yup.string().default(""),
-  categories: yup.array().of(yup.string().required()).default([]),
-});
-
-export type SearchFormValues = yup.InferType<typeof formSchema>;
+import useSyncSearchForm from "../../hook/useSyncSearchForm";
+import { formSchema, SearchFormValues } from "../../interface/search";
+import { useSearchParams } from "react-router-dom";
+import { updateSearchUrl } from "../../utils/updateSearchUrl";
 
 interface ISearchForm {
   onClose?: () => void;
@@ -63,13 +48,9 @@ function SubmitClearBtns() {
 }
 
 function SearchForm({ onClose, closeBtn }: ISearchForm) {
-  const { state, dispatch } = useSearch();
-
-  const methods = useForm<SearchFormValues>({
-    resolver: yupResolver(formSchema),
-    defaultValues: state,
-    shouldUnregister: false,
-  });
+  const { dispatch } = useSearch();
+  const { handleSubmit } = useFormContext<SearchFormValues>();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const onSubmit = (data: SearchFormValues) => {
     dispatch({
@@ -83,14 +64,18 @@ function SearchForm({ onClose, closeBtn }: ISearchForm) {
       },
     });
 
+    // update the url
+    updateSearchUrl({ searchParams, setSearchParams, data });
+
     onClose?.();
   };
 
+  // ---- synch url with state and form ----
+  useSyncSearchForm();
+
   return (
-    <FormProvider {...methods}>
-      <form
-        onSubmit={methods.handleSubmit(onSubmit)}
-        className={styles.searchForm}>
+    <>
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.searchForm}>
         <Title />
         <Sort />
         <Filter />
@@ -100,16 +85,22 @@ function SearchForm({ onClose, closeBtn }: ISearchForm) {
           {closeBtn}
         </div>
       </form>
-    </FormProvider>
+    </>
   );
 }
 
 function SearchBar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { state } = useSearch();
+  const methods = useForm<SearchFormValues>({
+    resolver: yupResolver(formSchema),
+    defaultValues: state,
+    shouldUnregister: false,
+  });
 
   return (
-    <>
+    <FormProvider {...methods}>
       {/* Mobile Toggle */}
       <button
         className={styles.searchMobileToggle}
@@ -151,7 +142,7 @@ function SearchBar() {
           <SearchForm />
         </div>
       </aside>
-    </>
+    </FormProvider>
   );
 }
 

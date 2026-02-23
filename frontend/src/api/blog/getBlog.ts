@@ -25,6 +25,5 @@ export async function getBlogs({
 export async function getBLog(slug: string): Promise<IBlogDetail> {
   const data = await axiosInstance.get(`/blogs/slug/${slug}`);
 
-  console.log(data.data);
   return data.data.data;
 }

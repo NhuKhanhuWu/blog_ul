@@ -6,11 +6,12 @@
 
 .title {
   font-family: "Forum", serif;
-  font-size: 3.8rem;
+  font-size: 4rem;
   font-weight: 100;
   margin: 1.4rem 0 2.6rem;
 }
 
+// ---- blog content styles ----
 .blogContent {
   display: flex;
   flex-direction: column;
@@ -41,3 +42,24 @@
   font-size: 1.4rem;
   color: $light-800;
 }
+// ---- blog content styles ----
+
+// ---- category ----
+.categoriesContainer {
+  margin-top: 2rem;
+  border-top: 2px solid $light-600;
+  padding-top: 1rem;
+}
+
+.categories {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.category {
+  text-align: center;
+  padding: 0.5rem;
+}
+// ---- category ----
