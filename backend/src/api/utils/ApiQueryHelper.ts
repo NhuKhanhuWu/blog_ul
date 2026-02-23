@@ -120,6 +120,8 @@ class ApiQueryHelper {
 
   searchByTitle() {
     const { title } = this.queryString;
+    if (!title) return this; //in case user does not pass title in params
+
     const checkedTitle = title.trim();
     if (!checkedTitle) return this;
 
