@@ -24,15 +24,25 @@ const getCmt = (baseQuery: Query<any, any>) =>
     await queryInstance.paginate();
 
     // query
-    const cmt = await queryInstance.query;
-    const amount = cmt.length || 1;
+    const cmt = await queryInstance.query.populate(
+      "userId",
+      "avatar name slug",
+    );
+    const amount = cmt.length;
+
+    // get page
+    const limit = 20;
+    const totalPages = Math.ceil(queryInstance.totalResults / limit);
+    const page = Number(queryObject.page) || 0;
+    const nextPage = page + 1 < totalPages ? page + 1 : undefined;
 
     // return
     res.status(200).json({
       status: "success",
       totalResult: queryInstance.totalResults,
-      totalPages: Math.ceil(queryInstance.totalResults / amount),
-      amount: cmt.length,
+      totalPages,
+      nextPage,
+      amount,
       data: cmt,
     });
   });
