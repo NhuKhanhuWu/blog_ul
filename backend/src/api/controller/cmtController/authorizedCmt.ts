@@ -5,7 +5,6 @@ import catchAsync from "../../utils/catchAsync";
 import AppError from "../../utils/AppError";
 import CommentModel from "../../model/commentModel";
 
-/** @format */
 export const authorizedCmt = catchAsync(async (req, res, next) => {
   // get cmt id
   const cmtId = req.params.id;
@@ -15,7 +14,7 @@ export const authorizedCmt = catchAsync(async (req, res, next) => {
   // get cmt from db
   const cmt = await CommentModel.findById(new Types.ObjectId(cmtId));
 
-  //   check if cmt exsits
+  // check if cmt exsits
   if (!cmt) throw new AppError("Comment not found", 404);
 
   // check if cmt belongs to user

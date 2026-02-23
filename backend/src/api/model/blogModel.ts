@@ -1,6 +1,6 @@
 /** @format */
 
-import { Schema, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 import { IBlogDocument } from "../interface/IBlog";
 import { IBlogContent } from "../utils/schema/blogSchema";
 import slugify from "slugify";
@@ -40,7 +40,7 @@ const contentBlockSchema = new Schema<IBlogContent>(
       type: String,
     },
   },
-  { _id: false } // no _id for subdocuments
+  { _id: false }, // no _id for subdocuments
 );
 
 const BlogSchema = new Schema<IBlogDocument>(
@@ -67,19 +67,46 @@ const BlogSchema = new Schema<IBlogDocument>(
     },
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     categories: {
-      type: [String],
-      default: [],
-      index: true, // for filtering
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Category",
+        },
+      ],
+      validate: {
+        validator: function (value: Types.ObjectId[]) {
+          return value.length <= 50;
+        },
+        message: "A blog can have at most 50 categories",
+      },
     },
     pub_date: {
       type: Date,
       index: true, // for sorting/filtering by date
     },
     content: [contentBlockSchema],
+    images: {
+      type: [String],
+      default: [],
+      validate: {
+        validator: function (value: string[]) {
+          return value.length <= 5;
+        },
+        message: "A blog can have at most 5 images",
+      },
+    },
+    upVotes: {
+      type: Number,
+      default: 0,
+    },
+    downVotes: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true, // adds createdAt, updatedAt
-  }
+  },
 );
 
 BlogSchema.index({ slug: "text" }); // text index for searching in slug

@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 /* -----------------------------------
-   🧱 Base field validators (reusable)
+  Base field validators (reusable)
 ----------------------------------- */
 
 // Title

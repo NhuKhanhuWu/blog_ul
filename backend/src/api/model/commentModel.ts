@@ -38,11 +38,6 @@ const commentSchema = new Schema<IComment>(
     },
 
     // vote
-    voteScore: {
-      type: Number,
-      default: 0,
-    },
-
     upVotes: {
       type: Number,
       default: 0,
@@ -63,12 +58,11 @@ const commentSchema = new Schema<IComment>(
     isDeleted: {
       type: Boolean,
       default: false,
-      index: true,
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 /* ================= INDEX ================= */

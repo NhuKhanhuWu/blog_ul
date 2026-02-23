@@ -1,0 +1,136 @@
+/** @format */
+
+// ===== MOBILE DEFAULT (<768px) =====
+// hide desktop navbar
+.navDesktop {
+  display: none;
+}
+
+.navContainer {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.logo {
+  img {
+    width: 12rem;
+  }
+}
+
+.hamburger {
+  width: 3.6rem;
+  height: 2.8rem;
+  position: relative;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  span {
+    display: block;
+    height: 4px;
+    width: 100%;
+    background-color: $dark-900;
+    transition: all 0.3s ease;
+  }
+
+  &.open {
+    span:nth-child(1) {
+      transform: translateY(1.2rem) rotate(45deg);
+    }
+
+    span:nth-child(2) {
+      opacity: 0;
+    }
+
+    span:nth-child(3) {
+      transform: translateY(-1.2rem) rotate(-45deg);
+    }
+  }
+}
+
+.navBar {
+  position: relative;
+}
+
+.navLink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  font-size: 1.6rem;
+}
+
+.navLink:first-child {
+  margin-bottom: 1.4rem;
+}
+
+.showBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  background-color: $light-200;
+  border-bottom: 1px $dark-900 solid;
+}
+
+.collapsed {
+  gap: 1rem;
+  align-items: center;
+  padding: 2rem 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  opacity: 0;
+  top: -100%;
+  pointer-events: none;
+  transition: all 0.3s;
+  font-weight: 500;
+  font-size: 1.6rem;
+  background-color: $dark-800;
+
+  .linkItem {
+    color: $light-100;
+  }
+
+  .linkItemActive {
+    text-decoration: underline;
+  }
+
+  &.expand {
+    opacity: 1;
+    top: 100%;
+    pointer-events: all;
+  }
+}
+// ===== MOBILE DEFAULT =====
+
+// ===== TABLET AND DESKTOP =====
+@include respond(md) {
+  .navMobile {
+    display: none;
+  }
+
+  .navDesktop {
+    display: block;
+  }
+
+  .navBar {
+    justify-content: space-between;
+    padding: 1rem 2rem;
+  }
+
+  .navLink {
+    flex-direction: row;
+    font-size: 2rem;
+    font-weight: 500;
+    gap: 3rem;
+  }
+}
+// ===== TABLET AND DESKTOP =====

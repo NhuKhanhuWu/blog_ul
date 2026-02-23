@@ -1,5 +1,7 @@
 /** @format */
 
+// TODO: update to delete old img & add new img in supabase
+
 import { BlogModel } from "../../model/blogModel";
 import AppError from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
@@ -36,7 +38,7 @@ export const updateBlog = catchAsync(async (req, res) => {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   // respond
