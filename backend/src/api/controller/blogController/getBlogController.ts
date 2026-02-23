@@ -107,7 +107,7 @@ export const getMultBlog = catchAsync(async (req, res) => {
   await queryInstance.paginate();
 
   // 4. Execute query
-  const blogs = await queryInstance.query.populate("categories");
+  const blogs = await queryInstance.query;
   const amount = blogs.length || 0;
 
   // 5. Get next page
@@ -132,7 +132,7 @@ export const getOneBlogById = catchAsync(async (req, res) => {
 
 export const getOneBlogBySlug = catchAsync(async (req, res, next) => {
   const slug = req.params.slug;
-  const blog = await BlogModel.findOne({ slug: slug });
+  const blog = await BlogModel.findOne({ slug: slug }).populate("categories");
 
   if (!blog) {
     throw new AppError("Blog not found", 404);
