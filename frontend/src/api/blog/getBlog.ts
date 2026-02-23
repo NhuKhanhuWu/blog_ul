@@ -1,6 +1,6 @@
 /** @format */
 
-import { IBlogSimplify } from "../../interface/blog";
+import { IBlogDetail, IBlogSimplify } from "../../interface/blog";
 import axiosInstance from "../../utils/axiosInstance";
 
 interface IGetBlogs {
@@ -20,4 +20,10 @@ export async function getBlogs({
   const data = await axiosInstance.get(`/blogs?${query}&page=${pageParam}`);
 
   return data.data;
+}
+
+export async function getBLog(slug: string): Promise<IBlogDetail> {
+  const data = await axiosInstance.get(`/blogs/slug/${slug}`);
+
+  return data.data.data;
 }
