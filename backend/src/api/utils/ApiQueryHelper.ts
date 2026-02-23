@@ -121,7 +121,6 @@ class ApiQueryHelper {
   searchByTitle() {
     const { title } = this.queryString;
     const checkedTitle = title.trim();
-
     if (!checkedTitle) return this;
 
     this.query = this.query.find({ $text: { $search: String(title) } });
