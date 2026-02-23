@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { getBLog } from "../api/blog/getBlog";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   IBlogDetail,
   INormalizedBlog,
@@ -71,6 +71,7 @@ function BlogDetailMobile() {
   if (isPending) return <Loader />;
 
   const blog = normalizeBlog(data);
+  // console.log(blog);
 
   return (
     <div className={styles.container}>
@@ -83,7 +84,13 @@ function BlogDetailMobile() {
 
       <BlogContent blog={blog} />
 
-      <div className={styles.categories}></div>
+      <div className={styles.categories}>
+        {blog.categories.map((cat) => (
+          <Link to={`/?category=${cat._id}`} key={cat._id}>
+            {cat.name}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
