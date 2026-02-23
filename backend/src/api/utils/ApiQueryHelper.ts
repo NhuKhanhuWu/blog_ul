@@ -120,7 +120,6 @@ class ApiQueryHelper {
 
   searchByTitle() {
     const { title } = this.queryString;
-    if (!title) return this;
     const checkedTitle = title.trim();
     if (!checkedTitle) return this;
 
