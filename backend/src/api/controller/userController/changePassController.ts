@@ -10,7 +10,10 @@ export const changePassController = catchAsync(async (req, res, next) => {
 
   // check if data is present
   if (!password || !passwordConfirm || !currentPassword) {
-    throw new AppError("Please provide all required fields", 400);
+    throw new AppError(
+      "Please provide all required fields: password, passwordConfirm, currentPassword",
+      400,
+    );
   }
 
   // check if user is present
@@ -29,7 +32,7 @@ export const changePassController = catchAsync(async (req, res, next) => {
   if (currentPassword === password) {
     throw new AppError(
       "New password must be different from current password",
-      400
+      400,
     );
   }
 
