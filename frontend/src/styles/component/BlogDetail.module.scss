@@ -1,0 +1,43 @@
+/** @format */
+
+.container {
+  padding: 2rem;
+}
+
+.title {
+  font-family: "Forum", serif;
+  font-size: 3.8rem;
+  font-weight: 100;
+  margin: 1.4rem 0 2.6rem;
+}
+
+.blogContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: 1.6rem;
+}
+
+.sectionTitle {
+  font-weight: 500;
+  font-size: 2.6rem;
+}
+
+.sectionHeader {
+  font-weight: 500;
+  font-size: 2rem;
+}
+
+.highlight {
+  font-size: 1.8rem;
+  line-height: 1.6;
+  font-weight: 500;
+  margin: 1rem 0;
+  font-style: italic;
+  text-decoration: underline;
+}
+
+.meta {
+  font-size: 1.4rem;
+  color: $light-800;
+}

@@ -2,7 +2,6 @@
 
 import express from "express";
 import {
-  getCategories,
   getMultBlog,
   getOneBlogById,
   getOneBlogBySlug,
@@ -21,9 +20,6 @@ import {
 const blogRouter = express.Router();
 
 // ------------ BLOGS ------------
-// get categories
-blogRouter.route("/categories/list").get(getCategories);
-
 // get single blog by slug
 blogRouter.route("/slug/:slug").get(getOneBlogBySlug);
 

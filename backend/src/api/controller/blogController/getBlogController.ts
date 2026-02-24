@@ -9,14 +9,22 @@ import { getOne } from "../../utils/crudFactory";
 
 // -------------constants-------------
 // Fields to project (return to client)
-const SELECTED_FIELDS = "id url title authors categories pub_date slug";
+const SELECTED_FIELDS = {
+  _id: 1,
+  title: 1,
+  authors: 1,
+  pub_date: 1,
+  slug: 1,
+  upVotes: 1,
+  preview: { $arrayElemAt: ["$content", 0] },
+  image: { $arrayElemAt: ["$images", 0] },
+};
 
 // Fields allowed for sorting
 const SORT_FIELDS = [
   "pub_date", // newest/oldest
   "-pub_date",
-  "title", // alphabetical"title",
-  "-title",
+  "-upVotes", // alphabetical"title",
 ];
 
 // Fields allowed for filtering
@@ -29,7 +37,7 @@ const FILTER_FIELDS = [
 // -------------helpers-------------
 function applyCategoryFilter(
   baseQuery: mongoose.Query<any, any>,
-  queryObject: Record<string, any>
+  queryObject: Record<string, any>,
 ) {
   const categories = queryObject.categories as string | undefined;
   if (!categories) return baseQuery;
@@ -45,12 +53,21 @@ function applyCategoryFilter(
     throw new AppError("Logic must be either 'or' or 'and'", 400);
   }
 
-  baseQuery =
-    logic === "and"
-      ? baseQuery.find({ categories: { $all: values } })
-      : baseQuery.find({ categories: { $in: values } });
+  // 🔥 Validate ObjectId
+  const categoryIds = values.map((id) => {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new AppError(`Invalid category id: ${id}`, 400);
+    }
+    return new mongoose.Types.ObjectId(id);
+  });
 
-  // cleanup query params
+  // 🔥 Apply filter
+  if (logic === "and") {
+    baseQuery.find({ categories: { $all: categoryIds } });
+  } else {
+    baseQuery.find({ categories: { $in: categoryIds } });
+  }
+
   delete queryObject.categories;
   delete queryObject.logic;
 
@@ -61,8 +78,12 @@ function applyCategoryFilter(
 
 // -------------controllers-------------
 export const getMultBlog = catchAsync(async (req, res) => {
-  // Shallow clone để tránh mutate req.query
   const queryObject = { ...req.query };
+
+  //  logic nếu không có categories
+  if (!queryObject.categories) {
+    delete queryObject.logic;
+  }
 
   // 1. Start base query (KHÔNG còn filter private)
   let baseQuery = BlogModel.find();
@@ -87,13 +108,20 @@ export const getMultBlog = catchAsync(async (req, res) => {
 
   // 4. Execute query
   const blogs = await queryInstance.query;
-  const amount = blogs.length || 1;
+  const amount = blogs.length || 0;
+
+  // 5. Get next page
+  const page = Number(queryObject.page) || 0;
+  const limit = Number(queryObject.limit) || 20;
+  const totalPages = Math.ceil(queryInstance.totalResults / limit);
+  const nextPage = page + 1 < totalPages ? page + 1 : undefined;
 
   res.status(200).json({
     status: "success",
     totalResult: queryInstance.totalResults,
-    totalPages: Math.ceil(queryInstance.totalResults / amount),
-    amount: blogs.length,
+    totalPages,
+    nextPage,
+    amount,
     data: blogs,
   });
 });
@@ -104,7 +132,7 @@ export const getOneBlogById = catchAsync(async (req, res) => {
 
 export const getOneBlogBySlug = catchAsync(async (req, res, next) => {
   const slug = req.params.slug;
-  const blog = await BlogModel.findOne({ slug: slug });
+  const blog = await BlogModel.findOne({ slug: slug }).populate("categories");
 
   if (!blog) {
     throw new AppError("Blog not found", 404);
@@ -113,30 +141,6 @@ export const getOneBlogBySlug = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     data: blog,
-  });
-});
-
-export const getCategories = catchAsync(async (req, res) => {
-  const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
-  if (page < 1) {
-    throw new AppError("Page number must be greater than 0", 400);
-  }
-
-  const skip = (page - 1) * 15;
-  const limit = 15;
-
-  const categories = await BlogModel.aggregate([
-    { $unwind: "$categories" },
-    { $group: { _id: "$categories" } },
-    { $sort: { _id: 1 } },
-    { $skip: skip },
-    { $limit: limit },
-  ]);
-
-  res.status(200).json({
-    status: "success",
-    result: categories.length,
-    data: categories,
   });
 });
 // -------------controllers-------------

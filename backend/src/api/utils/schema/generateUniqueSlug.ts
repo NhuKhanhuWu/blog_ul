@@ -1,12 +1,13 @@
 /** @format */
 
+import { Model } from "mongoose";
 import slugify from "slugify";
 
 // create slug when user sign up/update account infor
 export async function generateUniqueSlug(
-  model: any,
+  model: Model<any>,
   name: string,
-  userId?: string,
+  id?: string,
 ) {
   const baseSlug = slugify(name, {
     lower: true,
@@ -17,12 +18,13 @@ export async function generateUniqueSlug(
   let counter = 1;
 
   while (true) {
-    const existingUser = await model.findOne({ slug });
+    // Look for the slug, but ignore the document we are currently editing
+    const existingDoc = await model.findOne({ slug, _id: { $ne: id } });
 
-    if (!existingUser) break;
+    if (!existingDoc) break;
 
-    // if this is the user who updating => skip
-    if (userId && existingUser._id.toString() === userId) {
+    // if this is the doc which updating => skip
+    if (id && existingDoc._id.toString() === id) {
       break;
     }
 

@@ -1,9 +1,10 @@
 /** @format */
 
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, Types, model } from "mongoose";
 import { IBlogDocument } from "../interface/IBlog";
 import { IBlogContent } from "../utils/schema/blogSchema";
 import slugify from "slugify";
+import { generateUniqueSlug } from "../utils/schema/generateUniqueSlug";
 
 const contentBlockSchema = new Schema<IBlogContent>(
   {
@@ -67,9 +68,18 @@ const BlogSchema = new Schema<IBlogDocument>(
     },
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     categories: {
-      type: [String],
-      default: [],
-      index: true, // for filtering
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Category",
+        },
+      ],
+      validate: {
+        validator: function (value: Types.ObjectId[]) {
+          return value.length <= 50;
+        },
+        message: "A blog can have at most 50 categories",
+      },
     },
     pub_date: {
       type: Date,
@@ -86,7 +96,11 @@ const BlogSchema = new Schema<IBlogDocument>(
         message: "A blog can have at most 5 images",
       },
     },
-    voteScore: {
+    upVotes: {
+      type: Number,
+      default: 0,
+    },
+    downVotes: {
       type: Number,
       default: 0,
     },
@@ -100,19 +114,44 @@ BlogSchema.index({ slug: "text" }); // text index for searching in slug
 
 BlogSchema.index({ title: "text" }); // text index for searching in title
 
-// add slug before saving
-BlogSchema.pre("save", function (next) {
-  if (this.isModified("title") || !this.slug) {
-    this.slug = slugify(this.title, { lower: true, strict: true });
-  }
+// add & pub_date slug before saving
+BlogSchema.pre("save", async function (next) {
+  if (!this.isModified("title")) return next();
+
+  // Use this.constructor to access the Model from the Document
+  const BlogModel = this.constructor as mongoose.Model<any>;
+  const slug = await generateUniqueSlug(
+    BlogModel,
+    this.title,
+    this._id.toString(),
+  );
+
+  this.slug = slug;
+  this.pub_date = new Date();
 
   next();
 });
 
-// add pub_date before saving
-BlogSchema.pre("save", function (next) {
-  this.pub_date = new Date();
-  next();
+BlogSchema.pre("findOneAndUpdate", async function (next) {
+  const update = this.getUpdate() as any;
+
+  const title = update?.title ?? update?.$set?.title;
+  if (!title) return next();
+
+  const blog = await this.model.findOne(this.getQuery());
+  if (!blog) return next();
+
+  const newSlug = await generateUniqueSlug(
+    this.model,
+    title,
+    blog._id.toString(),
+  );
+
+  if (update.$set) {
+    update.$set.slug = newSlug;
+  } else {
+    update.slug = newSlug;
+  }
 });
 
 export const BlogModel = model<IBlogDocument>("Blog", BlogSchema);
