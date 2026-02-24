@@ -109,8 +109,9 @@ userSchema.index({ name: "text", email: "text" });
 userSchema.pre("save", async function (next) {
   if (!this.isModified("name")) return next();
 
+  const UserModel = this.constructor as mongoose.Model<any>;
   this.slug = await generateUniqueSlug(
-    this.model,
+    UserModel,
     this.name,
     this._id.toString(),
   );
