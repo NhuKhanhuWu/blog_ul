@@ -16,7 +16,10 @@ import {
   forgotPasswordOtpLimiterIP,
   resetPassword,
 } from "../controller/authController/forgotPasswordController";
-import { getMeController } from "../controller/userController/getMeController";
+import {
+  getMeController,
+  getUserBySlug,
+} from "../controller/userController/getUserController";
 import { protect } from "../controller/authController/protectController";
 import { changePassController } from "../controller/userController/changePassController";
 import {
@@ -65,6 +68,8 @@ userRouter.post("/refresh-token", refreshToken);
 
 // -------------------- User Routes -------------------- //
 userRouter.route("/me").get(protect, getMeController).post(protect, updateMe);
+
+userRouter.route("/:slug").get(getUserBySlug);
 
 userRouter.patch("/change-password", protect, changePassController);
 

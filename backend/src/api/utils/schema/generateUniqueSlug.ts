@@ -3,6 +3,8 @@
 import { Model } from "mongoose";
 import slugify from "slugify";
 
+const RESERVED_SLUGS = ["me", "admin", "login", "register"];
+
 // create slug when user sign up/update account infor
 export async function generateUniqueSlug(
   model: Model<any>,
@@ -18,6 +20,12 @@ export async function generateUniqueSlug(
   let counter = 1;
 
   while (true) {
+    //  Prevent reserved keywords
+    if (RESERVED_SLUGS.includes(slug)) {
+      slug = `${baseSlug}-${counter++}`;
+      continue;
+    }
+
     // Look for the slug, but ignore the document we are currently editing
     const existingDoc = await model.findOne({ slug, _id: { $ne: id } });
 
