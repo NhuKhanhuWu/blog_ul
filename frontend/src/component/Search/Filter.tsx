@@ -4,7 +4,7 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 import { ICategory } from "../../interface/category";
 import styles from "../../styles/component/SearchBar.module.scss";
 import { useFormContext } from "react-hook-form";
-import { SearchFormValues } from "./SearchBar";
+import { SearchFormValues } from "../../interface/search";
 import { useCategories } from "../../hook/useCategories";
 import { useDebounce } from "../../hook/useDebounce";
 

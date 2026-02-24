@@ -1,5 +1,7 @@
 /** @format */
 
+import { ICategory } from "./category";
+
 export interface IBlogSimplify {
   _id: string;
   title: string;
@@ -39,7 +41,7 @@ export interface IBlogDetail {
 
   userId: string;
 
-  categories: string;
+  categories: ICategory[];
 
   pub_date?: string;
 
