@@ -31,6 +31,7 @@ import {
   getUserBlogVote,
   getUserCmtVote,
 } from "../controller/voteController/getVoteController";
+import { updateMe } from "../controller/userController/updateAccountController";
 const userRouter = express.Router();
 
 // -------------------- Auth Routes -------------------- //
@@ -63,7 +64,7 @@ userRouter.post("/refresh-token", refreshToken);
 // -------------------- Auth Routes -------------------- //
 
 // -------------------- User Routes -------------------- //
-userRouter.get("/me", protect, getMeController);
+userRouter.route("/me").get(protect, getMeController).post(protect, updateMe);
 
 userRouter.patch("/change-password", protect, changePassController);
 

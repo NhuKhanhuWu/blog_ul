@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 function Authors({ blog }: IBlogCard) {
   const { authors } = blog;
   return (
-    <div className={styles.smTxt}>
+    <div className="smTxt">
       {authors.slice(0, 5).join(", ")}
       {authors.length > 5 && ", and more."}
     </div>
@@ -27,13 +27,13 @@ function BlogCard({ blog }: IBlogCard) {
       <div className={styles.blogTxt}>
         <div>
           <Authors blog={blog} />
-          <p className={styles.smTxt}>{formatDate(blog.pub_date)}</p>
+          <p className="smTxt">{formatDate(blog.pub_date)}</p>
         </div>
 
         <p className={`font-serif ${styles.title}`}>{blog.title}</p>
         <p className={styles.preview}>{blog.preview.text.slice(0, 200)}...</p>
 
-        <div className={`vertical-center ${styles.smTxt}`}>
+        <div className="vertical-center smTxt">
           <BiUpvote />
           {blog.upVotes || 0}
         </div>

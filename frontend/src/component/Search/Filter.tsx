@@ -10,6 +10,7 @@ import { useDebounce } from "../../hook/useDebounce";
 
 interface ICategoryInput {
   category: ICategory;
+  selectedIds: string[];
 }
 
 interface ICategories {
@@ -31,9 +32,22 @@ interface SelectedCatsProps {
   onRemove: (id: string) => void;
 }
 
-function Category({ category }: ICategoryInput) {
-  const { register, watch } = useFormContext<SearchFormValues>();
-  const selectedIds = watch("categories") || [];
+function Category({ category, selectedIds }: ICategoryInput) {
+  const { setValue } = useFormContext<SearchFormValues>();
+  const isChecked = selectedIds.includes(category._id);
+
+  const handleChange = () => {
+    if (isChecked) {
+      // Nếu đang chọn thì bỏ chọn
+      setValue(
+        "categories",
+        selectedIds.filter((id) => id !== category._id),
+      );
+    } else {
+      // Nếu chưa chọn thì thêm vào
+      setValue("categories", [...selectedIds, category._id]);
+    }
+  };
 
   return (
     <div className="checkbox">
@@ -42,8 +56,8 @@ function Category({ category }: ICategoryInput) {
         type="checkbox"
         value={category._id}
         // make sure checkbox always in right state when search
-        checked={selectedIds.includes(category._id)}
-        {...register("categories")}
+        checked={isChecked}
+        onChange={handleChange}
       />
       <label htmlFor={category._id}>{category.name}</label>
     </div>
@@ -51,12 +65,15 @@ function Category({ category }: ICategoryInput) {
 }
 
 function UnSelectedCats({ categories, loadMoreBtn }: ICategories) {
+  const { watch } = useFormContext<SearchFormValues>();
+  const selectedIds = watch("categories") || [];
+
   return (
     <div className={styles.categories}>
       {categories.map((item) => {
         return (
           <div key={item._id}>
-            <Category category={item} />
+            <Category selectedIds={selectedIds} category={item} />
           </div>
         );
       })}
@@ -79,24 +96,18 @@ function SelectedCats({
   if (selectedCategories.length === 0) return null;
 
   return (
-    <div className={styles.wrapper}>
-      <span className={styles.label}>
-        Selected ({selectedCategories.length})
-      </span>
-
-      <div className={styles.chips}>
-        {selectedCategories.map((cat) => (
-          <div key={cat._id} className={styles.chip}>
-            <span>{cat.name}</span>
-            <button
-              type="button"
-              onClick={() => onRemove(cat._id)}
-              className={styles.removeBtn}>
-              ✕
-            </button>
-          </div>
-        ))}
-      </div>
+    <div className={styles.chips}>
+      {selectedCategories.map((cat) => (
+        <div key={cat._id} className={styles.chip}>
+          <span>{cat.name}</span>
+          <button
+            type="button"
+            onClick={() => onRemove(cat._id)}
+            className={styles.removeBtn}>
+            ✕
+          </button>
+        </div>
+      ))}
     </div>
   );
 }
@@ -161,88 +172,15 @@ function LoadMoreBtn({
   );
 }
 
-// function Filter() {
-//   const { watch } = useFormContext<SearchFormValues>();
-//   const categoryName = watch("categoryName");
-//   const selectedIds = watch("categories") || [];
-//   const debouncedCategoryName = useDebounce(categoryName, 500);
-
-//   // State to store selected categories
-//   // (Help show category event when API doesn't return it)
-//   const [selectedCategories, setselectedCategories] = useState<ICategory[]>([]);
-
-//   const {
-//     data,
-//     fetchNextPage,
-//     hasNextPage,
-//     isPending,
-//     isFetchingNextPage,
-//     isFetchNextPageError,
-//   } = useCategories(debouncedCategoryName);
-
-//   const apiCategories = data?.pages.flatMap((page) => page.data) || [];
-
-//   // once apiCategories change, update selectedObjects list
-//   useEffect(() => {
-//     const newlySelected = apiCategories.filter(
-//       (cat) =>
-//         selectedIds.includes(cat._id) &&
-//         !selectedCategories.find((obj) => obj._id === cat._id),
-//     );
-//     if (newlySelected.length > 0) {
-//       setselectedCategories((prev) => [...prev, ...newlySelected]);
-//     }
-//   }, [apiCategories, selectedCategories, selectedIds]);
-
-//   // display categories handler
-//   const displayedCategories = useMemo(() => {
-//     // 1. turn selectedIds to Set to optimize seaching
-//     const selectedSet = new Set(selectedIds);
-
-//     // 2. get categories
-//     const currentlySelected = selectedCategories.filter((cat) =>
-//       selectedSet.has(cat._id),
-//     );
-
-//     // 3. filter out selected categories from apiCategories
-//     const filteredApiCategories = apiCategories.filter(
-//       (apiCat) => !selectedSet.has(apiCat._id),
-//     );
-
-//     return [...currentlySelected, ...filteredApiCategories];
-//   }, [apiCategories, selectedIds, selectedCategories]);
-
-//   return (
-//     <div>
-//       <div className={styles.searchOption}>
-//         <span>Cat.: </span>
-//         <CategoriesOption />
-//       </div>
-
-//       <UnSelectedCats
-//         loadMoreBtn={
-//           hasNextPage ? (
-//             <LoadMoreBtn
-//               isFetchingNextPage={isFetchingNextPage}
-//               isError={isFetchNextPageError}
-//               fetchNextPage={fetchNextPage}
-//               hasNextPage={hasNextPage}
-//             />
-//           ) : null
-//         }
-//         categories={displayedCategories}
-//         isPending={isPending || isFetchingNextPage}
-//       />
-//     </div>
-//   );
-// }
-
 function Filter() {
   const { watch, setValue } = useFormContext<SearchFormValues>();
+
+  // get data from form
   const categoryName = watch("categoryName");
   const selectedIds = watch("categories") || [];
   const debouncedCategoryName = useDebounce(categoryName, 500);
 
+  // fetch categories from api
   const {
     data,
     fetchNextPage,
@@ -252,13 +190,50 @@ function Filter() {
     isFetchNextPageError,
   } = useCategories(debouncedCategoryName);
 
-  const categories = data?.pages.flatMap((page) => page.data) || [];
+  // flat categories, cache with useMemo to reduce re-render
+  const apiCategories = useMemo(
+    () => data?.pages.flatMap((page) => page.data) || [],
+    [data?.pages],
+  );
+
+  // store selected cats to a state
+  // helps show chips when search for other categories
+  const [cachedSelectedCats, setCachedSelectedCats] = useState<ICategory[]>([]);
+
+  // once selectedId or cats from API changes
+  useEffect(() => {
+    // find cat checked in form but not cached yet
+    const selectedSet = new Set(selectedIds);
+    const cachedSet = new Set(cachedSelectedCats.map((c) => c._id));
+    const newlySelected = apiCategories.filter(
+      (cat) =>
+        selectedSet.has(cat._id) && // cats that are selected in the form
+        !cachedSet.has(cat._id), // but not cached yet
+    );
+
+    // update only when needed => avoid infinity re-render
+    if (newlySelected.length > 0) {
+      setCachedSelectedCats((prev) => [...prev, ...newlySelected]);
+    }
+  }, [selectedIds, apiCategories, cachedSelectedCats]);
+
+  // merger cats = cats in cache + cat in API.
+  const allKnownCategories = useMemo(() => {
+    const map = new Map<string, ICategory>(); // use map to avoid overlap
+
+    cachedSelectedCats.forEach((c) => map.set(c._id, c)); //
+    apiCategories.forEach((c) => map.set(c._id, c));
+
+    return Array.from(map.values());
+  }, [cachedSelectedCats, apiCategories]);
 
   const handleRemove = (id: string) => {
-    setValue(
-      "categories",
-      selectedIds.filter((cid) => cid !== id),
-    );
+    // 1. update values inform
+    const updatedIds = selectedIds.filter((cid) => cid !== id);
+    setValue("categories", updatedIds);
+
+    // 2. update select cats in cache
+    setCachedSelectedCats((prev) => prev.filter((c) => c._id !== id));
   };
 
   return (
@@ -267,12 +242,15 @@ function Filter() {
         <span>Cat.: </span>
         <CategoriesOption />
       </div>
+
+      {/* use allKnownCategories so chips won't disappear when search */}
       <SelectedCats
         selectedIds={selectedIds}
-        allCategories={categories}
+        allCategories={allKnownCategories}
         onRemove={handleRemove}
       />
 
+      {/* display cats from api */}
       <UnSelectedCats
         loadMoreBtn={
           hasNextPage ? (
@@ -284,7 +262,7 @@ function Filter() {
             />
           ) : null
         }
-        categories={categories}
+        categories={apiCategories}
         isPending={isPending || isFetchingNextPage}
       />
     </div>
