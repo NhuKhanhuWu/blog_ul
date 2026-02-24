@@ -7,7 +7,7 @@ import catchAsync from "../../utils/catchAsync";
 
 const SORT_FIELDS = ["createdAt", "-createdAt", "top_cmt"];
 
-const FILTER_FIELDS = ["userId", "blogId"];
+const FILTER_FIELDS = ["parentId"];
 
 const getCmt = (baseQuery: Query<any, any>) =>
   catchAsync(async (req, res) => {
