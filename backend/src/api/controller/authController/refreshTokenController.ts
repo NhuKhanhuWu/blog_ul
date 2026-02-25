@@ -1,5 +1,4 @@
 /** @format */
-// TODO: write refresh token logic
 
 import { IJwtPayload } from "../../interface/IJwtPayload";
 import RefreshToken from "../../model/refreshTokenModel";
@@ -40,7 +39,7 @@ export const refreshToken = catchAsync(async (req, res, next) => {
     decode = verifyToken(
       refreshToken,
       process.env.JWT_SECRET!,
-      true
+      true,
     ) as IJwtPayload;
   } catch (err) {
     throw new AppError("Invalid or expired token", 401);
@@ -59,7 +58,7 @@ export const refreshToken = catchAsync(async (req, res, next) => {
       {
         revoked: true,
         revokedAt: new Date(),
-      }
+      },
     ),
 
     // create new token
