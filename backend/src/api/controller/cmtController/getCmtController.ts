@@ -5,7 +5,7 @@ import CommentModel from "../../model/commentModel";
 import ApiQueryHelper from "../../utils/ApiQueryHelper";
 import catchAsync from "../../utils/catchAsync";
 
-const SORT_FIELDS = ["createdAt", "-createdAt", "upVotes"];
+const SORT_FIELDS = ["createdAt", "-createdAt", "-upVotes"];
 
 const FILTER_FIELDS = ["parentId"];
 
@@ -20,7 +20,7 @@ const getCmt = (baseQuery: Query<any, any>) =>
       queryString: queryObject,
     });
 
-    queryInstance.filter(FILTER_FIELDS).sort(SORT_FIELDS, "upVotes");
+    queryInstance.filter(FILTER_FIELDS).sort(SORT_FIELDS, "-upVotes");
     await queryInstance.paginate();
 
     // query
