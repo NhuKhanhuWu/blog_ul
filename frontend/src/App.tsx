@@ -9,11 +9,15 @@ import "./styles/general.scss";
 // lazy load
 const AppLayout = lazy(() => import("./layout/AppLayout.tsx"));
 const Homepage = lazy(() => import("./page/Homepage"));
+const BlogDetail = lazy(() => import("./page/BlogDetail.tsx"));
 
 const router = createBrowserRouter([
   {
     element: <AppLayout></AppLayout>,
-    children: [{ element: <Homepage />, path: "/" }],
+    children: [
+      { element: <Homepage />, path: "/" },
+      { element: <BlogDetail />, path: "/blog/:slug" },
+    ],
   },
 ]);
 

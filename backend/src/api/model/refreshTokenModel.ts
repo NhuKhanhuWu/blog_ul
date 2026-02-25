@@ -26,7 +26,7 @@ const RefreshTokenSchema = new Schema<IToken>({
 // delete token 3 days after revoked
 RefreshTokenSchema.index(
   { revokedAt: 1 },
-  { expireAfterSeconds: 3 * 24 * 60 * 60 }
+  { expireAfterSeconds: 3 * 24 * 60 * 60 },
 );
 
 // delete after expired
