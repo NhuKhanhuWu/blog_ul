@@ -34,6 +34,7 @@ export type IContentBlock =
     };
 
 export interface IBlogDetail {
+  _id: string;
   url?: string;
   title: string;
   slug: string;

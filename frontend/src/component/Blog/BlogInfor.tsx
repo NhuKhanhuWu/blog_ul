@@ -1,19 +1,9 @@
 /** @format */
 
 import styles from "../../styles/component/BlogDetail.module.scss";
-import {
-  IBlogDetail,
-  INormalizedBlog,
-  NormalizedContent,
-} from "../../interface/blog";
-import { Link, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { AxiosError } from "axios";
-import NotFound from "../NotFound";
-import Loader from "../Loader";
-import normalizeBlog from "../../utils/normalizeHeading";
+import { INormalizedBlog, NormalizedContent } from "../../interface/blog";
+import { Link } from "react-router-dom";
 import formatDate from "../../utils/fomatDate";
-import { getBLog } from "../../api/blog/getBlog";
 
 function ContentItem({ item }: { item: NormalizedContent }) {
   // title
@@ -79,20 +69,7 @@ function Categories({ blog }: { blog: INormalizedBlog }) {
   );
 }
 
-function BlogInfor() {
-  const { slug = "" } = useParams();
-  const { data, isPending, error } = useQuery<IBlogDetail, AxiosError>({
-    queryKey: ["blog", slug],
-    queryFn: () => getBLog(slug),
-  });
-
-  if (error?.response?.status === 404 || !data)
-    return <NotFound message="Blog not found" />;
-
-  if (isPending) return <Loader />;
-
-  const blog = normalizeBlog(data);
-
+function BlogInfor({ blog }: { blog: INormalizedBlog }) {
   return (
     <div className={styles.container}>
       <div className="smTxt">
