@@ -1,9 +1,9 @@
 /** @format */
 
-import styles from "../../styles/component/BlogDetail.module.scss";
+import styles from "../../styles/component/BlogInfor.module.scss";
 import { INormalizedBlog, NormalizedContent } from "../../interface/blog";
 import { Link } from "react-router-dom";
-import formatDate from "../../utils/fomatDate";
+import { formatDate } from "../../utils/date";
 
 function ContentItem({ item }: { item: NormalizedContent }) {
   // title
@@ -56,6 +56,7 @@ function Categories({ blog }: { blog: INormalizedBlog }) {
       <div className={styles.categories}>
         {blog.categories.map((cat) => (
           <Link
+            key={cat._id}
             className={`btn-secondary ${styles.category}`}
             to={{
               pathname: "/",
@@ -71,7 +72,7 @@ function Categories({ blog }: { blog: INormalizedBlog }) {
 
 function BlogInfor({ blog }: { blog: INormalizedBlog }) {
   return (
-    <div className={styles.container}>
+    <>
       <div className="smTxt">
         <p>{blog?.authors.join(", ")}</p>
         <p>{formatDate(blog?.pub_date || "")}</p>
@@ -82,7 +83,7 @@ function BlogInfor({ blog }: { blog: INormalizedBlog }) {
       <BlogContent blog={blog} />
 
       <Categories blog={blog} />
-    </div>
+    </>
   );
 }
 

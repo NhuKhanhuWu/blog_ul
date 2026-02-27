@@ -1,9 +1,9 @@
 /** @format */
 
-import { BiUpvote } from "react-icons/bi";
+import { FaRegThumbsUp } from "react-icons/fa";
 import { IBlogCard } from "../../interface/blog";
 import styles from "../../styles/component/BlogList.module.scss";
-import formatDate from "../../utils/fomatDate";
+import { formatDate } from "../../utils/date";
 import { Link } from "react-router-dom";
 
 function Authors({ blog }: IBlogCard) {
@@ -34,7 +34,7 @@ function BlogCard({ blog }: IBlogCard) {
         <p className={styles.preview}>{blog.preview.text.slice(0, 200)}...</p>
 
         <div className="vertical-center smTxt">
-          <BiUpvote />
+          <FaRegThumbsUp />
           {blog.upVotes || 0}
         </div>
       </div>

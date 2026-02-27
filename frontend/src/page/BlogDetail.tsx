@@ -10,6 +10,7 @@ import Loader from "../component/Loader";
 import normalizeBlog from "../utils/normalizeHeading";
 import { IBlogDetail } from "../interface/blog";
 import { AxiosError } from "axios";
+import styles from "../styles/page/BlogDetail.module.scss";
 
 function BlogDetail() {
   const { slug = "" } = useParams();
@@ -26,7 +27,7 @@ function BlogDetail() {
   const blog = normalizeBlog(data);
 
   return (
-    <div>
+    <div className={styles.container}>
       <BlogInfor blog={blog} />
 
       {/* commnent */}

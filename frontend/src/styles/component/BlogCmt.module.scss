@@ -1,0 +1,93 @@
+/** @format */
+
+.avatar {
+  width: 4rem;
+  border-radius: 999px;
+}
+
+.cmtMinimize {
+  background-color: $dark-100;
+  margin-top: 2rem;
+  padding: 1rem;
+  border-radius: 10px;
+
+  p {
+    font-size: 1.4rem;
+    font-weight: 500;
+  }
+
+  div {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+}
+
+.header {
+  display: flex;
+  gap: 4rem;
+  align-items: center;
+  border-bottom: 1px $dark-200 solid;
+
+  p {
+    font-size: 2rem;
+    font-weight: 700;
+  }
+}
+
+.cmtContainer {
+  padding: 0 2rem;
+}
+
+.cmtForm {
+  border-bottom: 1px $dark-200 solid;
+  padding: 1rem 0;
+}
+
+.cmts {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  margin-top: 1rem;
+}
+
+.cmtItem {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.cmtTxt {
+  flex: 1;
+}
+
+.cmtItemHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.cmtContent {
+  font-size: 1.6rem;
+  margin: 0.8rem 0 1.4rem;
+  max-height: 10rem;
+  overflow: hidden;
+
+  &.expand {
+    max-height: fit-content;
+  }
+}
+
+.seeMoreBtn {
+  font-weight: 600;
+}
+
+.cmtBtns {
+  display: flex;
+  gap: 2rem;
+  font-size: 1.6rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  color: $light-800;
+}
