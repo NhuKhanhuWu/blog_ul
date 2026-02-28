@@ -10,7 +10,6 @@ const EXCLUDED_FIELDS = [
   "sort",
   "limit",
   "fields",
-  "genres",
   "title",
   "match",
   "name",
@@ -113,6 +112,11 @@ class ApiQueryHelper {
 
   filter(allowedFields: string[] = []) {
     const mongoQuery = this._buildMongoQuery(allowedFields);
+
+    if (mongoQuery.parentId === "null") {
+      mongoQuery.parentId = null;
+    }
+
     this.query = this.query.find(mongoQuery);
 
     return this;
