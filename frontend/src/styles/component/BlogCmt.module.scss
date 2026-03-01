@@ -29,9 +29,10 @@
   gap: 4rem;
   align-items: center;
   border-bottom: 1px $dark-200 solid;
+  padding: 1.6rem 0;
 
   p {
-    font-size: 2rem;
+    font-size: 2.6rem;
     font-weight: 700;
   }
 }
@@ -52,10 +53,14 @@
   margin-top: 1rem;
 }
 
-.cmtItem {
+.cmtItemContainer {
   display: flex;
   gap: 1rem;
   align-items: flex-start;
+}
+
+.cmt {
+  flex: 1;
 }
 
 .cmtTxt {
@@ -83,11 +88,17 @@
   font-weight: 600;
 }
 
-.cmtBtns {
+.cmtActions {
   display: flex;
   gap: 2rem;
   font-size: 1.6rem;
   align-items: center;
   margin-bottom: 1rem;
   color: $light-800;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
 }

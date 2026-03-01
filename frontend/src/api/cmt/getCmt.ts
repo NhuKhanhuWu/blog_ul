@@ -16,8 +16,7 @@ export async function getCmtByBlog({
   pageParam,
   parentId = null,
 }: IGetCmtByBlog): Promise<IGetCmtRes> {
-  const parentParams = parentId ? `parentId=${parentId}` : "";
-  const query = `sort=${sort}&page=${pageParam}&${parentParams}`;
+  const query = `sort=${sort}&page=${pageParam}&parentId=${parentId}`;
   const data = await axiosInstance.get(`/blogs/${blogId}/cmt?${query}`);
 
   return data.data;

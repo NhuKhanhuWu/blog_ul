@@ -1,6 +1,6 @@
 /** @format */
 
-import { Dispatch, ReactNode, SetStateAction, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, useMemo, useState } from "react";
 import { Sheet } from "react-modal-sheet";
 
 import defaultAvatar from "../../utils/defaultAvatar";
@@ -9,10 +9,11 @@ import Loader from "../Loader";
 import Error from "../Error";
 import CmtForm from "./CmtForm";
 import styles from "../../styles/component/BlogCmt.module.scss";
-import { useGetCmtByBlog } from "../../hook/useCmt";
 import { useIntersectionObserver } from "../../hook/useIntersectionObserver";
 import InfinityObserver from "../InfinityObserver";
 import CmtItem from "./CmtItem";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { getCmtByBlog } from "../../api/cmt/getCmt";
 
 interface ICmtMinimize {
   isOpen: boolean;
@@ -57,20 +58,20 @@ function CmtModal({
       className={!isOpen ? "hidden" : ""}
       isOpen={isOpen}
       onClose={() => setIsOpen(false)}>
-      <Sheet.Container>
-        <Sheet.Header />
+      <Sheet.Container className={styles.cmtContainer}>
+        <Sheet.Header className={styles.header}>
+          {/* <div className={styles.header}> */}
+          <p>{totalCmt} comments</p>
 
-        <Sheet.Content className={styles.cmtContainer}>
-          <div className={styles.header}>
-            <p>{totalCmt} comments</p>
+          <select name="sort" onChange={(e) => setSort(e.target.value)}>
+            <option value="-upVotes">Most related</option>
+            <option value="-createdAt">Newest</option>
+            <option value="createdAt">Oldest</option>
+          </select>
+          {/* </div> */}
+        </Sheet.Header>
 
-            <select name="sort" onChange={(e) => setSort(e.target.value)}>
-              <option value="-upVotes">Most related</option>
-              <option value="-createdAt">Newest</option>
-              <option value="createdAt">Oldest</option>
-            </select>
-          </div>
-
+        <Sheet.Content>
           <CmtForm />
 
           <div className={styles.cmts}>
@@ -92,14 +93,23 @@ function BlogCmtMobile({ blogId }: { blogId: string }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const {
-    cmts,
-    totalCmt,
+    data,
     isPending,
     isFetchingNextPage,
     isError,
     hasNextPage,
     fetchNextPage,
-  } = useGetCmtByBlog({ blogId, sort });
+  } = useInfiniteQuery({
+    queryKey: ["cmt", sort, blogId],
+    queryFn: ({ pageParam = 0 }) => getCmtByBlog({ blogId, sort, pageParam }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+  });
+  const cmts = useMemo(
+    () => data?.pages.flatMap((p) => p.data) || [],
+    [data?.pages],
+  );
+  const totalCmt = data?.pages[0].totalResult || 0;
 
   const { lastElementRef } = useIntersectionObserver(
     fetchNextPage,
