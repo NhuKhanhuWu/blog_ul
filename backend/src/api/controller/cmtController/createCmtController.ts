@@ -53,7 +53,7 @@ export const createCmt = catchAsync(async (req, res, next) => {
     // check if blog Id from child == blog id from parent
     if (parentComment.blogId.toString() !== blogId) {
       return next(
-        new AppError("blogId must be the same as parent comment's blogId", 400)
+        new AppError("blogId must be the same as parent comment's blogId", 400),
       );
     }
   }
@@ -65,7 +65,6 @@ export const createCmt = catchAsync(async (req, res, next) => {
     parentId: parentId || null,
     content,
 
-    voteScore: 0,
     upVotes: 0,
     downVotes: 0,
     replyCount: 0,
