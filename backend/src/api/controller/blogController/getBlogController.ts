@@ -126,13 +126,28 @@ export const getMultBlog = catchAsync(async (req, res) => {
   });
 });
 
+// get one blog
 export const getOneBlogById = catchAsync(async (req, res) => {
-  getOne(BlogModel)(req, res);
+  const { id } = req.params;
+  const blog = await BlogModel.findById(id)
+    .populate("categories")
+    .populate("userId", "name slug avatar");
+
+  if (!blog) {
+    throw new AppError("Blog not found", 404);
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: blog,
+  });
 });
 
 export const getOneBlogBySlug = catchAsync(async (req, res, next) => {
   const slug = req.params.slug;
-  const blog = await BlogModel.findOne({ slug: slug }).populate("categories");
+  const blog = await BlogModel.findOne({ slug: slug })
+    .populate("categories")
+    .populate("userId", "name slug avatar");
 
   if (!blog) {
     throw new AppError("Blog not found", 404);
