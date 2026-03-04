@@ -5,7 +5,7 @@ import {
   IBlogDetail,
   INormalizedBlog,
   NormalizedContent,
-} from "../../interface/blog";
+} from "../../interface/blogTypes";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
