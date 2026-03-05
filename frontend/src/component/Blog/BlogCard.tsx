@@ -1,7 +1,7 @@
 /** @format */
 
 import { BiUpvote } from "react-icons/bi";
-import { IBlogCard } from "../../interface/blog";
+import { IBlogCard } from "../../interface/blogTypes";
 import styles from "../../styles/component/BlogList.module.scss";
 import formatDate from "../../utils/fomatDate";
 import { Link } from "react-router-dom";

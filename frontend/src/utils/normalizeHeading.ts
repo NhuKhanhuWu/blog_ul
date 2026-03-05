@@ -5,7 +5,7 @@ import {
   IContentBlock,
   INormalizedBlog,
   NormalizedContent,
-} from "../interface/blog";
+} from "../interface/blogTypes";
 
 function normalizeHeading(item: IContentBlock): NormalizedContent {
   const text = item.text || "";

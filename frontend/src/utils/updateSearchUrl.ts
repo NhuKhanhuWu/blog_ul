@@ -1,7 +1,7 @@
 /** @format */
 
 import { SetURLSearchParams } from "react-router-dom";
-import { SearchFormValues } from "../interface/search";
+import { SearchFormValues } from "../interface/searchTypes";
 
 export interface IUpdateSearchUrl {
   searchParams: URLSearchParams;

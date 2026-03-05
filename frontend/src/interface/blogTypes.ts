@@ -1,6 +1,6 @@
 /** @format */
 
-import { ICategory } from "./category";
+import { ICategory } from "./categoryTypes";
 
 export interface IBlogSimplify {
   _id: string;
