@@ -3,11 +3,9 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider } from "react-redux";
-import { lazy, useEffect } from "react";
+import { lazy } from "react";
 import "./styles/general.scss";
 import { store } from "./redux/store.ts";
-import { refreshThunk } from "./redux/authSlice.ts";
-import { useAppDispatch } from "./hook/reduxHooks.ts";
 
 // lazy load
 const AppLayout = lazy(() => import("./layout/AppLayout.tsx"));
@@ -29,12 +27,6 @@ const queryClient = new QueryClient({
 });
 
 function App() {
-  // auto login when reload/open website
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(refreshThunk());
-  }, [dispatch]);
-
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>

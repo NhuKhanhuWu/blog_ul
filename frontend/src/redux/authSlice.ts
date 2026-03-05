@@ -8,6 +8,7 @@ import {
 } from "../interface/authTypes";
 import { login, logout as logoutService } from "../api/auth/log";
 import refresh from "../api/auth/refresh";
+import { getMe } from "../api/user/getMe";
 
 interface ISetCredentialsPayload {
   user: IUser;
@@ -32,8 +33,12 @@ export const refreshThunk = createAsyncThunk("auth/refresh", async () => {
   return await refresh();
 });
 
-export const logoutThunk = createAsyncThunk("auth/refresh", async () => {
+export const logoutThunk = createAsyncThunk("auth/logout", async () => {
   return await logoutService();
+});
+
+export const getMeThunk = createAsyncThunk("user/getMe", async () => {
+  return await getMe();
 });
 
 const authSlide = createSlice({
@@ -78,13 +83,17 @@ const authSlide = createSlice({
 
       // refresh token
       .addCase(refreshThunk.fulfilled, (state, action) => {
-        state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
         state.isAuthenticated = true;
       })
 
+      // get me
+      .addCase(getMeThunk.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+
       // logout
-      .addCase(loginThunk.fulfilled, (state) => {
+      .addCase(logoutThunk.fulfilled, (state) => {
         state.user = null;
         state.accessToken = null;
         state.isAuthenticated = false;
