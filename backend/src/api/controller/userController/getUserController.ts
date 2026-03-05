@@ -11,16 +11,13 @@ const GET_BY_SLUG_FIELDS = {
 
 export const getMeController = catchAsync(async (req, res) => {
   // get user from req object
+  // const userId = req.user?._id;
   const user = req.user;
-  const { accessToken } = req;
 
   // send response
   res.status(200).json({
     status: "success",
-    data: {
-      user,
-    },
-    accessToken,
+    user,
   });
 });
 
