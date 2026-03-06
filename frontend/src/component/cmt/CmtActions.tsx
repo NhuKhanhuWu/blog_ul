@@ -1,7 +1,7 @@
 /** @format */
 
 import { FaRegThumbsDown, FaRegThumbsUp } from "react-icons/fa";
-import { ICmt } from "../../interface/cmt";
+import { ICmt } from "../../interface/cmtTypes";
 import styles from "../../styles/component/BlogCmt.module.scss";
 import { MdOutlineMessage } from "react-icons/md";
 

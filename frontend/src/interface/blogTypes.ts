@@ -57,7 +57,7 @@ export interface IBlogDetail {
   updatedAt: Date;
 }
 
-export type NormalizedContent =
+export type TNormalizedContent =
   | { type: "title"; text: string }
   | { type: "section"; text: string }
   | { type: "quote"; text: string }
@@ -66,6 +66,6 @@ export type NormalizedContent =
   | { type: "paragraph"; text: string }
   | { type: "image"; img: string; note?: string };
 
-export type INormalizedBlog = Omit<IBlogDetail, "content"> & {
-  content: NormalizedContent[];
+export type TNormalizedBlog = Omit<IBlogDetail, "content"> & {
+  content: TNormalizedContent[];
 };

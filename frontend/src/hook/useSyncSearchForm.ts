@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useSearch } from "../context/SearchContext";
-import { SearchFormValues } from "../interface/searchTypes";
+import { TSearchFormValues } from "../interface/searchTypes";
 import { useFormContext } from "react-hook-form";
 
 type Logic = "or" | "and";
@@ -21,7 +21,7 @@ function useSyncSearchForm() {
   // ---- synch url with state and form ----
   const { dispatch } = useSearch();
   const [searchParams] = useSearchParams();
-  const { reset } = useFormContext<SearchFormValues>();
+  const { reset } = useFormContext<TSearchFormValues>();
 
   const categories = searchParams.get("category") || "";
   const title = searchParams.get("title") || "";
