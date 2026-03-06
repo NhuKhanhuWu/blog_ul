@@ -121,6 +121,14 @@
     display: block;
   }
 
+  .logo {
+    display: flex;
+
+    img {
+      width: 8rem;
+    }
+  }
+
   .navBar {
     justify-content: space-between;
     padding: 1rem 2rem;
@@ -128,7 +136,7 @@
 
   .navLink {
     flex-direction: row;
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 500;
     gap: 3rem;
   }

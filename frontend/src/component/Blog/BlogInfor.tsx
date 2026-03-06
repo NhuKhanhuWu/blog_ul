@@ -1,7 +1,7 @@
 /** @format */
 
 import styles from "../../styles/component/BlogInfor.module.scss";
-import { INormalizedBlog, NormalizedContent } from "../../interface/blog";
+import { INormalizedBlog, NormalizedContent } from "../../interface/blogTypes";
 import { Link } from "react-router-dom";
 import { formatDate } from "../../utils/date";
 

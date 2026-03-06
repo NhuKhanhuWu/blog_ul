@@ -1,7 +1,7 @@
 /** @format */
 
 import { FaRegThumbsUp } from "react-icons/fa";
-import { IBlogCard } from "../../interface/blog";
+import { IBlogCard } from "../../interface/blogTypes";
 import styles from "../../styles/component/BlogList.module.scss";
 import { formatDate } from "../../utils/date";
 import { Link } from "react-router-dom";

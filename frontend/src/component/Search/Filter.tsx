@@ -1,10 +1,10 @@
 /** @format */
 
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { ICategory } from "../../interface/category";
+import { ICategory } from "../../interface/categoryTypes";
 import styles from "../../styles/component/SearchBar.module.scss";
 import { useFormContext } from "react-hook-form";
-import { SearchFormValues } from "../../interface/search";
+import { SearchFormValues } from "../../interface/searchTypes";
 import { useCategories } from "../../hook/useCategories";
 import { useDebounce } from "../../hook/useDebounce";
 

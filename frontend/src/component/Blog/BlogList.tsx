@@ -2,7 +2,7 @@
 
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSearch } from "../../context/SearchContext";
-import { SearchState } from "../../state/searchReducer";
+import { SearchState } from "../../reducer/searchReducer";
 import BlogCard from "./BlogCard";
 import { getBlogs } from "../../api/blog/getBlog";
 import Loader from "../Loader";
