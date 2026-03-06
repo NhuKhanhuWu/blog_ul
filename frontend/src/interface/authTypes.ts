@@ -16,7 +16,9 @@ export interface IAuthResponse {
 export interface IAuthState extends IAuthResponse {
   isAuthenticated: boolean;
   isLoading: boolean;
+  error: string | null;
 }
+
 export interface ILogin {
   email: string;
   password: string;

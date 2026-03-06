@@ -9,6 +9,8 @@ import {
 import { login, logout as logoutService } from "../api/auth/log";
 import refresh from "../api/auth/refresh";
 import { getMe } from "../api/user/getMe";
+import axios from "axios";
+import { IApiError } from "../interface/api";
 
 interface ISetCredentialsPayload {
   user: IUser;
@@ -20,14 +22,30 @@ const initialState: IAuthState = {
   accessToken: null,
   isAuthenticated: false,
   isLoading: false,
+  error: null,
 };
 
-export const loginThunk = createAsyncThunk<IAuthResponse, ILogin>(
-  "auth/login",
-  async ({ email, password }) => {
-    return await login({ email, password });
-  },
-);
+// export const loginThunk = createAsyncThunk<IAuthResponse, ILogin>(
+//   "auth/login",
+//   async ({ email, password }) => {
+//     return await login({ email, password });
+//   },
+// );
+export const loginThunk = createAsyncThunk<
+  IAuthResponse,
+  ILogin,
+  { rejectValue: string }
+>("auth/login", async (data, { rejectWithValue }) => {
+  try {
+    return await login(data);
+  } catch (error) {
+    if (axios.isAxiosError<IApiError>(error)) {
+      return rejectWithValue(error.response?.data.message ?? "Login failed");
+    }
+
+    return rejectWithValue("Something went wrong");
+  }
+});
 
 export const refreshThunk = createAsyncThunk("auth/refresh", async () => {
   return await refresh();
@@ -76,9 +94,11 @@ const authSlide = createSlice({
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
         state.isAuthenticated = true;
+        state.error = null;
       })
-      .addCase(loginThunk.rejected, (state) => {
+      .addCase(loginThunk.rejected, (state, action) => {
         state.isLoading = false;
+        state.error = action.payload ?? action.error.message ?? null;
       })
 
       // refresh token

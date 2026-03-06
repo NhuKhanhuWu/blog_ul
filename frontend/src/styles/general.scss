@@ -14,6 +14,10 @@ html {
   @include respond(lg) {
     font-size: 62.5%; // 1rem = 10px
   }
+
+  @include respond(xl) {
+    font-size: 75%; // 1rem = 12px
+  }
 }
 
 body {
@@ -49,6 +53,7 @@ blockquote {
 
 input {
   outline: none;
+  border: none;
 }
 
 input[type="checkbox"] {
@@ -124,7 +129,7 @@ select {
   .error-mgs {
     color: rgb(188, 69, 69);
     font-style: italic;
-    font-size: 1.2rem;
+    font-size: 1.6rem;
     font-weight: 300;
   }
 
@@ -152,6 +157,11 @@ select {
     justify-content: center;
     align-items: center;
     font-family: "Parkinsans", sans-serif;
+  }
+
+  .btn-reset--input {
+    font-size: 2rem;
+    color: $dark-400;
   }
 
   .disabled {
