@@ -4,7 +4,7 @@ import { Dispatch, ReactNode, SetStateAction, useMemo, useState } from "react";
 import { Sheet } from "react-modal-sheet";
 
 import defaultAvatar from "../../utils/defaultAvatar";
-import { ICmt } from "../../interface/cmt";
+import { ICmt } from "../../interface/cmtTypes";
 import Loader from "../Loader";
 import Error from "../Error";
 import CmtForm from "./CmtForm";
