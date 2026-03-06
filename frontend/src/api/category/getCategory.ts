@@ -1,6 +1,6 @@
 /** @format */
 
-import { ICategoriesResponse } from "../../interface/category";
+import { ICategoriesResponse } from "../../interface/categoryTypes";
 import axiosInstance from "../../utils/axiosInstance";
 
 export async function getCategories(

@@ -10,7 +10,7 @@ import Sort from "./Sort";
 import Filter from "./Filter";
 import styles from "../../styles/component/SearchBar.module.scss";
 import useSyncSearchForm from "../../hook/useSyncSearchForm";
-import { formSchema, SearchFormValues } from "../../interface/search";
+import { formSchema, SearchFormValues } from "../../interface/searchTypes";
 import { useSearchParams } from "react-router-dom";
 import { updateSearchUrl } from "../../utils/updateSearchUrl";
 

@@ -2,7 +2,7 @@
 
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSearch } from "../../context/SearchContext";
-import { SearchState } from "../../state/searchReducer";
+import { SearchState } from "../../reducer/searchReducer";
 import BlogCard from "./BlogCard";
 import { getBlogs } from "../../api/blog/getBlog";
 import Loader from "../Loader";
@@ -11,6 +11,7 @@ import styles from "../../styles/component/BlogList.module.scss";
 import InfinityObserver from "../InfinityObserver";
 import { useIntersectionObserver } from "../../hook/useIntersectionObserver";
 import NotFound from "../NotFound";
+import { useMemo } from "react";
 
 function getQuery(state: SearchState) {
   const { title, sort, categories, logic } = state;
@@ -44,11 +45,13 @@ function BlogList() {
     isFetchingNextPage || isPending,
     hasNextPage,
   );
+  const blogs = useMemo(
+    () => data?.pages.flatMap((page) => page.data) ?? [],
+    [data?.pages],
+  );
 
   if (isPending) return <Loader />;
   if (isError) return <Error />;
-
-  const blogs = data?.pages.flatMap((page) => page.data) ?? [];
 
   if (blogs.length === 0) return <NotFound message="No result found" />;
 
