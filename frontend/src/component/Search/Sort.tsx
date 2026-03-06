@@ -1,11 +1,11 @@
 /** @format */
 
 import { useFormContext } from "react-hook-form";
-import { SearchFormValues } from "../../interface/searchTypes";
+import { TSearchFormValues } from "../../interface/searchTypes";
 import styles from "../../styles/component/SearchBar.module.scss";
 
 function Sort() {
-  const { register } = useFormContext<SearchFormValues>();
+  const { register } = useFormContext<TSearchFormValues>();
 
   return (
     <div className={styles.searchOption}>

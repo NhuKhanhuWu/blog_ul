@@ -2,7 +2,7 @@
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { Link } from "react-router-dom";
 import styles from "../../styles/component/BlogCmt.module.scss";
-import { ICmt } from "../../interface/cmt";
+import { ICmt } from "../../interface/cmtTypes";
 import { Dispatch, memo, SetStateAction, useMemo, useState } from "react";
 import defaultAvatar from "../../utils/defaultAvatar";
 import { useInfiniteQuery } from "@tanstack/react-query";

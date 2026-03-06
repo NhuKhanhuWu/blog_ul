@@ -1,7 +1,7 @@
 /** @format */
 
 import { Dispatch, SetStateAction } from "react";
-import { ICmt } from "../../interface/cmt";
+import { ICmt } from "../../interface/cmtTypes";
 import styles from "../../styles/component/BlogCmt.module.scss";
 import { Link } from "react-router-dom";
 import { getDateDistance } from "../../utils/date";

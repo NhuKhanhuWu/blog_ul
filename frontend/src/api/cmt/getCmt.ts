@@ -1,6 +1,6 @@
 /** @format */
 
-import { IGetCmtRes } from "../../interface/cmt";
+import { IGetCmtRes } from "../../interface/cmtTypes";
 import axiosInstance from "../../utils/axiosInstance";
 
 interface IGetCmtByBlog {
