@@ -24,6 +24,7 @@ const getCmt = (baseQuery: Query<any, any>) =>
     await queryInstance.paginate();
 
     // query
+    // TODO: exclude cmt that has been deleted
     const cmt = await queryInstance.query.populate(
       "userId",
       "avatar name slug",
