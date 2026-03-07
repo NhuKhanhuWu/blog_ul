@@ -10,7 +10,7 @@ import { login, logout as logoutService } from "../api/auth/log";
 import refresh from "../api/auth/refresh";
 import { getMe } from "../api/user/getMe";
 import axios from "axios";
-import { IApiError } from "../interface/api";
+import { IApiError } from "../interface/apiTypes";
 
 interface ISetCredentialsPayload {
   user: IUser;
@@ -25,12 +25,6 @@ const initialState: IAuthState = {
   error: null,
 };
 
-// export const loginThunk = createAsyncThunk<IAuthResponse, ILogin>(
-//   "auth/login",
-//   async ({ email, password }) => {
-//     return await login({ email, password });
-//   },
-// );
 export const loginThunk = createAsyncThunk<
   IAuthResponse,
   ILogin,

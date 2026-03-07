@@ -14,10 +14,6 @@ html {
   @include respond(lg) {
     font-size: 62.5%; // 1rem = 10px
   }
-
-  @include respond(xl) {
-    font-size: 75%; // 1rem = 12px
-  }
 }
 
 body {
@@ -194,6 +190,11 @@ select {
 
 .hidden {
   display: none !important;
+}
+
+.highlight-txt {
+  font-weight: 600;
+  font-style: italic;
 }
 
 .smTxt {

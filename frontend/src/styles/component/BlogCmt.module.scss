@@ -41,9 +41,11 @@
   padding: 0 2rem;
 }
 
-.cmtForm {
+.cmtForm,
+.notLoginMgs {
   border-bottom: 1px $dark-200 solid;
   padding: 1rem 0;
+  font-size: 1.6rem;
 }
 
 .cmts {

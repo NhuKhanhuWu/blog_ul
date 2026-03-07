@@ -85,6 +85,7 @@ const CmtItem = memo(({ cmt }: { cmt: ICmt }) => {
   const [isShowReply, setIsShowReply] = useState(false);
   const { blogId = "" } = cmt;
 
+  // -------------fetch cmt's replies-------------
   const { data, isFetchingNextPage, isError, hasNextPage, fetchNextPage } =
     useInfiniteQuery({
       queryKey: ["cmt", blogId, cmt._id],
@@ -99,10 +100,12 @@ const CmtItem = memo(({ cmt }: { cmt: ICmt }) => {
       getNextPageParam: (lastPage) => lastPage.nextPage,
       enabled: isShowReply,
     });
+
   const replies = useMemo(
     () => data?.pages.flatMap((p) => p.data) || [],
     [data?.pages],
   );
+  // -------------fetch cmt's replies-------------
 
   return (
     <div className={styles.cmtItemContainer}>
@@ -127,14 +130,14 @@ const CmtItem = memo(({ cmt }: { cmt: ICmt }) => {
         </div>
 
         {/* replies */}
-        {isShowReply && (
+        <div className={!isShowReply ? "hidden" : ""}>
           <Replies
             fetchNextPage={fetchNextPage}
             hasNextPage={hasNextPage}
             isFetchingNextPage={isFetchingNextPage}
             replies={replies}
           />
-        )}
+        </div>
 
         {/* show replies btn */}
         {cmt.replyCount > 0 && (
