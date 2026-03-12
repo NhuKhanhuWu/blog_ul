@@ -11,8 +11,12 @@ function AppLayout() {
   const dispatch = useAppDispatch();
   useEffect(() => {
     // refresh token & get user infor when reload to store in redux
-    dispatch(refreshThunk());
-    dispatch(getMeThunk());
+    const initAuth = async () => {
+      await dispatch(refreshThunk());
+      await dispatch(getMeThunk());
+    };
+
+    initAuth();
   }, [dispatch]);
 
   return (
