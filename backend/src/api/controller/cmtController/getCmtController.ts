@@ -31,7 +31,7 @@ const getCmt = (baseQuery: Query<any, any>) =>
     const amount = cmt.length;
 
     // get page
-    const limit = 20;
+    const limit = Number(queryObject.limit) || 20;
     const totalPages = Math.ceil(queryInstance.totalResults / limit);
     const page = Number(queryObject.page) || 0;
     const nextPage = page + 1 < totalPages ? page + 1 : undefined;
