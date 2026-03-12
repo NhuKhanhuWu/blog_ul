@@ -63,8 +63,8 @@ const authSlide = createSlice({
       state.isAuthenticated = true;
     },
 
-    setAccessToken: (state, action: PayloadAction<ISetCredentialsPayload>) => {
-      state.accessToken = action.payload.accessToken;
+    setAccessToken: (state, action: PayloadAction<string>) => {
+      state.accessToken = action.payload;
     },
 
     logout: (state) => {

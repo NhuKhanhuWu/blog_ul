@@ -8,7 +8,7 @@ import { getBLog } from "../api/blog/getBlog";
 import NotFound from "../component/NotFound";
 import Loader from "../component/Loader";
 import normalizeBlog from "../utils/normalizeHeading";
-import { IBlogDetail } from "../interface/blog";
+import { IBlogDetail } from "../interface/blogTypes";
 import { AxiosError } from "axios";
 import styles from "../styles/page/BlogDetail.module.scss";
 

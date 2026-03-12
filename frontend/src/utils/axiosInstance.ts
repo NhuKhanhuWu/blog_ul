@@ -3,6 +3,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { store } from "../redux/store";
 import { setAccessToken } from "../redux/authSlice";
+import refresh from "../api/auth/refresh";
 
 interface IRetryAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -71,13 +72,9 @@ axiosInstance.interceptors.response.use(
 
       // request new token
       try {
-        const response = await axiosInstance.post(
-          `${BASE_URL}/user/refresh-token`,
-          {},
-          { withCredentials: true },
-        );
+        const response = await refresh();
 
-        const newAccessToken = response.data.accessToken;
+        const newAccessToken = response.accessToken || "";
 
         // store new token in redux
         store.dispatch(setAccessToken(newAccessToken));

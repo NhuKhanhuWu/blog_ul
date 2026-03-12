@@ -3,10 +3,12 @@
 import * as yup from "yup";
 import { Link } from "react-router-dom";
 
-import { useAppSelector } from "../../hook/reduxHooks";
-import styles from "../../styles/component/BlogCmt.module.scss";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+
+import { useAppSelector } from "../../hook/reduxHooks";
+import styles from "../../styles/component/BlogCmt.module.scss";
+import defaultAvatar from "../../utils/defaultAvatar";
 
 const formSchema = yup.object().shape({
   content: yup
@@ -15,6 +17,8 @@ const formSchema = yup.object().shape({
     .required(),
 });
 
+type TFormSchema = yup.InferType<typeof formSchema>;
+
 function CmtForm() {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const {
@@ -22,6 +26,10 @@ function CmtForm() {
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: yupResolver(formSchema) });
+  const username = useAppSelector((state) => state.auth.user?.name) || "";
+  const avatar =
+    useAppSelector((state) => state.auth.user?.avatar) ||
+    defaultAvatar(username);
 
   if (!isAuthenticated) {
     return (
@@ -34,10 +42,21 @@ function CmtForm() {
     );
   }
 
+  function submitHandler(data: TFormSchema) {}
+
   return (
-    <div className={styles.cmtForm}>
-      <input placeholder="Write your comment" className="input"></input>
-    </div>
+    <form onSubmit={handleSubmit(submitHandler)} className={styles.cmtForm}>
+      <div className={styles.formInput}>
+        <img loading="lazy" alt={username} src={avatar} />
+        <input
+          {...register("content")}
+          placeholder="Write your comment"
+          className="input"></input>
+        <button className="btn-primary">Send</button>
+      </div>
+
+      {errors.content && <p className="error-mgs">{errors.content.message}</p>}
+    </form>
   );
 }
 
