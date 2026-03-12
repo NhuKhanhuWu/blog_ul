@@ -13,6 +13,7 @@ export interface IUserInput {
 export interface IUserDocument extends Document {
   _id: Types.ObjectId; // MongoDB always uses ObjectId
   name: string;
+  slug: string;
   email: string;
   password?: string | undefined; // select: false makes it optional
   passwordConfirm?: string | undefined; // deleted after creation => optional

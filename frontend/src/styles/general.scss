@@ -37,8 +37,19 @@ button {
   background-color: transparent;
 }
 
+blockquote {
+  font-style: italic;
+  font-size: 2.2rem;
+  line-height: 1.2;
+  padding: 1rem;
+  border-left: 6px solid $light-600;
+  margin: 1rem 0;
+  font-family: "Forum", serif;
+}
+
 input {
   outline: none;
+  border: none;
 }
 
 input[type="checkbox"] {
@@ -114,7 +125,7 @@ select {
   .error-mgs {
     color: rgb(188, 69, 69);
     font-style: italic;
-    font-size: 1.2rem;
+    font-size: 1.6rem;
     font-weight: 300;
   }
 
@@ -142,6 +153,11 @@ select {
     justify-content: center;
     align-items: center;
     font-family: "Parkinsans", sans-serif;
+  }
+
+  .btn-reset--input {
+    font-size: 2rem;
+    color: $dark-400;
   }
 
   .disabled {
@@ -174,4 +190,14 @@ select {
 
 .hidden {
   display: none !important;
+}
+
+.highlight-txt {
+  font-weight: 600;
+  font-style: italic;
+}
+
+.smTxt {
+  font-weight: 300;
+  font-size: 1.2rem;
 }

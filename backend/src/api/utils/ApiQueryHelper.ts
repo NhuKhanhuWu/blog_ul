@@ -10,7 +10,6 @@ const EXCLUDED_FIELDS = [
   "sort",
   "limit",
   "fields",
-  "genres",
   "title",
   "match",
   "name",
@@ -113,6 +112,11 @@ class ApiQueryHelper {
 
   filter(allowedFields: string[] = []) {
     const mongoQuery = this._buildMongoQuery(allowedFields);
+
+    if (mongoQuery.parentId === "null") {
+      mongoQuery.parentId = null;
+    }
+
     this.query = this.query.find(mongoQuery);
 
     return this;
@@ -120,8 +124,9 @@ class ApiQueryHelper {
 
   searchByTitle() {
     const { title } = this.queryString;
-    const checkedTitle = title.trim();
+    if (!title) return this; //in case user does not pass title in params
 
+    const checkedTitle = title.trim();
     if (!checkedTitle) return this;
 
     this.query = this.query.find({ $text: { $search: String(title) } });
