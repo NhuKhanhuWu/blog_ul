@@ -165,7 +165,7 @@ class ApiQueryHelper {
 
   async paginate() {
     const page = Number(this.queryString.page) || 0;
-    const limit = Number(this.queryString.limit) || 20;
+    const limit = Math.min(Number(this.queryString.limit) || 20, 20);
     const skip = page * limit;
 
     // Get total count before applying pagination

@@ -89,11 +89,12 @@ const CmtItem = memo(({ cmt }: { cmt: ICmt }) => {
   const { data, isFetchingNextPage, isError, hasNextPage, fetchNextPage } =
     useInfiniteQuery({
       queryKey: ["cmt", blogId, cmt._id],
-      queryFn: ({ pageParam = 0 }) =>
+      queryFn: ({ pageParam: page = 0 }) =>
         getCmtByBlog({
           blogId,
           sort: "createdAt",
-          pageParam,
+          page,
+          limit: 3,
           parentId: cmt._id,
         }),
       initialPageParam: 0,
