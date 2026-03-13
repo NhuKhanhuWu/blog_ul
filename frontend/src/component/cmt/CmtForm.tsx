@@ -9,6 +9,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppSelector } from "../../hook/reduxHooks";
 import styles from "../../styles/component/BlogCmt.module.scss";
 import defaultAvatar from "../../utils/defaultAvatar";
+import { IoSendSharp } from "react-icons/io5";
 
 const formSchema = yup.object().shape({
   content: yup
@@ -42,17 +43,27 @@ function CmtForm() {
     );
   }
 
-  function submitHandler(data: TFormSchema) {}
+  function submitHandler(data: TFormSchema) {
+    console.log(data);
+  }
 
   return (
     <form onSubmit={handleSubmit(submitHandler)} className={styles.cmtForm}>
       <div className={styles.formInput}>
-        <img loading="lazy" alt={username} src={avatar} />
+        <img
+          loading="lazy"
+          alt={username}
+          src={avatar}
+          className={styles.avatar}
+        />
         <input
           {...register("content")}
           placeholder="Write your comment"
           className="input"></input>
-        <button className="btn-primary">Send</button>
+
+        <button className={styles.sendCmtBtn}>
+          <IoSendSharp />
+        </button>
       </div>
 
       {errors.content && <p className="error-mgs">{errors.content.message}</p>}

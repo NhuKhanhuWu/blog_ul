@@ -2,7 +2,7 @@
 
 import { useParams } from "react-router-dom";
 import BlogInfor from "../component/Blog/BlogInfor";
-import BlogCmt from "../component/cmt/BlogCmt";
+import BlogCmt from "../component/Cmt/BlogCmt";
 import { useQuery } from "@tanstack/react-query";
 import { getBLog } from "../api/blog/getBlog";
 import NotFound from "../component/NotFound";

@@ -55,7 +55,6 @@ function Replies({
 
 function LoadRepliesBtn({
   cmt,
-  replies,
   isShowReplies,
   setShowReplies,
   isLoading,
@@ -66,16 +65,20 @@ function LoadRepliesBtn({
   if (isError) return <span className="error-mgs">Something went wrong</span>;
 
   return (
-    <button onClick={() => setShowReplies(!isShowReplies)}>
-      {cmt.replyCount > replies.length || !isShowReplies ? (
-        <>
-          Show replies <IoIosArrowDown />
-        </>
-      ) : (
-        <>
-          Hide replies <IoIosArrowUp />
-        </>
-      )}
+    <button
+      className="btn-show-replies"
+      onClick={() => setShowReplies(!isShowReplies)}>
+      <span className="icon">
+        {isShowReplies ? <IoIosArrowUp /> : <IoIosArrowDown />}
+      </span>
+
+      <span className="text">
+        {!isShowReplies
+          ? // state 1: closing -> show total replies
+            `${cmt.replyCount} replies`
+          : // state 2: opening -> show hide replies
+            "Hide replies"}
+      </span>
     </button>
   );
 }
