@@ -100,8 +100,8 @@ function BlogCmtMobile({ blogId }: { blogId: string }) {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ["cmt", sort, blogId],
-    queryFn: ({ pageParam = 0 }) => getCmtByBlog({ blogId, sort, pageParam }),
+    queryKey: ["cmt", blogId, sort],
+    queryFn: ({ pageParam: page = 0 }) => getCmtByBlog({ blogId, sort, page }),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.nextPage,
   });

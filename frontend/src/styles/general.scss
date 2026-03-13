@@ -1,24 +1,61 @@
 /** @format */
-// sm: 480px,
-// md: 768px,
-// lg: 1024px,
-// xl: 1280px,
+
+/** @format */
+// Biến Sass tĩnh (giữ lại để tham chiếu nếu cần)
+$dark-900: #1a1a1a; // Ví dụ giá trị
+$dark-400: #717171;
+$light-200: #f4f4f4;
+$light-600: #d1d1d1;
+$error-red: rgb(188, 69, 69);
+
+:root {
+  font-family: "Parkinsans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+
+  // --- LIGHT MODE (Mặc định) ---
+  --bg-body: #{$light-200};
+  --text-main: #{$dark-900};
+  --text-muted: #{$dark-400};
+  --border-color: #{$dark-900};
+  --accent-color: #{$dark-900};
+  --btn-bg-primary: #{$dark-900};
+  --btn-text-primary: #{$light-200};
+  --error-color: #{$error-red};
+  --quote-border: #{$light-600};
+}
+
+// --- DARK MODE CONFIG ---
+[data-theme="dark"] {
+  --bg-body: #121212;
+  --text-main: #f5f5f5;
+  --text-muted: #a0a0a0;
+  --border-color: #f5f5f5;
+  --accent-color: #3b82f6; // Màu xanh nhẹ cho dark mode dễ nhìn hơn
+  --btn-bg-primary: #f5f5f5;
+  --btn-text-primary: #121212;
+  --error-color: #ff6b6b;
+  --quote-border: #444;
+}
 
 html {
-  font-size: 50%; // 1rem = 8px
-
+  font-size: 50%;
   @include respond(md) {
-    font-size: 56.25%; // 1rem = 9px
+    font-size: 56.25%;
   }
-
   @include respond(lg) {
-    font-size: 62.5%; // 1rem = 10px
+    font-size: 62.5%;
   }
 }
 
 body {
-  background-color: var(--light-200);
+  background-color: var(--bg-body);
+  color: var(--text-main); // Thêm dòng này để text tự đổi màu
   font-size: 1.4rem;
+  transition:
+    background-color 0.3s,
+    color 0.3s; // Giúp chuyển mode mượt hơn
 }
 
 * {
@@ -29,12 +66,7 @@ body {
 
 a {
   text-decoration: none;
-  color: var(--dark-900);
-}
-
-button {
-  border: none;
-  background-color: transparent;
+  color: var(--text-main);
 }
 
 blockquote {
@@ -42,65 +74,53 @@ blockquote {
   font-size: 2.2rem;
   line-height: 1.2;
   padding: 1rem;
-  border-left: 6px solid $light-600;
+  border-left: 6px solid var(--quote-border);
   margin: 1rem 0;
   font-family: "Forum", serif;
+}
+
+button {
+  border: none;
+  background-color: transparent;
 }
 
 input {
   outline: none;
   border: none;
+  background-color: transparent; // Để không bị đè màu trắng mặc định
+  color: var(--text-main);
 }
 
 input[type="checkbox"] {
   appearance: none;
   width: 20px;
   height: 20px;
-  border: 1px solid $dark-900;
-  border-radius: 0px;
+  border: 1px solid var(--border-color);
   cursor: pointer;
+
+  &:checked {
+    background-color: var(--accent-color);
+  }
 }
 
 input[type="radio"] {
   width: 18px;
   height: 18px;
+  accent-color: var(--accent-color);
 }
 
 select {
   height: 3.8rem;
   border: none;
   padding: 0.6rem 1.6rem;
-}
-
-:root {
-  font-family: "Parkinsans", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.checkbox {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.vertical-center {
-  display: flex;
-  align-items: center;
-}
-
-.flex-1 {
-  flex: 1;
-}
-
-.link {
-  cursor: pointer;
-  text-decoration: underline;
+  background-color: transparent;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .input {
   border: none;
-  border-bottom: 1px $dark-900 solid;
+  border-bottom: 1px var(--border-color) solid;
   padding: 0.4rem 1.4rem;
   width: 100%;
   display: flex;
@@ -109,95 +129,53 @@ select {
   height: 2.6rem;
 }
 
-.light {
-  input[type="checkbox"]:checked {
-    background-color: $dark-900;
-  }
-
-  input[type="radio"] {
-    accent-color: $dark-900;
-  }
-
-  select {
-    border-bottom: 1px solid $dark-900;
-  }
-
-  .error-mgs {
-    color: rgb(188, 69, 69);
-    font-style: italic;
-    font-size: 1.6rem;
-    font-weight: 300;
-  }
-
-  .btn-secondary,
-  .btn-primary:hover {
-    border: 1px solid $dark-900;
-    transition: all 0.3s;
-    background-color: $light-200;
-    color: $dark-900;
-    border-color: $dark-900;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: "Parkinsans", sans-serif;
-  }
-
-  .btn-secondary:hover,
-  .btn-primary {
-    border: 1px solid $dark-900;
-    background-color: $dark-900;
-    color: $light-200;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: "Parkinsans", sans-serif;
-  }
-
-  .btn-reset--input {
-    font-size: 2rem;
-    color: $dark-400;
-  }
-
-  .disabled {
-    color: $dark-400;
-    font-style: italic;
-    pointer-events: none;
-  }
+.error-mgs {
+  color: var(--error-color);
+  font-style: italic;
+  font-size: 1.6rem;
+  font-weight: 300;
 }
 
-.btn-dark {
-  background-color: $dark-900;
-  border: 1px solid;
-  color: $light-200;
-  transition: all 0.3s;
-}
-
-.btn-dark:hover {
-  background-color: $light-900;
-  color: $dark-200;
-  transition: all 0.3s;
-}
-
-.font-serif {
-  font-family: "Forum", serif;
-}
-
-.font-sans--serif {
+// Button logic dùng CSS variables
+.btn-primary {
+  border: 1px solid var(--border-color);
+  background-color: var(--btn-bg-primary);
+  color: var(--btn-text-primary);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-family: "Parkinsans", sans-serif;
+  transition: all 0.3s;
+
+  &:hover {
+    background-color: var(--bg-body);
+    color: var(--text-main);
+  }
+}
+
+.btn-secondary {
+  @extend .btn-primary; // Kế thừa từ primary
+  background-color: var(--bg-body);
+  color: var(--text-main);
+
+  &:hover {
+    background-color: var(--btn-bg-primary);
+    color: var(--btn-text-primary);
+  }
+}
+
+.btn-reset--input {
+  font-size: 2rem;
+  color: var(--text-muted);
+}
+
+.disabled {
+  color: var(--text-muted);
+  font-style: italic;
+  pointer-events: none;
 }
 
 .hidden {
-  display: none !important;
-}
-
-.highlight-txt {
-  font-weight: 600;
-  font-style: italic;
-}
-
-.smTxt {
-  font-weight: 300;
-  font-size: 1.2rem;
+  display: none;
 }

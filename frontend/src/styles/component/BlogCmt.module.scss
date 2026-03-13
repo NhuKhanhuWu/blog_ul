@@ -1,5 +1,6 @@
 /** @format */
 
+// --------- cmt item -----------
 .avatar {
   width: 4rem;
   border-radius: 999px;
@@ -44,7 +45,7 @@
 .cmtForm,
 .notLoginMgs {
   border-bottom: 1px $dark-200 solid;
-  padding: 1rem 0;
+  padding: 2rem 0;
   font-size: 1.6rem;
 }
 
@@ -103,4 +104,15 @@
     align-items: center;
     gap: 0.6rem;
   }
+}
+
+// ------- cmt form -------
+.formInput {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.sendCmtBtn {
+  font-size: 2rem;
 }
