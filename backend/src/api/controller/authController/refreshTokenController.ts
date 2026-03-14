@@ -48,7 +48,11 @@ export const refreshToken = catchAsync(async (req, res, next) => {
   // create new  token
   const { userId } = curRefreshToken;
   const accessToken = createAccessToken(userId.toString());
-  const newRefreshToken = createRefreshToken(userId.toString());
+
+  // the web have problem where new refresh token is not setted in cookie when revoke
+  // now use one refresh token for the entire session
+  //TODO: will fix this later
+  // const newRefreshToken = createRefreshToken(userId.toString());
 
   // update in db
   await Promise.all([
@@ -61,22 +65,24 @@ export const refreshToken = catchAsync(async (req, res, next) => {
       },
     ),
 
+    // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE -------------
     // create new token
-    RefreshToken.create({
-      token: newRefreshToken,
-      userId,
-      sessionExpiresAt: sessionExpireDate,
-    }),
+    // RefreshToken.create({
+    //   token: newRefreshToken,
+    //   userId,
+    //   sessionExpiresAt: sessionExpireDate,
+    // }),
   ]);
 
+  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE -------------
   // save new refresh token to cookie
-  res.cookie("refreshToken", newRefreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days
-    path: "/",
-  });
+  // res.cookie("refreshToken", newRefreshToken, {
+  //   httpOnly: true,
+  //   secure: process.env.NODE_ENV === "production",
+  //   sameSite: "lax",
+  //   maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days
+  //   path: "/",
+  // });
 
   // send response
   res.status(201).json({
