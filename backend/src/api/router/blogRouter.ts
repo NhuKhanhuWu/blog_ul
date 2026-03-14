@@ -17,6 +17,7 @@ import {
   cmtLimitersPerMin,
   createCmt,
 } from "../controller/cmtController/createCmtController";
+import { loadUser } from "../controller/authController/loadUserController";
 
 const blogRouter = express.Router();
 
@@ -40,7 +41,7 @@ blogRouter
 // get cmt
 blogRouter
   .route("/:id/cmt")
-  .get(getCmtByBlog)
+  .get(loadUser, getCmtByBlog)
   .post(protect, cmtLimitersPerHour, cmtLimitersPerMin, createCmt);
 
 export default blogRouter;
