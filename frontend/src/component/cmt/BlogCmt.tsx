@@ -64,9 +64,9 @@ function CmtModal({
           <p>{totalCmt} comments</p>
 
           <select name="sort" onChange={(e) => setSort(e.target.value)}>
-            <option value="-upVotes">Most related</option>
-            <option value="-createdAt">Newest</option>
-            <option value="createdAt">Oldest</option>
+            <option value="top">Most related</option>
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
           </select>
           {/* </div> */}
         </Sheet.Header>
@@ -89,7 +89,7 @@ function CmtModal({
 }
 
 function BlogCmtMobile({ blogId }: { blogId: string }) {
-  const [sort, setSort] = useState("-upVotes");
+  const [sort, setSort] = useState("top");
   const [isOpen, setIsOpen] = useState(false);
 
   const {
