@@ -12,19 +12,23 @@ import blogRouter from "./api/router/blogRouter";
 import blogListRouter from "./api/router/blogListRouter";
 import cmtRouter from "./api/router/cmtRouter";
 import voteRouter from "./api/router/voteRouter";
+import categoryRouter from "./api/router/categoryRouter";
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
 // trust origin only
-const allowedOrigins = ["https://blog-uk-frontend.onrender.com"];
+const allowedOrigins = [
+  "https://blog-uk-frontend.onrender.com",
+  "http://localhost:5173",
+];
 
 app.use(
   cors({
     origin: (og, cb) => {
       if (!og || allowedOrigins.includes(og)) {
-        cb(null, og);
+        cb(null, true);
       } else cb(new Error("Not allowed by CORS"));
     },
     credentials: true,
@@ -37,6 +41,7 @@ app.use("/api/v1/blogs", blogRouter);
 app.use("/api/v1/blog-list", blogListRouter);
 app.use("/api/v1/cmt", cmtRouter);
 app.use("/api/v1/votes", voteRouter);
+app.use("/api/v1/categories", categoryRouter);
 
 // ERROR
 // must use /* not *

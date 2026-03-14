@@ -38,7 +38,7 @@ export const updateBlog = catchAsync(async (req, res) => {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   // respond

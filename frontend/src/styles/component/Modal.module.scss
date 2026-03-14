@@ -1,0 +1,25 @@
+/** @format */
+
+.overlayContainer {
+  // Bao phủ toàn màn hình
+  position: fixed;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  // Đưa lên lớp trên cùng để chặn click vào phần tử dưới
+  z-index: 9999;
+
+  // Màu nền mờ tối
+  background-color: rgba(70, 70, 70, 0.5);
+
+  // Làm mờ các phần tử phía sau (Glassmorphism effect)
+  backdrop-filter: blur(4px);
+
+  .modalContent {
+    z-index: 10000;
+    height: fit-content;
+    width: fit-content;
+    margin: auto; // center of the screen
+  }
+}
