@@ -40,14 +40,14 @@
 
 .meta {
   font-size: 1.4rem;
-  color: $light-800;
+  color: var(--text-muted);
 }
 // ---- blog content styles ----
 
 // ---- category ----
 .categoriesContainer {
   margin-top: 2rem;
-  border-top: 2px solid $light-600;
+  border-top: 2px solid var(--text-muted);
   padding-top: 1rem;
 }
 

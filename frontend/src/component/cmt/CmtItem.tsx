@@ -1,161 +1,83 @@
 /** @format */
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { Link } from "react-router-dom";
 import styles from "../../styles/component/BlogCmt.module.scss";
 import { ICmt } from "../../interface/cmtTypes";
-import { Dispatch, memo, SetStateAction, useMemo, useState } from "react";
+import { memo, useMemo, useState, ReactNode } from "react";
 import defaultAvatar from "../../utils/defaultAvatar";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getCmtByBlog } from "../../api/cmt/getCmt";
 import CmtContent from "./CmtContent";
 import CmtActions from "./CmtActions";
+import ReplyBtns from "./ReplyBtns";
 
-interface IReplies {
-  replies: ICmt[];
-  hasNextPage: boolean | undefined;
-  isFetchingNextPage: boolean;
-  fetchNextPage: () => void;
-}
+// Component bọc ngoài để quản lý style chung
+const CmtLayout = ({ cmt, children }: { cmt: ICmt; children: ReactNode }) => (
+  <div className={styles.cmtItemContainer}>
+    <Link to={`/profile/${cmt.userId.slug}`}>
+      <img
+        className={styles.avatar}
+        src={cmt.userId.avatar ?? defaultAvatar(cmt.userId.slug)}
+        loading="lazy"
+        alt="avatar"
+      />
+    </Link>
+    <div className={styles.cmt}>{children}</div>
+  </div>
+);
 
-interface ILoadRepliesBtn {
-  cmt: ICmt;
-  replies: ICmt[];
-  isShowReplies: boolean;
-  setShowReplies: Dispatch<SetStateAction<boolean>>;
-  isLoading: boolean;
-  isError: boolean;
-}
-
-function Replies({
-  replies,
-  hasNextPage,
-  isFetchingNextPage,
-  fetchNextPage,
-}: IReplies) {
-  return (
-    <>
-      <div className={styles.repliesList}>
-        {replies.map((reply) => (
-          <CmtItem key={reply._id} cmt={reply} />
-        ))}
-
-        {/* load more btn for the replies if there are more */}
-        {hasNextPage && (
-          <button
-            onClick={() => fetchNextPage()}
-            disabled={isFetchingNextPage}
-            className={styles.loadMoreSmall}>
-            {isFetchingNextPage ? "Loading..." : "Show more replies"}
-          </button>
-        )}
-      </div>
-    </>
-  );
-}
-
-function LoadRepliesBtn({
-  cmt,
-  isShowReplies,
-  setShowReplies,
-  isLoading,
-  isError,
-}: ILoadRepliesBtn) {
-  if (isLoading) return <button className="disabled">Loading...</button>;
-
-  if (isError) return <span className="error-mgs">Something went wrong</span>;
-
-  return (
-    <button
-      className="btn-show-replies"
-      onClick={() => setShowReplies(!isShowReplies)}>
-      <span className="icon">
-        {isShowReplies ? <IoIosArrowUp /> : <IoIosArrowDown />}
-      </span>
-
-      <span className="text">
-        {!isShowReplies
-          ? // state 1: closing -> show total replies
-            `${cmt.replyCount} replies`
-          : // state 2: opening -> show hide replies
-            "Hide replies"}
-      </span>
-    </button>
-  );
-}
-
-const CmtItem = memo(({ cmt }: { cmt: ICmt }) => {
+const CmtItem = memo(({ cmt, depth = 0 }: { cmt: ICmt; depth?: number }) => {
   const [isExpand, setIsExpand] = useState(false);
   const [isShowReply, setIsShowReply] = useState(false);
-  const { blogId = "" } = cmt;
 
-  // -------------fetch cmt's replies-------------
+  // Logic fetch dữ liệu lồng vào đúng nơi cần thiết
   const { data, isFetchingNextPage, isError, hasNextPage, fetchNextPage } =
     useInfiniteQuery({
-      queryKey: ["cmt", blogId, cmt._id],
-      queryFn: ({ pageParam: page = 0 }) =>
+      queryKey: ["cmt-replies", cmt._id],
+      queryFn: ({ pageParam = 0 }) =>
         getCmtByBlog({
-          blogId,
+          blogId: cmt.blogId,
           sort: "createdAt",
-          page,
+          page: pageParam,
           limit: 3,
           parentId: cmt._id,
         }),
       initialPageParam: 0,
       getNextPageParam: (lastPage) => lastPage.nextPage,
-      enabled: isShowReply,
+      enabled: isShowReply && depth < 3, // Chống đệ quy vô hạn
     });
 
   const replies = useMemo(
     () => data?.pages.flatMap((p) => p.data) || [],
-    [data?.pages],
+    [data],
   );
-  // -------------fetch cmt's replies-------------
 
   return (
-    <div className={styles.cmtItemContainer}>
-      {/* --------- avatar ----------- */}
-      <Link to={`/profile/${cmt.userId.slug}`}>
-        <img
-          className={styles.avatar}
-          src={cmt.userId.avatar ?? defaultAvatar(cmt.userId.slug)}
-          loading="lazy"
-        />
-      </Link>
-
-      {/* -------- content-------- */}
-      <div className={styles.cmt}>
-        {/* text */}
-        <div className={styles.cmtTxt}>
-          {/* include user name, timestamp, cmt's content */}
-          <CmtContent cmt={cmt} isExpand={isExpand} setIsExpand={setIsExpand} />
-
-          {/* votes & replies btn */}
-          <CmtActions cmt={cmt} />
-        </div>
-
-        {/* replies */}
-        <div className={!isShowReply ? "hidden" : ""}>
-          <Replies
-            fetchNextPage={fetchNextPage}
-            hasNextPage={hasNextPage}
-            isFetchingNextPage={isFetchingNextPage}
-            replies={replies}
-          />
-        </div>
-
-        {/* show replies btn */}
-        {cmt.replyCount > 0 && (
-          <LoadRepliesBtn
-            cmt={cmt}
-            isShowReplies={isShowReply}
-            replies={replies}
-            setShowReplies={setIsShowReply}
-            isError={isError}
-            isLoading={isFetchingNextPage}
-          />
-        )}
+    <CmtLayout cmt={cmt}>
+      {/* Phần nội dung chính */}
+      <div className={styles.cmtTxt}>
+        <CmtContent cmt={cmt} isExpand={isExpand} setIsExpand={setIsExpand} />
+        <CmtActions cmt={cmt} />
       </div>
-    </div>
+
+      {/* Danh sách replies: Chỉ render khi mở */}
+      {isShowReply && (
+        <div className={styles.repliesList}>
+          {isError && <span className="error-mgs">Error loading replies</span>}
+          {replies.map((reply) => (
+            <CmtItem key={reply._id} cmt={reply} depth={depth + 1} />
+          ))}
+        </div>
+      )}
+
+      <ReplyBtns
+        cmt={cmt}
+        isOpen={isShowReply}
+        onToggle={() => setIsShowReply(!isShowReply)}
+        hasNextPage={hasNextPage}
+        onFetchNext={fetchNextPage}
+        isFetching={isFetchingNextPage}
+      />
+    </CmtLayout>
   );
 });
 
