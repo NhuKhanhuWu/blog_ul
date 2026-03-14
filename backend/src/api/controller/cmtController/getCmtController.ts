@@ -156,7 +156,7 @@ const getCmt = catchAsync(async (req, res) => {
   });
 
   const totalPages = Math.ceil(totalResult / limit);
-  const nextPage = page + 1 <= totalPages ? page + 1 : null;
+  const nextPage = page + 1 < totalPages ? page + 1 : null;
 
   res.status(200).json({
     status: "success",

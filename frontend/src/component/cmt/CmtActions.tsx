@@ -9,6 +9,8 @@ import { useToggleVote } from "../../hook/useToggleVote";
 function CmtActions({ cmt }: { cmt: ICmt }) {
   const { mutate, isPending } = useToggleVote();
 
+  // TODO: handle logic for upvote/down vote (send request & show button accordingly)
+
   const handleVote = (type: 1 | -1) => {
     // Gọi mutation
     mutate({
