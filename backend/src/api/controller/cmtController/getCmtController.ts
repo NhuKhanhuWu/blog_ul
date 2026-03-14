@@ -123,7 +123,6 @@ const getCommentsWithVote = async ({
       // 7. loai bo cac truong thua
       {
         $project: {
-          blogId: 0,
           isDeleted: 0,
           updatedAt: 0,
           userVote: 0,
