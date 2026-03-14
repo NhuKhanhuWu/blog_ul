@@ -8,7 +8,7 @@ interface IGetCmtByBlog {
   sort: string;
   page: number;
   limit?: number;
-  parentId?: string | null;
+  parentId?: string;
 }
 
 export async function getCmtByBlog({
@@ -16,7 +16,7 @@ export async function getCmtByBlog({
   sort,
   page,
   limit = 20,
-  parentId = null,
+  parentId = "",
 }: IGetCmtByBlog): Promise<IGetCmtRes> {
   const query = `sort=${sort}&page=${page}&parentId=${parentId}&limit=${limit}`;
   const data = await axiosInstance.get(`/blogs/${blogId}/cmt?${query}`);
