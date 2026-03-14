@@ -49,7 +49,28 @@ const getCommentsWithVote = async ({
       // 4. Giới hạn số document trả về
       { $limit: limit },
 
-      // 5. Join với collection "votes"
+      // 5. join voi user
+      {
+        $lookup: {
+          from: "users",
+          let: { user_id: "$userId" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$_id", "$$user_id"] } } },
+            { $project: { name: 1, slug: 1, avatar: 1 } },
+          ],
+          as: "userId",
+        },
+      },
+      { $unwind: "$userId" },
+
+      {
+        $unwind: {
+          path: "$userId",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+
+      // 6. Join với collection "votes"
       ...(userObjectId
         ? [
             {
@@ -98,6 +119,17 @@ const getCommentsWithVote = async ({
             { $unset: "userVote" },
           ]
         : [{ $addFields: { voteType: 0 } }]),
+
+      // 7. loai bo cac truong thua
+      {
+        $project: {
+          blogId: 0,
+          isDeleted: 0,
+          updatedAt: 0,
+          userVote: 0,
+          downVotes: 0,
+        },
+      },
     ]),
 
     CommentModel.countDocuments(filter),
@@ -124,10 +156,14 @@ const getCmt = catchAsync(async (req, res) => {
     userId,
   });
 
+  const totalPages = Math.ceil(totalResult / limit);
+  const nextPage = page + 1 <= totalPages ? page + 1 : null;
+
   res.status(200).json({
     status: "success",
     totalResult,
-    totalPages: Math.ceil(totalResult / limit),
+    totalPages,
+    nextPage,
     amount: comments.length,
     data: comments,
   });
