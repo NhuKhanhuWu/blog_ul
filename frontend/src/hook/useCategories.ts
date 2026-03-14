@@ -2,7 +2,7 @@
 
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getCategories } from "../api/category/getCategory";
-import { ICategoriesResponse } from "../interface/category";
+import { ICategoriesResponse } from "../interface/categoryTypes";
 
 export function useCategories(categoryName?: string) {
   return useInfiniteQuery<ICategoriesResponse, Error>({

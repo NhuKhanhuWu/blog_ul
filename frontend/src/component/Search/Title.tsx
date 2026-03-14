@@ -1,10 +1,10 @@
 /** @format */
 import { useFormContext } from "react-hook-form";
 import styles from "../../styles/component/SearchBar.module.scss";
-import { SearchFormValues } from "../../interface/search";
+import { TSearchFormValues } from "../../interface/searchTypes";
 
 export default function Title() {
-  const { register } = useFormContext<SearchFormValues>();
+  const { register } = useFormContext<TSearchFormValues>();
 
   return (
     <div className={styles.searchOption}>

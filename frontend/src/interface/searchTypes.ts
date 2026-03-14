@@ -17,4 +17,5 @@ export const formSchema = yup.object({
   categoryName: yup.string().default(""),
   categories: yup.array().of(yup.string().required()).default([]),
 });
-export type SearchFormValues = yup.InferType<typeof formSchema>;
+
+export type TSearchFormValues = yup.InferType<typeof formSchema>;

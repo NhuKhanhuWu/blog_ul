@@ -3,11 +3,11 @@
 import {
   IBlogDetail,
   IContentBlock,
-  INormalizedBlog,
-  NormalizedContent,
-} from "../interface/blog";
+  TNormalizedBlog,
+  TNormalizedContent,
+} from "../interface/blogTypes";
 
-function normalizeHeading(item: IContentBlock): NormalizedContent {
+function normalizeHeading(item: IContentBlock): TNormalizedContent {
   const text = item.text || "";
 
   if (item.heading === 1) {
@@ -33,7 +33,7 @@ function normalizeHeading(item: IContentBlock): NormalizedContent {
   return { type: "paragraph", text };
 }
 
-function normalizeBlog(blog: IBlogDetail): INormalizedBlog {
+function normalizeBlog(blog: IBlogDetail): TNormalizedBlog {
   return {
     ...blog,
     content: blog.content.map(normalizeHeading),
