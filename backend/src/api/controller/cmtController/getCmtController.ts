@@ -63,13 +63,6 @@ const getCommentsWithVote = async ({
       },
       { $unwind: "$userId" },
 
-      {
-        $unwind: {
-          path: "$userId",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-
       // 6. Join với collection "votes"
       ...(userObjectId
         ? [
@@ -114,9 +107,6 @@ const getCommentsWithVote = async ({
                 },
               },
             },
-
-            // 7. Xóa field userVote (không cần trả về cho client)
-            { $unset: "userVote" },
           ]
         : [{ $addFields: { voteType: 0 } }]),
 
@@ -172,9 +162,10 @@ export const getCmtByBlog = catchAsync(async (req, res, next) => {
   const blogId = new Types.ObjectId(req.params.id);
   const parentIdStr = req.query.parentId;
 
-  const parentId = parentIdStr
-    ? new Types.ObjectId(parentIdStr as string)
-    : null;
+  const parentId =
+    typeof parentIdStr === "string" && Types.ObjectId.isValid(parentIdStr)
+      ? new Types.ObjectId(parentIdStr)
+      : null;
 
   (req as any)._commentFilter = {
     parentId,
