@@ -1,6 +1,6 @@
 /** @format */
 
-import { IBlogDetail, IBlogSimplify } from "../../interface/blog";
+import { IBlogDetail, IBlogSimplify } from "../../interface/blogTypes";
 import axiosInstance from "../../utils/axiosInstance";
 
 interface IGetBlogs {

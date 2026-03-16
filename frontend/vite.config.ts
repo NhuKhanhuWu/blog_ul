@@ -19,7 +19,10 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/api": "http://localhost:3000", // only for local dev
+      "/api": {
+        target: "http://localhost:3000", // for development
+        changeOrigin: true,
+      },
     },
   },
   css: {

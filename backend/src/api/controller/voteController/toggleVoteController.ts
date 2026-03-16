@@ -45,12 +45,15 @@ const updateVoteScore = async ({
         : { upVotes: -1, downVotes: 1 };
   }
 
-  const result = await TargetModel.updateOne(
+  const target = await TargetModel.findOneAndUpdate(
     { _id: targetId },
     { $inc: update },
+    { new: true, select: "upVotes downVotes" },
   );
 
-  if (result.matchedCount === 0) throw new AppError("Target not found", 404);
+  if (!target) throw new AppError("Target not found", 404);
+
+  return target;
 };
 
 const getAction = ({
@@ -118,7 +121,7 @@ export const toggleVote = catchAsync(async (req, res) => {
   //--------- update/create/delete vote document -----------
 
   // update cache value in target
-  await updateVoteScore({
+  const target = await updateVoteScore({
     targetType,
     targetId,
     voteType,
@@ -126,9 +129,11 @@ export const toggleVote = catchAsync(async (req, res) => {
   });
 
   //   response
-  res.json({
-    success: true,
+  res.status(201).json({
+    status: "success",
     action, // create | update | delete
     voteType: action === "delete" ? 0 : voteType,
+    upVotes: target.upVotes,
+    downVotes: target.downVotes,
   });
 });

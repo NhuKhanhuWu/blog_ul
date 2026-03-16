@@ -56,7 +56,7 @@ export const login = catchAsync(async (req, res, next) => {
   user.password = undefined; // remove password from res
   res.status(200).json({
     status: "success",
-    data: { user },
+    user,
     accessToken,
   });
 });

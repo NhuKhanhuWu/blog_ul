@@ -1,6 +1,6 @@
 /** @format */
 
-import { ICategory } from "./category";
+import { ICategory } from "./categoryTypes";
 
 export interface IBlogSimplify {
   _id: string;
@@ -34,6 +34,7 @@ export type IContentBlock =
     };
 
 export interface IBlogDetail {
+  _id: string;
   url?: string;
   title: string;
   slug: string;
@@ -56,7 +57,7 @@ export interface IBlogDetail {
   updatedAt: Date;
 }
 
-export type NormalizedContent =
+export type TNormalizedContent =
   | { type: "title"; text: string }
   | { type: "section"; text: string }
   | { type: "quote"; text: string }
@@ -65,6 +66,6 @@ export type NormalizedContent =
   | { type: "paragraph"; text: string }
   | { type: "image"; img: string; note?: string };
 
-export type INormalizedBlog = Omit<IBlogDetail, "content"> & {
-  content: NormalizedContent[];
+export type TNormalizedBlog = Omit<IBlogDetail, "content"> & {
+  content: TNormalizedContent[];
 };

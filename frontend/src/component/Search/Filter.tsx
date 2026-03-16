@@ -1,10 +1,10 @@
 /** @format */
 
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { ICategory } from "../../interface/category";
+import { ICategory } from "../../interface/categoryTypes";
 import styles from "../../styles/component/SearchBar.module.scss";
 import { useFormContext } from "react-hook-form";
-import { SearchFormValues } from "../../interface/search";
+import { TSearchFormValues } from "../../interface/searchTypes";
 import { useCategories } from "../../hook/useCategories";
 import { useDebounce } from "../../hook/useDebounce";
 
@@ -33,7 +33,7 @@ interface SelectedCatsProps {
 }
 
 function Category({ category, selectedIds }: ICategoryInput) {
-  const { setValue } = useFormContext<SearchFormValues>();
+  const { setValue } = useFormContext<TSearchFormValues>();
   const isChecked = selectedIds.includes(category._id);
 
   const handleChange = () => {
@@ -65,7 +65,7 @@ function Category({ category, selectedIds }: ICategoryInput) {
 }
 
 function UnSelectedCats({ categories, loadMoreBtn }: ICategories) {
-  const { watch } = useFormContext<SearchFormValues>();
+  const { watch } = useFormContext<TSearchFormValues>();
   const selectedIds = watch("categories") || [];
 
   return (
@@ -113,7 +113,7 @@ function SelectedCats({
 }
 
 function CategorySearch() {
-  const { register } = useFormContext<SearchFormValues>();
+  const { register } = useFormContext<TSearchFormValues>();
 
   return (
     <input
@@ -126,7 +126,7 @@ function CategorySearch() {
 }
 
 function CategoriesOption() {
-  const { register } = useFormContext<SearchFormValues>();
+  const { register } = useFormContext<TSearchFormValues>();
 
   return (
     <div className={styles.filterOption}>
@@ -173,7 +173,7 @@ function LoadMoreBtn({
 }
 
 function Filter() {
-  const { watch, setValue } = useFormContext<SearchFormValues>();
+  const { watch, setValue } = useFormContext<TSearchFormValues>();
 
   // get data from form
   const categoryName = watch("categoryName");

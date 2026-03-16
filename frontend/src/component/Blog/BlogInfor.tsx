@@ -1,21 +1,11 @@
 /** @format */
 
-import styles from "../../styles/component/BlogDetail.module.scss";
-import {
-  IBlogDetail,
-  INormalizedBlog,
-  NormalizedContent,
-} from "../../interface/blog";
-import { Link, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { AxiosError } from "axios";
-import NotFound from "../NotFound";
-import Loader from "../Loader";
-import normalizeBlog from "../../utils/normalizeHeading";
-import formatDate from "../../utils/fomatDate";
-import { getBLog } from "../../api/blog/getBlog";
+import styles from "../../styles/component/BlogInfor.module.scss";
+import { TNormalizedBlog, TNormalizedContent } from "../../interface/blogTypes";
+import { Link } from "react-router-dom";
+import { formatDate } from "../../utils/date";
 
-function ContentItem({ item }: { item: NormalizedContent }) {
+function ContentItem({ item }: { item: TNormalizedContent }) {
   // title
   if (item.type === "title")
     return <p className={styles.sectionTitle}>{item.text}</p>;
@@ -48,7 +38,7 @@ function ContentItem({ item }: { item: NormalizedContent }) {
   return <p className={styles.paragraph}>{item.text}</p>;
 }
 
-function BlogContent({ blog }: { blog: INormalizedBlog }) {
+function BlogContent({ blog }: { blog: TNormalizedBlog }) {
   return (
     <div className={styles.blogContent}>
       {blog.content.map((item, index) => (
@@ -58,7 +48,7 @@ function BlogContent({ blog }: { blog: INormalizedBlog }) {
   );
 }
 
-function Categories({ blog }: { blog: INormalizedBlog }) {
+function Categories({ blog }: { blog: TNormalizedBlog }) {
   return (
     <div className={styles.categoriesContainer}>
       <div>Categories:</div>
@@ -66,6 +56,7 @@ function Categories({ blog }: { blog: INormalizedBlog }) {
       <div className={styles.categories}>
         {blog.categories.map((cat) => (
           <Link
+            key={cat._id}
             className={`btn-secondary ${styles.category}`}
             to={{
               pathname: "/",
@@ -79,22 +70,9 @@ function Categories({ blog }: { blog: INormalizedBlog }) {
   );
 }
 
-function BlogInfor() {
-  const { slug = "" } = useParams();
-  const { data, isPending, error } = useQuery<IBlogDetail, AxiosError>({
-    queryKey: ["blog", slug],
-    queryFn: () => getBLog(slug),
-  });
-
-  if (error?.response?.status === 404 || !data)
-    return <NotFound message="Blog not found" />;
-
-  if (isPending) return <Loader />;
-
-  const blog = normalizeBlog(data);
-
+function BlogInfor({ blog }: { blog: TNormalizedBlog }) {
   return (
-    <div className={styles.container}>
+    <>
       <div className="smTxt">
         <p>{blog?.authors.join(", ")}</p>
         <p>{formatDate(blog?.pub_date || "")}</p>
@@ -105,7 +83,7 @@ function BlogInfor() {
       <BlogContent blog={blog} />
 
       <Categories blog={blog} />
-    </div>
+    </>
   );
 }
 
