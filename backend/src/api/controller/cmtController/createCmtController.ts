@@ -78,6 +78,11 @@ export const createCmt = catchAsync(async (req, res, next) => {
     });
   }
 
+  // 6. update blog's totalCmts
+  await BlogModel.findByIdAndUpdate(blogId, {
+    $inc: { totalCmts: 1 },
+  });
+
   res.status(201).json({
     status: "success",
     data: comment,
