@@ -104,6 +104,10 @@ const BlogSchema = new Schema<IBlogDocument>(
       type: Number,
       default: 0,
     },
+    totalCmts: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true, // adds createdAt, updatedAt

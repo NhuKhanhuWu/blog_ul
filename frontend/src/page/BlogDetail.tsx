@@ -19,7 +19,7 @@ function BlogDetail() {
     queryFn: () => getBLog(slug),
   });
 
-  if (error?.response?.status === 404 || !data)
+  if (error?.response?.status === 404 || (!data && !isPending))
     return <NotFound message="Blog not found" />;
 
   if (isPending) return <Loader />;
