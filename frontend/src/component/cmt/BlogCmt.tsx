@@ -7,11 +7,11 @@ import defaultAvatar from "../../utils/defaultAvatar";
 import { ICmt } from "../../interface/cmtTypes";
 import Loader from "../Loader";
 import Error from "../Error";
-import CmtForm from "./CmtForm";
+import CmtForm from "./CmtForm.tsx";
 import styles from "../../styles/component/BlogCmt.module.scss";
 import { useIntersectionObserver } from "../../hook/useIntersectionObserver";
 import InfinityObserver from "../InfinityObserver";
-import CmtItem from "./CmtItem";
+import CmtItem from "./CmtItem.tsx";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getCmtByBlog } from "../../api/cmt/getCmt";
 
