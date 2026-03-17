@@ -1,6 +1,7 @@
 /** @format */
 
 import * as yup from "yup";
+import { ICategory } from "./categoryTypes";
 
 export const formSchema = yup.object({
   title: yup.string().default(""),
@@ -15,7 +16,16 @@ export const formSchema = yup.object({
     .required()
     .default("or"),
   categoryName: yup.string().default(""),
-  categories: yup.array().of(yup.string().required()).default([]),
+  categories: yup
+    .array()
+    .of(yup.string().required())
+    .default([])
+    .max(5, "You can only select up to 5 categories at a time"),
 });
 
 export type TSearchFormValues = yup.InferType<typeof formSchema>;
+
+export interface ICategoryInput {
+  category: ICategory;
+  selectedIds: string[];
+}
