@@ -19,6 +19,10 @@ import {
 import { loadUser } from "../controller/authController/loadUserController";
 import { validate } from "../utils/validate";
 import { BlogCreateSchema } from "../utils/schema/blogSchema";
+import {
+  cmtBodySchema,
+  createCmtParamsSchema,
+} from "../utils/schema/cmtSchema";
 
 const blogRouter = express.Router();
 
@@ -39,10 +43,16 @@ blogRouter
   .delete(protect, deleteBlog); // get single blog by id
 
 // ------------ CMTS ------------
-// get cmt
 blogRouter
   .route("/:id/cmt")
   .get(loadUser, getCmtByBlog)
-  .post(protect, cmtLimitersPerHour, cmtLimitersPerMin, createCmt);
+  .post(
+    protect,
+    cmtLimitersPerHour,
+    cmtLimitersPerMin,
+    validate(createCmtParamsSchema, "params"),
+    validate(cmtBodySchema, "body"),
+    createCmt,
+  );
 
 export default blogRouter;

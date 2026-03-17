@@ -20,6 +20,11 @@ export const softDeleteCmt = catchAsync(async (req, res) => {
       $inc: { replyCount: -1 },
     });
   }
+  // update blog's totalParentCmts
+  else
+    await BlogModel.findByIdAndUpdate(cmt.blogId, {
+      $inc: { totalParentCmts: -1 },
+    });
 
   // update blog's totalCmts
   await BlogModel.findByIdAndUpdate(cmt.blogId, {
