@@ -17,6 +17,8 @@ import {
   createCmt,
 } from "../controller/cmtController/createCmtController";
 import { loadUser } from "../controller/authController/loadUserController";
+import { validate } from "../utils/validate";
+import { BlogCreateSchema } from "../utils/schema/blogSchema";
 
 const blogRouter = express.Router();
 
@@ -25,12 +27,15 @@ const blogRouter = express.Router();
 blogRouter.route("/slug/:slug").get(getOneBlogBySlug);
 
 // get multiple blogs with query & create blog
-blogRouter.route("/").get(getMultBlog).post(protect, createBlog);
+blogRouter
+  .route("/")
+  .get(getMultBlog)
+  .post(protect, validate(BlogCreateSchema, "body"), createBlog);
 
 blogRouter
   .route("/:id")
   .get(getOneBlogById) //get one blog by id
-  .patch(protect, updateBlog) // update blog
+  .patch(protect, validate(BlogCreateSchema, "body"), updateBlog) // update blog
   .delete(protect, deleteBlog); // get single blog by id
 
 // ------------ CMTS ------------

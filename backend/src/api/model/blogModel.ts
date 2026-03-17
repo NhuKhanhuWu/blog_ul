@@ -3,8 +3,8 @@
 import mongoose, { Schema, Types, model } from "mongoose";
 import { IBlogDocument } from "../interface/IBlog";
 import { IBlogContent } from "../utils/schema/blogSchema";
-import slugify from "slugify";
 import { generateUniqueSlug } from "../utils/schema/generateUniqueSlug";
+import CommentModel from "./commentModel";
 
 const contentBlockSchema = new Schema<IBlogContent>(
   {
@@ -108,6 +108,10 @@ const BlogSchema = new Schema<IBlogDocument>(
       type: Number,
       default: 0,
     },
+    totalParentCmts: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true, // adds createdAt, updatedAt
@@ -155,6 +159,22 @@ BlogSchema.pre("findOneAndUpdate", async function (next) {
     update.$set.slug = newSlug;
   } else {
     update.slug = newSlug;
+  }
+});
+
+// delete cmt after delete blog
+BlogSchema.post("findOneAndDelete", function (doc) {
+  if (doc) {
+    const blogId = doc._id;
+
+    // QUAN TRỌNG: Không dùng await ở đây => đẩy vào hàng chờ => giải phóng luồng chính
+    CommentModel.deleteMany({ blogId: blogId })
+      .then((result) => {
+        console.log(`${result.deletedCount} comments deleted in background`);
+      })
+      .catch((err) => {
+        console.error("Error occur when deleting comment in background", err);
+      });
   }
 });
 
