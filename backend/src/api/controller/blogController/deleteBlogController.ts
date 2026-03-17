@@ -2,16 +2,15 @@
 
 // TODO: update to delete img in supabase
 
+import { Request } from "express";
 import { BlogModel } from "../../model/blogModel";
 import AppError from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
 
-export const deleteBlog = catchAsync(async (req, res) => {
-  // get blog
+const validate = async (req: Request) => {
   const blogId = req.params.id;
   const user = req.user;
   const blog = await BlogModel.findById(blogId);
-  const { accessToken } = req;
 
   // check if blog exists
   if (!blog) {
@@ -23,6 +22,13 @@ export const deleteBlog = catchAsync(async (req, res) => {
     throw new AppError("You are not authorized to delete this blog", 403);
   }
 
+  return blogId;
+};
+
+export const deleteBlog = catchAsync(async (req, res) => {
+  // get blog
+  const blogId = await validate(req);
+
   // delete blog
   await BlogModel.findByIdAndDelete(blogId);
 
@@ -30,6 +36,5 @@ export const deleteBlog = catchAsync(async (req, res) => {
   res.status(204).json({
     status: "success",
     data: null,
-    accessToken,
   });
 });
