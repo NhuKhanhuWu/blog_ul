@@ -7,6 +7,8 @@ import AppError from "../../utils/AppError";
 import { Types } from "mongoose";
 import { BlogModel } from "../../model/blogModel";
 import { Request } from "express";
+import { validateCmtConstraints } from "../../services/comment.service";
+import { CreateCmtBody, CreateCmtParams } from "../../utils/schema/cmtSchema";
 
 // -------- LIMITERS --------
 // 5 cmt/min
@@ -24,47 +26,12 @@ export const cmtLimitersPerHour = createLimiter({
 });
 
 // -------- CREATE CONTROLLER --------
-const validateParams = async (req: Request) => {
-  const blogId = req.params.id;
-  const { parentId, content } = req.body;
 
-  // 1. validate blogId
-  if (!blogId || !Types.ObjectId.isValid(blogId)) {
-    throw new AppError("Invalid blogId", 400);
-  }
-
-  // 2. check post tồn tại
-  const post = await BlogModel.findById(blogId);
-  if (!post) {
-    throw new AppError("Blog not found", 404);
-  }
-
-  // 3. validate parentId (nếu có)
-  let parentCmt = null;
-  if (parentId) {
-    if (!Types.ObjectId.isValid(parentId)) {
-      throw new AppError("Invalid parentId", 400);
-    }
-
-    parentCmt = await CommentModel.findById(parentId);
-    if (!parentCmt) {
-      throw new AppError("Parent comment not found", 404);
-    }
-
-    // check if blog Id from child == blog id from parent
-    if (parentCmt.blogId.toString() !== blogId) {
-      throw new AppError(
-        "blogId must be the same as parent comment's blogId",
-        400,
-      );
-    }
-  }
-
-  return { blogId, parentId, content, parentCmt };
-};
-
-export const createCmt = catchAsync(async (req, res, next) => {
-  const { blogId, parentId, content, parentCmt } = await validateParams(req);
+export const createCmt = catchAsync(async (req, res) => {
+  const { blogId, parentId, content, parentCmt } = await validateCmtConstraints(
+    req.params as CreateCmtParams,
+    req.body as CreateCmtBody,
+  );
 
   // 4. tạo comment
   const comment = await CommentModel.create({

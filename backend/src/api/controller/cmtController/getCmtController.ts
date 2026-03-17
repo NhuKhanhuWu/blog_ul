@@ -2,6 +2,7 @@
 import { Types } from "mongoose";
 import CommentModel from "../../model/commentModel";
 import catchAsync from "../../utils/catchAsync";
+import { BlogModel } from "../../model/blogModel";
 
 const SORT_MAP: Record<string, Record<string, 1 | -1>> = {
   newest: { createdAt: -1 },
@@ -35,96 +36,92 @@ const getCommentsWithVote = async ({
 
   const userObjectId = userId ? new Types.ObjectId(userId) : null;
 
-  const [comments, totalResult] = await Promise.all([
-    CommentModel.aggregate([
-      // 1. Lọc document theo điều kiện
-      { $match: filter },
+  const comments = await CommentModel.aggregate([
+    // 1. Lọc document theo điều kiện
+    { $match: filter },
 
-      // 2. Sắp xếp
-      { $sort: sortStage },
+    // 2. Sắp xếp
+    { $sort: sortStage },
 
-      // 3. Bỏ qua n document đầu (phân trang)
-      { $skip: skip },
+    // 3. Bỏ qua n document đầu (phân trang)
+    { $skip: skip },
 
-      // 4. Giới hạn số document trả về
-      { $limit: limit },
+    // 4. Giới hạn số document trả về
+    { $limit: limit },
 
-      // 5. join voi user
-      {
-        $lookup: {
-          from: "users",
-          let: { user_id: "$userId" },
-          pipeline: [
-            { $match: { $expr: { $eq: ["$_id", "$$user_id"] } } },
-            { $project: { name: 1, slug: 1, avatar: 1 } },
-          ],
-          as: "userId",
-        },
+    // 5. join voi user
+    {
+      $lookup: {
+        from: "users",
+        let: { user_id: "$userId" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$_id", "$$user_id"] } } },
+          { $project: { name: 1, slug: 1, avatar: 1 } },
+        ],
+        as: "userId",
       },
-      { $unwind: "$userId" },
+    },
+    { $unwind: "$userId" },
 
-      // 6. Join với collection "votes"
-      ...(userObjectId
-        ? [
-            {
-              $lookup: {
-                from: "votes", // collection cần join
-                // khai báo biến từ document hiện tại
-                // để dùng trong pipeline bên dưới
-                let: { commentId: "$_id" },
-                pipeline: [
-                  {
-                    $match: {
-                      // $expr cho phép so sánh giữa 2 field
-                      $expr: {
-                        $and: [
-                          { $eq: ["$targetId", "$$commentId"] },
-                          { $eq: ["$userId", userObjectId] },
-                          { $eq: ["$targetType", "comment"] },
-                        ],
-                      },
+    // 6. Join với collection "votes"
+    ...(userObjectId
+      ? [
+          {
+            $lookup: {
+              from: "votes", // collection cần join
+              // khai báo biến từ document hiện tại
+              // để dùng trong pipeline bên dưới
+              let: { commentId: "$_id" },
+              pipeline: [
+                {
+                  $match: {
+                    // $expr cho phép so sánh giữa 2 field
+                    $expr: {
+                      $and: [
+                        { $eq: ["$targetId", "$$commentId"] },
+                        { $eq: ["$userId", userObjectId] },
+                        { $eq: ["$targetType", "comment"] },
+                      ],
                     },
                   },
-                  // chỉ lấy field voteType
-                  { $project: { voteType: 1, _id: 0 } },
-                ],
-                // kết quả join lưu vào field "userVote" (là 1 array)
-                as: "userVote",
-              },
-            },
-
-            // 6. Thêm field voteType vào document
-            {
-              $addFields: {
-                voteType: {
-                  $ifNull: [
-                    // lấy phần tử đầu của array userVote
-                    { $first: "$userVote.voteType" },
-
-                    // nếu không có vote → default 0
-                    0,
-                  ],
                 },
+                // chỉ lấy field voteType
+                { $project: { voteType: 1, _id: 0 } },
+              ],
+              // kết quả join lưu vào field "userVote" (là 1 array)
+              as: "userVote",
+            },
+          },
+
+          // 6. Thêm field voteType vào document
+          {
+            $addFields: {
+              voteType: {
+                $ifNull: [
+                  // lấy phần tử đầu của array userVote
+                  { $first: "$userVote.voteType" },
+
+                  // nếu không có vote → default 0
+                  0,
+                ],
               },
             },
-          ]
-        : [{ $addFields: { voteType: 0 } }]),
+          },
+        ]
+      : [{ $addFields: { voteType: 0 } }]),
 
-      // 7. loai bo cac truong thua
-      {
-        $project: {
-          isDeleted: 0,
-          updatedAt: 0,
-          userVote: 0,
-          downVotes: 0,
-        },
+    // 7. loai bo cac truong thua
+    {
+      $project: {
+        isDeleted: 0,
+        updatedAt: 0,
+        userVote: 0,
+        downVotes: 0,
       },
-    ]),
-
-    CommentModel.countDocuments(filter),
+    },
   ]);
 
-  return { comments, totalResult };
+  return comments;
 };
 
 const getCmt = catchAsync(async (req, res) => {
@@ -136,8 +133,9 @@ const getCmt = catchAsync(async (req, res) => {
     : DEFAULT_SORT;
 
   const filter = (req as any)._commentFilter;
+  const extraMetadata = (req as any)._extraMetadata || {}; // Lấy thêm data từ blog nếu có
 
-  const { comments, totalResult } = await getCommentsWithVote({
+  const comments = await getCommentsWithVote({
     filter,
     sort,
     page,
@@ -145,32 +143,60 @@ const getCmt = catchAsync(async (req, res) => {
     userId,
   });
 
-  const totalPages = Math.ceil(totalResult / limit);
-  const nextPage = page + 1 < totalPages ? page + 1 : null;
-
   res.status(200).json({
     status: "success",
-    totalResult,
-    totalPages,
-    nextPage,
+    ...extraMetadata, // Trả về totalCmts, totalParentCmts ở đây
     amount: comments.length,
     data: comments,
   });
 });
 
 export const getCmtByBlog = catchAsync(async (req, res, next) => {
-  const blogId = new Types.ObjectId(req.params.id);
+  const blogIdStr = req.params.id || "";
   const parentIdStr = req.query.parentId;
 
+  if (!Types.ObjectId.isValid(blogIdStr)) {
+    return next(new Error("Invalid Blog ID"));
+  }
+
+  const blogId = new Types.ObjectId(blogIdStr);
   const parentId =
     typeof parentIdStr === "string" && Types.ObjectId.isValid(parentIdStr)
       ? new Types.ObjectId(parentIdStr)
       : null;
 
+  // 1. Tìm blog để lấy totalCmts và totalParentCmts
+  const blog = await BlogModel.findById(blogId).select(
+    "totalCmts totalParentCmts",
+  );
+
+  if (!blog) {
+    return next(new Error("Blog not found"));
+  }
+
+  // 2. Thiết lập filter
+  // Nếu parentId là null -> đang lấy danh sách comment cha (phân trang theo totalParentCmts)
+  // Nếu parentId có giá trị -> đang lấy replies (phân trang theo số lượng reply thực tế)
   (req as any)._commentFilter = {
     parentId,
-    blogId, // convert sang ObjectId
+    blogId,
     isDeleted: false,
+  };
+
+  // 3. Đính kèm metadata vào request để hàm getCmt sử dụng
+  const page = Number(req.query.page) || 0;
+  const limit = Number(req.query.limit) || 20;
+
+  // Tính toán phân trang cho comment cha
+  const totalResults = parentId === null ? blog.totalParentCmts || 0 : null;
+
+  (req as any)._extraMetadata = {
+    totalCmts: blog.totalCmts || 0,
+    totalParentCmts: blog.totalParentCmts || 0,
+    ...(totalResults !== null && {
+      totalPages: Math.ceil(totalResults / limit),
+      currentPage: page,
+    }),
   };
 
   return getCmt(req, res, next);
