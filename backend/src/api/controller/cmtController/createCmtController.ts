@@ -6,6 +6,9 @@ import { createLimiter } from "../../utils/createLimiter";
 import AppError from "../../utils/AppError";
 import { Types } from "mongoose";
 import { BlogModel } from "../../model/blogModel";
+import { Request } from "express";
+import { validateCmtConstraints } from "../../services/comment.service";
+import { CreateCmtBody, CreateCmtParams } from "../../utils/schema/cmtSchema";
 
 // -------- LIMITERS --------
 // 5 cmt/min
@@ -23,40 +26,12 @@ export const cmtLimitersPerHour = createLimiter({
 });
 
 // -------- CREATE CONTROLLER --------
-export const createCmt = catchAsync(async (req, res, next) => {
-  const blogId = req.params.id;
-  const { parentId, content } = req.body;
 
-  // 1. validate blogId
-  if (!blogId || !Types.ObjectId.isValid(blogId)) {
-    return next(new AppError("Invalid blogId", 400));
-  }
-
-  // 2. check post tồn tại
-  const post = await BlogModel.findById(blogId);
-  if (!post) {
-    return next(new AppError("Post not found", 404));
-  }
-
-  // 3. validate parentId (nếu có)
-  let parentComment = null;
-  if (parentId) {
-    if (!Types.ObjectId.isValid(parentId)) {
-      return next(new AppError("Invalid parentId", 400));
-    }
-
-    parentComment = await CommentModel.findById(parentId);
-    if (!parentComment) {
-      return next(new AppError("Parent comment not found", 404));
-    }
-
-    // check if blog Id from child == blog id from parent
-    if (parentComment.blogId.toString() !== blogId) {
-      return next(
-        new AppError("blogId must be the same as parent comment's blogId", 400),
-      );
-    }
-  }
+export const createCmt = catchAsync(async (req, res) => {
+  const { blogId, parentId, content, parentCmt } = await validateCmtConstraints(
+    req.params as CreateCmtParams,
+    req.body as CreateCmtBody,
+  );
 
   // 4. tạo comment
   const comment = await CommentModel.create({
@@ -72,11 +47,21 @@ export const createCmt = catchAsync(async (req, res, next) => {
   });
 
   // 5. update replyCount
-  if (parentComment) {
+  if (parentCmt) {
     await CommentModel.findByIdAndUpdate(parentId, {
       $inc: { replyCount: 1 },
     });
   }
+  // update blog's totalParentCmts
+  else
+    await BlogModel.findByIdAndUpdate(blogId, {
+      $inc: { totalParentCmts: 1 },
+    });
+
+  // 6. update blog's totalCmts
+  await BlogModel.findByIdAndUpdate(blogId, {
+    $inc: { totalCmts: 1 },
+  });
 
   res.status(201).json({
     status: "success",

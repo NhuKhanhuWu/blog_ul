@@ -3,17 +3,17 @@
 import { Dispatch, ReactNode, SetStateAction, useMemo, useState } from "react";
 import { Sheet } from "react-modal-sheet";
 
-import defaultAvatar from "../../utils/defaultAvatar";
-import { ICmt } from "../../interface/cmtTypes";
-import Loader from "../Loader";
-import Error from "../Error";
-import CmtForm from "./CmtForm";
+import defaultAvatar from "../../utils/defaultAvatar.ts";
+import { ICmt } from "../../interface/cmtTypes.ts";
+import Loader from "../Loader.tsx";
+import Error from "../Error.tsx";
+import CmtForm from "./CmtForm.tsx";
 import styles from "../../styles/component/BlogCmt.module.scss";
-import { useIntersectionObserver } from "../../hook/useIntersectionObserver";
-import InfinityObserver from "../InfinityObserver";
-import CmtItem from "./CmtItem";
+import { useIntersectionObserver } from "../../hook/useIntersectionObserver.ts";
+import InfinityObserver from "../InfinityObserver.tsx";
+import CmtItem from "./CmtItem.tsx";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getCmtByBlog } from "../../api/cmt/getCmt";
+import { getCmtByBlog } from "../../api/cmt/getCmt.ts";
 
 interface ICmtMinimize {
   isOpen: boolean;
@@ -64,9 +64,9 @@ function CmtModal({
           <p>{totalCmt} comments</p>
 
           <select name="sort" onChange={(e) => setSort(e.target.value)}>
-            <option value="-upVotes">Most related</option>
-            <option value="-createdAt">Newest</option>
-            <option value="createdAt">Oldest</option>
+            <option value="top">Most related</option>
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
           </select>
           {/* </div> */}
         </Sheet.Header>
@@ -89,7 +89,7 @@ function CmtModal({
 }
 
 function BlogCmtMobile({ blogId }: { blogId: string }) {
-  const [sort, setSort] = useState("-upVotes");
+  const [sort, setSort] = useState("top");
   const [isOpen, setIsOpen] = useState(false);
 
   const {
@@ -100,8 +100,8 @@ function BlogCmtMobile({ blogId }: { blogId: string }) {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: ["cmt", sort, blogId],
-    queryFn: ({ pageParam = 0 }) => getCmtByBlog({ blogId, sort, pageParam }),
+    queryKey: ["cmt", blogId, sort],
+    queryFn: ({ pageParam: page = 0 }) => getCmtByBlog({ blogId, sort, page }),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.nextPage,
   });

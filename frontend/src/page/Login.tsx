@@ -32,8 +32,7 @@ function Login() {
   });
 
   // handling fetching data
-  const { isLoading } = useAppSelector((state) => state.auth);
-  const { error } = useAppSelector((state) => state.auth);
+  const { isLoading, error } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 

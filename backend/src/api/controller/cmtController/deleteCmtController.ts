@@ -2,6 +2,8 @@
 
 import catchAsync from "../../utils/catchAsync";
 import AppError from "../../utils/AppError";
+import { BlogModel } from "../../model/blogModel";
+import CommentModel from "../../model/commentModel";
 
 export const softDeleteCmt = catchAsync(async (req, res) => {
   // get cmt
@@ -11,6 +13,23 @@ export const softDeleteCmt = catchAsync(async (req, res) => {
   // delete cmt (soft delete)
   cmt.isDeleted = true;
   await cmt.save();
+
+  // update cmt't parent replyCount
+  if (cmt.parentId !== null) {
+    await CommentModel.findByIdAndUpdate(cmt.parentId, {
+      $inc: { replyCount: -1 },
+    });
+  }
+  // update blog's totalParentCmts
+  else
+    await BlogModel.findByIdAndUpdate(cmt.blogId, {
+      $inc: { totalParentCmts: -1 },
+    });
+
+  // update blog's totalCmts
+  await BlogModel.findByIdAndUpdate(cmt.blogId, {
+    $inc: { totalCmts: -1 },
+  });
 
   res.status(204).json({
     status: "success",
