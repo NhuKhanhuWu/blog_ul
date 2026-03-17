@@ -25,12 +25,6 @@ const initialState: IAuthState = {
   error: null,
 };
 
-// export const loginThunk = createAsyncThunk<IAuthResponse, ILogin>(
-//   "auth/login",
-//   async ({ email, password }) => {
-//     return await login({ email, password });
-//   },
-// );
 export const loginThunk = createAsyncThunk<
   IAuthResponse,
   ILogin,
