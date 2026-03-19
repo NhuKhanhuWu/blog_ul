@@ -1,6 +1,7 @@
 /** @format */
 
 import { z } from "zod";
+import { objectIdSchema } from "./objectIdSchema";
 
 /* -----------------------------------
   Base field validators (reusable)
@@ -8,13 +9,13 @@ import { z } from "zod";
 
 // Title
 export const titleValidator = z
-  .string()
-  .min(1)
+  .string("Title cannot be empty")
+  .min(1, "Title cannot be empty")
   .max(150, "Title cannot exceed 150 characters");
 
 // Author (single)
 export const authorValidator = z
-  .string()
+  .string("Author name cannot be empty")
   .min(1, "Author name cannot be empty")
   .max(50, "Author name cannot exceed 50 characters");
 
@@ -24,20 +25,17 @@ export const authorsValidator = z
   .max(10, "You can specify up to 10 authors");
 
 // Category (single)
-export const categoryValidator = z
-  .string()
-  .min(1, "Category cannot be empty")
-  .max(25, "Category cannot exceed 25 characters");
+export const categoryValidator = objectIdSchema;
 
 // Categories array
 export const categoriesValidator = z
   .array(categoryValidator)
-  .max(10, "You can specify up to 10 categories")
+  .max(40, "You can specify up to 40 categories")
   .optional();
 
 const TextBlockSchema = z.object({
   text: z
-    .string()
+    .string("Text content is required")
     .min(1, "Text is required")
     .max(10000, "Text block is too long (max 10,000 characters)"),
   heading: z.number().int().min(1).max(6).optional(),

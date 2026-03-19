@@ -13,7 +13,7 @@
 
 .form {
   width: 80%;
-  max-width: 45rem;
+  max-width: 35rem;
   margin: auto;
   background-color: $light-200;
   border: 1px $dark-900 solid;
@@ -21,7 +21,7 @@
   padding: 2.4rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
   align-items: center;
   text-align: center;
   font-size: 1.4rem;
@@ -30,7 +30,7 @@
 
 .welcomeTxt {
   h1 {
-    font-size: 2.4rem;
+    font-size: 2rem;
     font-weight: 500;
   }
 
@@ -40,7 +40,7 @@
 }
 
 .logo {
-  width: 16rem;
+  width: 10rem;
 }
 
 .inputContainer {

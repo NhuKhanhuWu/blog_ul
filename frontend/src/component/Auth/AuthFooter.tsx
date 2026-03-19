@@ -10,14 +10,20 @@ function AuthFooter({ type }: Props) {
   if (type === "login") {
     return (
       <p>
-        Don't have an account? <Link to="/auth-signup">Sign up</Link>
+        Don't have an account?{" "}
+        <Link className="link" to="/auth-signup">
+          Sign up
+        </Link>
       </p>
     );
   }
 
   return (
     <p>
-      Already have an account? <Link to="/auth-login">Log in</Link>
+      Already have an account?{" "}
+      <Link className="link" to="/auth-login">
+        Log in
+      </Link>
     </p>
   );
 }

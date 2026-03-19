@@ -21,4 +21,5 @@ export interface IBlogDocument extends IBlogInput {
   upVotes: Number;
   downVotes: Number;
   totalCmts: number;
+  totalParentCmts: number;
 }

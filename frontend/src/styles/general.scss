@@ -45,7 +45,11 @@ html {
     font-size: 56.25%;
   }
   @include respond(lg) {
-    font-size: 62.5%;
+    font-size: 62.5%; // 1rem = 10px
+  }
+
+  @include respond(xl) {
+    font-size: 70%;
   }
 }
 
@@ -110,12 +114,16 @@ input[type="radio"] {
 }
 
 select {
-  height: 3.8rem;
+  height: 3rem;
   border: none;
-  padding: 0.6rem 1.6rem;
-  background-color: transparent;
-  color: var(--text-main);
-  border-bottom: 1px solid var(--border-color);
+  padding: 0 1.6rem;
+}
+
+:root {
+  font-family: "Parkinsans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
 }
 
 .checkbox {
@@ -139,12 +147,24 @@ select {
   height: 2.6rem;
 }
 
-.error-mgs {
-  color: var(--error-color);
-  font-style: italic;
-  font-size: 1.6rem;
-  font-weight: 300;
-}
+.light {
+  input[type="checkbox"]:checked {
+    background-color: $dark-900;
+  }
+
+  input[type="radio"] {
+    accent-color: $dark-900;
+  }
+
+  select {
+    border-bottom: 1px solid $dark-900;
+  }
+
+  .error-mgs {
+    color: rgb(188, 69, 69);
+    font-style: italic;
+    font-weight: 300;
+  }
 
 // Button logic dùng CSS variables
 .btn-primary {
