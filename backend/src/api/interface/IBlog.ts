@@ -20,4 +20,6 @@ export interface IBlogDocument extends IBlogInput {
   images: [String];
   upVotes: Number;
   downVotes: Number;
+  totalCmts: number;
+  totalParentCmts: number;
 }

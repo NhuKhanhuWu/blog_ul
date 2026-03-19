@@ -16,6 +16,13 @@ import {
   cmtLimitersPerMin,
   createCmt,
 } from "../controller/cmtController/createCmtController";
+import { loadUser } from "../controller/authController/loadUserController";
+import { validate } from "../utils/validate";
+import { BlogCreateSchema } from "../utils/schema/blogSchema";
+import {
+  cmtBodySchema,
+  createCmtParamsSchema,
+} from "../utils/schema/cmtSchema";
 
 const blogRouter = express.Router();
 
@@ -24,19 +31,28 @@ const blogRouter = express.Router();
 blogRouter.route("/slug/:slug").get(getOneBlogBySlug);
 
 // get multiple blogs with query & create blog
-blogRouter.route("/").get(getMultBlog).post(protect, createBlog);
+blogRouter
+  .route("/")
+  .get(getMultBlog)
+  .post(protect, validate(BlogCreateSchema, "body"), createBlog);
 
 blogRouter
   .route("/:id")
   .get(getOneBlogById) //get one blog by id
-  .patch(protect, updateBlog) // update blog
+  .patch(protect, validate(BlogCreateSchema, "body"), updateBlog) // update blog
   .delete(protect, deleteBlog); // get single blog by id
 
 // ------------ CMTS ------------
-// get cmt
 blogRouter
   .route("/:id/cmt")
-  .get(getCmtByBlog)
-  .post(protect, cmtLimitersPerHour, cmtLimitersPerMin, createCmt);
+  .get(loadUser, getCmtByBlog)
+  .post(
+    protect,
+    cmtLimitersPerHour,
+    cmtLimitersPerMin,
+    validate(createCmtParamsSchema, "params"),
+    validate(cmtBodySchema, "body"),
+    createCmt,
+  );
 
 export default blogRouter;

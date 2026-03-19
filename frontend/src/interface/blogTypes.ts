@@ -34,6 +34,7 @@ export type IContentBlock =
     };
 
 export interface IBlogDetail {
+  _id: string;
   url?: string;
   title: string;
   slug: string;
@@ -52,11 +53,14 @@ export interface IBlogDetail {
   upVotes: number;
   downVotes: number;
 
+  totalCmts: number;
+  totalParentCmt: number;
+
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type NormalizedContent =
+export type TNormalizedContent =
   | { type: "title"; text: string }
   | { type: "section"; text: string }
   | { type: "quote"; text: string }
@@ -65,6 +69,6 @@ export type NormalizedContent =
   | { type: "paragraph"; text: string }
   | { type: "image"; img: string; note?: string };
 
-export type INormalizedBlog = Omit<IBlogDetail, "content"> & {
-  content: NormalizedContent[];
+export type TNormalizedBlog = Omit<IBlogDetail, "content"> & {
+  content: TNormalizedContent[];
 };

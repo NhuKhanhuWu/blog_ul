@@ -10,7 +10,7 @@ import Sort from "./Sort";
 import Filter from "./Filter";
 import styles from "../../styles/component/SearchBar.module.scss";
 import useSyncSearchForm from "../../hook/useSyncSearchForm";
-import { formSchema, SearchFormValues } from "../../interface/searchTypes";
+import { formSchema, TSearchFormValues } from "../../interface/searchTypes";
 import { useSearchParams } from "react-router-dom";
 import { updateSearchUrl } from "../../utils/updateSearchUrl";
 
@@ -20,7 +20,7 @@ interface ISearchForm {
 }
 
 function SubmitClearBtns() {
-  const { reset } = useFormContext<SearchFormValues>();
+  const { reset } = useFormContext<TSearchFormValues>();
   const initValue = formSchema.getDefault();
   const { dispatch } = useSearch();
 
@@ -49,10 +49,10 @@ function SubmitClearBtns() {
 
 function SearchForm({ onClose, closeBtn }: ISearchForm) {
   const { dispatch } = useSearch();
-  const { handleSubmit } = useFormContext<SearchFormValues>();
+  const { handleSubmit } = useFormContext<TSearchFormValues>();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const onSubmit = (data: SearchFormValues) => {
+  const onSubmit = (data: TSearchFormValues) => {
     dispatch({
       type: "SET_SEARCH",
       payload: {
@@ -93,7 +93,7 @@ function SearchBar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { state } = useSearch();
-  const methods = useForm<SearchFormValues>({
+  const methods = useForm<TSearchFormValues>({
     resolver: yupResolver(formSchema),
     defaultValues: state,
     shouldUnregister: false,

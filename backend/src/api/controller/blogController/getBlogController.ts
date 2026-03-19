@@ -85,7 +85,7 @@ export const getMultBlog = catchAsync(async (req, res) => {
     delete queryObject.logic;
   }
 
-  // 1. Start base query (KHÔNG còn filter private)
+  // 1. Start base query
   let baseQuery = BlogModel.find();
 
   // 2. Apply category filter
@@ -130,7 +130,7 @@ export const getMultBlog = catchAsync(async (req, res) => {
 export const getOneBlogById = catchAsync(async (req, res) => {
   const { id } = req.params;
   const blog = await BlogModel.findById(id)
-    .populate("categories")
+    .populate("categories", "name slug")
     .populate("userId", "name slug avatar");
 
   if (!blog) {
@@ -146,7 +146,7 @@ export const getOneBlogById = catchAsync(async (req, res) => {
 export const getOneBlogBySlug = catchAsync(async (req, res, next) => {
   const slug = req.params.slug;
   const blog = await BlogModel.findOne({ slug: slug })
-    .populate("categories")
+    .populate("categories", "name slug")
     .populate("userId", "name slug avatar");
 
   if (!blog) {
