@@ -53,6 +53,9 @@ export interface IBlogDetail {
   upVotes: number;
   downVotes: number;
 
+  totalCmts: number;
+  totalParentCmt: number;
+
   createdAt: Date;
   updatedAt: Date;
 }
