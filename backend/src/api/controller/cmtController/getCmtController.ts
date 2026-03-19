@@ -183,19 +183,21 @@ export const getCmtByBlog = catchAsync(async (req, res, next) => {
     isDeleted: false,
   };
 
+  // Tính toán phân trang cho comment cha
+  const totalResults = parentId === null ? blog.totalParentCmts : 0;
+
   // 3. Đính kèm metadata vào request để hàm getCmt sử dụng
   const page = Number(req.query.page) || 0;
   const limit = Number(req.query.limit) || 20;
-
-  // Tính toán phân trang cho comment cha
-  const totalResults = parentId === null ? blog.totalParentCmts || 0 : null;
+  const totalPages = Math.ceil(totalResults / limit);
+  const nextPage = page + 1 < totalPages ? page + 1 : undefined;
 
   (req as any)._extraMetadata = {
     totalCmts: blog.totalCmts || 0,
     totalParentCmts: blog.totalParentCmts || 0,
     ...(totalResults !== null && {
-      totalPages: Math.ceil(totalResults / limit),
-      currentPage: page,
+      totalPages,
+      nextPage,
     }),
   };
 
