@@ -1,10 +1,13 @@
 /** @format */
 
-export interface IUser {
+export interface IUserPublic {
   _id: string;
   name: string;
-  email: string;
   avatar: string;
+}
+
+export interface IUser extends IUserPublic {
+  email: string;
   role?: string;
 }
 

@@ -1,94 +1,22 @@
 /** @format */
 
-import { Dispatch, ReactNode, SetStateAction, useMemo, useState } from "react";
-import { Sheet } from "react-modal-sheet";
+import { useMemo, useState } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-import defaultAvatar from "../../utils/defaultAvatar.ts";
-import { ICmt } from "../../interface/cmtTypes.ts";
 import Loader from "../Loader.tsx";
 import Error from "../Error.tsx";
-import CmtForm from "./CmtForm.tsx";
-import styles from "../../styles/component/BlogCmt.module.scss";
 import { useIntersectionObserver } from "../../hook/useIntersectionObserver.ts";
 import InfinityObserver from "../InfinityObserver.tsx";
-import CmtItem from "./CmtItem.tsx";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { getCmtByBlog } from "../../api/cmt/getCmt.ts";
+import CmtMinimize from "./CmtMinimize.tsx";
+import CmtModal from "./CmtModal.tsx";
 
-interface ICmtMinimize {
-  isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
-  cmts: ICmt[];
-  totalCmt: number;
+interface IBlogInfor {
+  blogId: string;
+  totalCmts: number;
 }
 
-interface ICmtModal extends ICmtMinimize {
-  setSort: Dispatch<SetStateAction<string>>;
-  children?: ReactNode;
-}
-
-function CmtMinimize({ isOpen, setIsOpen, cmts, totalCmt }: ICmtMinimize) {
-  return (
-    <div
-      className={`${isOpen ? "hidden" : ""} ${styles.cmtMinimize}`}
-      onClick={() => setIsOpen(true)}>
-      <p>{totalCmt} comment(s)</p>
-      <div>
-        <img
-          className={styles.avatar}
-          src={cmts[0].userId.avatar || defaultAvatar(cmts[0].userId.name)}
-          loading="lazy"
-        />
-        <p>{cmts[0].content.slice(0, 100)}...</p>
-      </div>
-    </div>
-  );
-}
-
-function CmtModal({
-  isOpen,
-  setIsOpen,
-  setSort,
-  totalCmt,
-  cmts,
-  children: loadAndErr,
-}: ICmtModal) {
-  return (
-    <Sheet
-      className={!isOpen ? "hidden" : ""}
-      isOpen={isOpen}
-      onClose={() => setIsOpen(false)}>
-      <Sheet.Container className={styles.cmtContainer}>
-        <Sheet.Header className={styles.header}>
-          {/* <div className={styles.header}> */}
-          <p>{totalCmt} comments</p>
-
-          <select name="sort" onChange={(e) => setSort(e.target.value)}>
-            <option value="top">Most related</option>
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
-          </select>
-          {/* </div> */}
-        </Sheet.Header>
-
-        <Sheet.Content>
-          <CmtForm />
-
-          <div className={styles.cmts}>
-            {cmts.map((cmt) => (
-              <CmtItem cmt={cmt} key={cmt._id} />
-            ))}
-
-            {loadAndErr}
-          </div>
-        </Sheet.Content>
-      </Sheet.Container>
-      <Sheet.Backdrop />
-    </Sheet>
-  );
-}
-
-function BlogCmtMobile({ blogId }: { blogId: string }) {
+function BlogCmtMobile({ blogId, totalCmts }: IBlogInfor) {
   const [sort, setSort] = useState("top");
   const [isOpen, setIsOpen] = useState(false);
 
@@ -109,7 +37,6 @@ function BlogCmtMobile({ blogId }: { blogId: string }) {
     () => data?.pages.flatMap((p) => p.data) || [],
     [data?.pages],
   );
-  const totalCmt = data?.pages[0].totalResult || 0;
 
   const { lastElementRef } = useIntersectionObserver(
     fetchNextPage,
@@ -125,7 +52,7 @@ function BlogCmtMobile({ blogId }: { blogId: string }) {
           cmts={cmts}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
-          totalCmt={totalCmt}
+          totalCmts={totalCmts}
         />
       )}
 
@@ -134,7 +61,7 @@ function BlogCmtMobile({ blogId }: { blogId: string }) {
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         setSort={setSort}
-        totalCmt={totalCmt}
+        totalCmts={totalCmts}
         children={
           <>
             {isError && <Error />}
@@ -147,10 +74,10 @@ function BlogCmtMobile({ blogId }: { blogId: string }) {
   );
 }
 
-function BlogCmt({ blogId }: { blogId: string }) {
+function BlogCmt({ blogId, totalCmts }: IBlogInfor) {
   return (
     <>
-      <BlogCmtMobile blogId={blogId} />
+      <BlogCmtMobile blogId={blogId} totalCmts={totalCmts} />
     </>
   );
 }

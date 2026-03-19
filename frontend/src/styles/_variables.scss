@@ -1,4 +1,5 @@
 /** @format */
+@use "sass:map";
 
 // =============================
 // static variables
@@ -60,26 +61,26 @@ $spacing-lg: 2.4rem;
 // =============================
 :root {
   // Light Mode (Mặc định)
-  --bg-body: #{map-get($colors, "light", 200)};
-  --bg-card: #{map-get($colors, "light", 100)};
-  --text-main: #{map-get($colors, "dark", 900)};
-  --text-muted: #{map-get($colors, "dark", 300)};
-  --border-color: #{map-get($colors, "dark", 900)};
-  --accent-color: #{map-get($colors, "dark", 900)};
-  --btn-bg: #{map-get($colors, "dark", 900)};
-  --btn-text: #{map-get($colors, "light", 200)};
-  --error-color: #{map-get($colors, "error")};
+  --bg-body: #{map.get($colors, "light", 200)};
+  --bg-card: #{map.get($colors, "light", 100)};
+  --text-main: #{map.get($colors, "dark", 900)};
+  --text-muted: #{map.get($colors, "dark", 300)};
+  --border-color: #{map.get($colors, "dark", 900)};
+  --accent-color: #{map.get($colors, "dark", 900)};
+  --btn-bg: #{map.get($colors, "dark", 900)};
+  --btn-text: #{map.get($colors, "light", 200)};
+  --error-color: #{map.get($colors, "error")};
 }
 
 [data-theme="dark"] {
   // Dark Mode
-  --bg-body: #{map-get($colors, "dark", 900)};
-  --bg-card: #{map-get($colors, "dark", 700)};
-  --text-main: #{map-get($colors, "light", 100)};
-  --text-muted: #{map-get($colors, "light", 600)};
-  --border-color: #{map-get($colors, "light", 600)};
-  --accent-color: #{map-get($colors, "blue")};
-  --btn-bg: #{map-get($colors, "light", 100)};
-  --btn-text: #{map-get($colors, "dark", 900)};
+  --bg-body: #{map.get($colors, "dark", 900)};
+  --bg-card: #{map.get($colors, "dark", 700)};
+  --text-main: #{map.get($colors, "light", 100)};
+  --text-muted: #{map.get($colors, "light", 600)};
+  --border-color: #{map.get($colors, "light", 600)};
+  --accent-color: #{map.get($colors, "blue")};
+  --btn-bg: #{map.get($colors, "light", 100)};
+  --btn-text: #{map.get($colors, "dark", 900)};
   --error-color: #ff6b6b;
 }

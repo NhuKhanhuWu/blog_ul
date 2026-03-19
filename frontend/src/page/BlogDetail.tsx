@@ -31,7 +31,7 @@ function BlogDetail() {
       <BlogInfor blog={blog} />
 
       {/* commnent */}
-      <BlogCmt blogId={blog._id} />
+      <BlogCmt blogId={blog._id} totalCmts={blog.totalCmts} />
 
       {/* recommened blog */}
     </div>
