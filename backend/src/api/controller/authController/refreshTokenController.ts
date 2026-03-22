@@ -49,33 +49,32 @@ export const refreshToken = catchAsync(async (req, res, next) => {
   const { userId } = curRefreshToken;
   const accessToken = createAccessToken(userId.toString());
 
-  // the web have problem where new refresh token is not setted in cookie when revoke
+  // the web have problem where new refresh token is not setted in cookie when the old one revoked
   // now use one refresh token for the entire session
   //TODO: will fix this later
   // const newRefreshToken = createRefreshToken(userId.toString());
 
   // update in db
-  await Promise.all([
-    // marke cur token as used
-    RefreshToken.findByIdAndUpdate(
-      { _id: curRefreshToken._id },
-      {
-        revoked: true,
-        revokedAt: new Date(),
-      },
-    ),
+  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: END -------------
+  // await Promise.all([
+  //   // marke cur token as used
+  //   RefreshToken.findByIdAndUpdate(
+  //     { _id: curRefreshToken._id },
+  //     {
+  //       revoked: true,
+  //       revokedAt: new Date(),
+  //     },
+  //   ),
 
-    // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE -------------
-    // create new token
-    // RefreshToken.create({
-    //   token: newRefreshToken,
-    //   userId,
-    //   sessionExpiresAt: sessionExpireDate,
-    // }),
-  ]);
+  //   // create new token
+  //   RefreshToken.create({
+  //     token: newRefreshToken,
+  //     userId,
+  //     sessionExpiresAt: sessionExpireDate,
+  //   }),
+  // ]);
 
-  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE -------------
-  // save new refresh token to cookie
+  // // save new refresh token to cookie
   // res.cookie("refreshToken", newRefreshToken, {
   //   httpOnly: true,
   //   secure: process.env.NODE_ENV === "production",
@@ -83,6 +82,7 @@ export const refreshToken = catchAsync(async (req, res, next) => {
   //   maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days
   //   path: "/",
   // });
+  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: END -------------
 
   // send response
   res.status(201).json({
