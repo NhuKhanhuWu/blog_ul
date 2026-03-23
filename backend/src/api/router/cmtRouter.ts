@@ -3,8 +3,8 @@ import express from "express";
 import { protect } from "../controller/authController/protectController";
 import { getCmtByUser } from "../controller/cmtController/getCmtController";
 import { updateCmt } from "../controller/cmtController/updateCmtController";
-import { authorizedCmt } from "../controller/cmtController/authorizedCmt";
 import { softDeleteCmt } from "../controller/cmtController/deleteCmtController";
+import { authorizedCmt } from "../services/comment.service";
 
 const cmtRouter = express.Router();
 

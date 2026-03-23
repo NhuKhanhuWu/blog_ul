@@ -19,7 +19,7 @@ function BlogDetail() {
     queryFn: () => getBLog(slug),
   });
 
-  if (error?.response?.status === 404 || !data)
+  if (error?.response?.status === 404 || (!data && !isPending))
     return <NotFound message="Blog not found" />;
 
   if (isPending) return <Loader />;
@@ -31,7 +31,7 @@ function BlogDetail() {
       <BlogInfor blog={blog} />
 
       {/* commnent */}
-      <BlogCmt blogId={blog._id} />
+      <BlogCmt blogId={blog._id} totalCmts={blog.totalCmts} />
 
       {/* recommened blog */}
     </div>

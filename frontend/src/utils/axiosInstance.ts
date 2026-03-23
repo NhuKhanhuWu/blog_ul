@@ -47,6 +47,11 @@ axiosInstance.interceptors.response.use(
   async (error: AxiosError) => {
     const ogRequest = error.config as IRetryAxiosRequestConfig;
 
+    // login DOES NOT trigger refresh token
+    if (ogRequest.url?.includes("/user/login")) {
+      return Promise.reject(error);
+    }
+
     // if no response => reject
     if (!error.response) return Promise.reject(error);
 
@@ -64,6 +69,7 @@ axiosInstance.interceptors.response.use(
               ogRequest.headers.Authorization = `Bearer ${token}`;
               return axiosInstance(ogRequest);
             })
+            .catch((err) => Promise.reject(err))
         );
       }
 
@@ -87,6 +93,7 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(ogRequest);
       } catch (error) {
         proccessQueue(error, null);
+        return Promise.reject(error);
       } finally {
         isRefreshing = false;
       }

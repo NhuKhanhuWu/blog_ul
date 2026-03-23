@@ -48,35 +48,41 @@ export const refreshToken = catchAsync(async (req, res, next) => {
   // create new  token
   const { userId } = curRefreshToken;
   const accessToken = createAccessToken(userId.toString());
-  const newRefreshToken = createRefreshToken(userId.toString());
+
+  // the web have problem where new refresh token is not setted in cookie when the old one revoked
+  // now use one refresh token for the entire session
+  //TODO: will fix this later
+  // const newRefreshToken = createRefreshToken(userId.toString());
 
   // update in db
-  await Promise.all([
-    // marke cur token as used
-    RefreshToken.findByIdAndUpdate(
-      { _id: curRefreshToken._id },
-      {
-        revoked: true,
-        revokedAt: new Date(),
-      },
-    ),
+  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: END -------------
+  // await Promise.all([
+  //   // marke cur token as used
+  //   RefreshToken.findByIdAndUpdate(
+  //     { _id: curRefreshToken._id },
+  //     {
+  //       revoked: true,
+  //       revokedAt: new Date(),
+  //     },
+  //   ),
 
-    // create new token
-    RefreshToken.create({
-      token: newRefreshToken,
-      userId,
-      sessionExpiresAt: sessionExpireDate,
-    }),
-  ]);
+  //   // create new token
+  //   RefreshToken.create({
+  //     token: newRefreshToken,
+  //     userId,
+  //     sessionExpiresAt: sessionExpireDate,
+  //   }),
+  // ]);
 
-  // save new refresh token to cookie
-  res.cookie("refreshToken", newRefreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days
-    path: "/",
-  });
+  // // save new refresh token to cookie
+  // res.cookie("refreshToken", newRefreshToken, {
+  //   httpOnly: true,
+  //   secure: process.env.NODE_ENV === "production",
+  //   sameSite: "lax",
+  //   maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days
+  //   path: "/",
+  // });
+  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: END -------------
 
   // send response
   res.status(201).json({
