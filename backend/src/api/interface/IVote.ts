@@ -21,3 +21,9 @@ export interface IVote {
   updatedAt?: Date;
   _id: Types.ObjectId;
 }
+export interface IUpdateVoteScore {
+  targetType: "blog" | "comment";
+  targetId: string;
+  voteType: 1 | -1;
+  action: "create" | "delete" | "update";
+}
