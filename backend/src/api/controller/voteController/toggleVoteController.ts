@@ -1,13 +1,12 @@
 /** @format */
 
-import mongoose, { Model } from "mongoose";
-import { IVote } from "../../interface/IVote";
+import { Model } from "mongoose";
+import { IUpdateVoteScore, IVote } from "../../interface/IVote";
 import { BlogModel } from "../../model/blogModel";
 import CommentModel from "../../model/commentModel";
 import VoteModel from "../../model/voteModel";
 import AppError from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
-import { Request } from "express";
 
 interface IGetAction {
   existingVote: IVote;
@@ -15,13 +14,6 @@ interface IGetAction {
 }
 
 type VoteAction = "create" | "delete" | "update";
-
-interface IUpdateVoteScore {
-  targetType: "blog" | "comment";
-  targetId: string;
-  voteType: 1 | -1;
-  action: "create" | "delete" | "update";
-}
 
 const updateVoteScore = async ({
   targetType,
@@ -70,25 +62,10 @@ const getAction = ({
   return { action };
 };
 
-const getQuery = (req: Request) => {
-  const userId = req.user?._id;
-  const { targetId, voteType, targetType } = req.body;
-
-  if (!targetId || !voteType || !targetType)
-    throw new AppError("targetId, voteIype, and targetType are required!", 400);
-
-  if (voteType !== 1 && voteType !== -1)
-    throw new AppError("Invalid voteType!", 400);
-
-  if (targetType !== "blog" && targetType !== "comment")
-    throw new AppError("Invalid targetType", 400);
-
-  return { targetId, voteType, targetType, userId };
-};
-
 export const toggleVote = catchAsync(async (req, res) => {
   // get user, target, vote type
-  const { targetId, voteType, targetType, userId } = getQuery(req);
+  const userId = req.user?._id;
+  const { targetId, voteType, targetType } = req.body;
 
   // get action type
   const existingVote = (await VoteModel.findOne({
