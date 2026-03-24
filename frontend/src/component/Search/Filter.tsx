@@ -124,8 +124,8 @@ function LoadMoreBtn({
   return (
     <>
       <div
-        className={`${styles.link} ${
-          isFetchingNextPage && styles.disabled
+        className={`${
+          isFetchingNextPage && "disabled"
         } ${styles.loadMoreBtn} link`}
         onClick={handleClick}>
         {isFetchingNextPage ? "Loading..." : "Load more"}
