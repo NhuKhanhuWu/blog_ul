@@ -203,8 +203,8 @@ select {
 
 .disabled {
   color: var(--text-muted);
-  font-style: italic;
   pointer-events: none;
+  cursor: not-allowed;
 }
 
 .hidden {

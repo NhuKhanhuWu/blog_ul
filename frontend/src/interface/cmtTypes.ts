@@ -14,6 +14,7 @@ export interface ICmt {
   upVotes: number;
   downVotes: number;
   replyCount: number;
+  voteType: 0 | 1 | -1; // user vote type for this cmt (0: not vote; 1:upVote; -1:downVote)
   isDeleted: boolean;
   createdAt: Date;
 }
