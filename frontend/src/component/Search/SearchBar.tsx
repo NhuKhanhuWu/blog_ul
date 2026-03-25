@@ -41,7 +41,7 @@ function SubmitClearBtns() {
         type="button"
         className="btn-secondary"
         onClick={() => resetForm()}>
-        Clear
+        Reset
       </button>
     </div>
   );
@@ -133,7 +133,7 @@ function SearchBar() {
           isCollapsed ? styles.collapsed : styles.expanded
         }`}>
         <button
-          className={`${styles.collapseBtn} btn-secondary`}
+          className={`${styles.collapseBtn} btn-primary`}
           onClick={() => setIsCollapsed((prev) => !prev)}>
           <IoSearchSharp />
         </button>

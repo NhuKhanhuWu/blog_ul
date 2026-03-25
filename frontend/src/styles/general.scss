@@ -147,6 +147,10 @@ select {
   height: 2.6rem;
 }
 
+.input:focus {
+  border-width: 2px;
+}
+
 .light {
   input[type="checkbox"]:checked {
     background-color: $dark-900;
