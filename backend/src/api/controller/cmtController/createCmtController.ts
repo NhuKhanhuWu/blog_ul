@@ -44,7 +44,9 @@ export const createCmt = catchAsync(async (req, res) => {
     downVotes: 0,
     replyCount: 0,
     isDeleted: false,
-  });
+  })
+    // populate with userId to display in UI
+    .then((doc) => doc.populate({ path: "userId", select: "name slug" }));
 
   // 5. update replyCount
   if (parentCmt) {
