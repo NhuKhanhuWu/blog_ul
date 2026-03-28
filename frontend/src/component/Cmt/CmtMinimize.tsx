@@ -17,14 +17,17 @@ function CmtMinimize({ isOpen, setIsOpen, cmts, totalCmts }: ICmtMinimize) {
       className={`${isOpen ? "hidden" : ""} ${styles.cmtMinimize}`}
       onClick={() => setIsOpen(true)}>
       <p>{totalCmts} comment(s)</p>
-      <div>
-        <img
-          className={styles.avatar}
-          src={cmts[0].userId.avatar || defaultAvatar(cmts[0].userId.name)}
-          loading="lazy"
-        />
-        <p>{cmts[0].content.slice(0, 100)}...</p>
-      </div>
+
+      {cmts.length > 0 && (
+        <div>
+          <img
+            className={styles.avatar}
+            src={cmts[0].userId.avatar || defaultAvatar(cmts[0].userId.name)}
+            loading="lazy"
+          />
+          <p>{cmts[0].content.slice(0, 100)}...</p>
+        </div>
+      )}
     </div>
   );
 }

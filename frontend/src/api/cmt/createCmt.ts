@@ -1,23 +1,23 @@
 /** @format */
 
-import { ICreateCmtRes } from "../../interface/cmtTypes";
+import { ICmt } from "../../interface/cmtTypes";
 import axiosInstance from "../../utils/axiosInstance";
 
 interface ICreateCmt {
   blogId: string;
-  parentId?: string | null;
+  parentId?: string | undefined;
   content: string;
 }
 
 export async function createCmt({
   blogId,
-  parentId = null,
+  parentId = undefined,
   content,
-}: ICreateCmt): Promise<ICreateCmtRes> {
+}: ICreateCmt): Promise<ICmt> {
   const res = await axiosInstance.post(`/blogs/${blogId}/cmt`, {
     parentId,
     content,
   });
 
-  return res.data;
+  return res.data.data;
 }

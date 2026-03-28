@@ -17,7 +17,7 @@ function CmtContent({ cmt, isExpand, setIsExpand }: ICmtTxt) {
     <>
       {/* user name & timestapm => cmtItemHeader*/}
       <div className={styles.cmtItemHeader}>
-        <Link to={`/profile/${cmt.userId.slug}`}>{cmt.userId.name}</Link>
+        <Link to={`/profile/${cmt.userId?.slug}`}>{cmt.userId?.name}</Link>
         <span>{getDateDistance(cmt.createdAt)}</span>
       </div>
 

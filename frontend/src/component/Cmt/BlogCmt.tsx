@@ -62,6 +62,7 @@ function BlogCmtMobile({ blogId, totalCmts }: IBlogInfor) {
         setIsOpen={setIsOpen}
         setSort={setSort}
         totalCmts={totalCmts}
+        blogId={blogId}
         children={
           <>
             {isError && <Error />}

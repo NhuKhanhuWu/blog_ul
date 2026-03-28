@@ -10,10 +10,12 @@ import { ICmt } from "../../interface/cmtTypes";
 import styles from "../../styles/component/BlogCmt.module.scss";
 import { MdOutlineMessage } from "react-icons/md";
 import { useToggleVote } from "../../hook/useToggleVote";
+import { useState } from "react";
+import CmtForm from "./CmtForm";
 
 function CmtActions({ cmt }: { cmt: ICmt }) {
-  // TODO: handle logic for upvote/down vote (send request & show button accordingly)
   const { mutate, isPending } = useToggleVote();
+  const [isRepling, setIsRepling] = useState(false);
 
   const handleVote = (type: 1 | -1) => {
     if (isPending) return;
@@ -21,27 +23,39 @@ function CmtActions({ cmt }: { cmt: ICmt }) {
   };
 
   return (
-    <div className={styles.cmtActions}>
-      {/* up vote */}
-      <span
-        className={isPending ? "disabled" : ""}
-        onClick={() => handleVote(1)}>
-        {cmt.voteType === 1 ? <FaThumbsUp /> : <FaRegThumbsUp />}
+    <>
+      <div className={styles.cmtActions}>
+        {/* up vote */}
+        <span
+          className={isPending ? "disabled" : ""}
+          onClick={() => handleVote(1)}>
+          {cmt.voteType === 1 ? <FaThumbsUp /> : <FaRegThumbsUp />}
 
-        {cmt.upVotes || ""}
-      </span>
+          {cmt.upVotes || ""}
+        </span>
 
-      {/* down vote */}
-      <span
-        className={isPending ? "disabled" : ""}
-        onClick={() => handleVote(-1)}>
-        {cmt.voteType === -1 ? <FaThumbsDown /> : <FaRegThumbsDown />}
-      </span>
+        {/* down vote */}
+        <span
+          className={isPending ? "disabled" : ""}
+          onClick={() => handleVote(-1)}>
+          {cmt.voteType === -1 ? <FaThumbsDown /> : <FaRegThumbsDown />}
+        </span>
 
-      <span>
-        <MdOutlineMessage />
-      </span>
-    </div>
+        <span onClick={() => setIsRepling(true)}>
+          <MdOutlineMessage />
+        </span>
+      </div>
+
+      {/* reply cmt's form */}
+      {isRepling && (
+        <CmtForm
+          blogId={cmt.blogId}
+          parentId={cmt._id}
+          isUsing={isRepling}
+          setIsUsing={setIsRepling}
+        />
+      )}
+    </>
   );
 }
 

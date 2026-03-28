@@ -38,7 +38,7 @@
   }
 }
 
-.cmtContainer {
+.modalContainer {
   padding: 0 2rem;
 }
 
@@ -106,9 +106,12 @@
 }
 
 // ------- cmt form -------
+.cmtFormCotainer {
+  margin: 2rem 0;
+}
+
 .cmtForm,
 .notLoginMgs {
-  padding: 2rem 0;
   font-size: 1.6rem;
   margin-bottom: 2rem;
 
@@ -124,5 +127,5 @@
 }
 
 .sendCmtBtn {
-  font-size: 2rem;
+  padding: 0.5rem 1rem;
 }

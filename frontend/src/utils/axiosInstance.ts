@@ -16,7 +16,7 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-// ------------interceptors------------
+// ------------attach accessToken------------
 axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const state = store.getState();
   const token = state.auth.accessToken;
@@ -25,8 +25,8 @@ axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 
   return config;
 });
-// ------------interceptors------------
 
+// request access token && handle request queue
 let isRefreshing = false;
 let failQueue: {
   resolve: (token: string) => void;
