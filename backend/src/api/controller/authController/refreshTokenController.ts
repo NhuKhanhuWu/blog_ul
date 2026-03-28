@@ -21,11 +21,14 @@ export const refreshToken = catchAsync(async (req, res, next) => {
 
   // get token from db
   const curRefreshToken = await RefreshToken.findOne({ token: refreshToken });
+
   if (!curRefreshToken) throw new AppError("Invalid token!", 401);
 
-  // check if token has been used (revoked)
-  if (curRefreshToken.revoked)
-    throw new AppError("Token has already been used", 401);
+  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: START -------------
+  // // check if token has been used (revoked)
+  // if (curRefreshToken.revoked)
+  //   throw new AppError("Token has already been used", 401);
+  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: END -------------
 
   // check if session expired
   const sessionExpireDate = new Date(curRefreshToken.sessionExpiresAt);
@@ -49,13 +52,13 @@ export const refreshToken = catchAsync(async (req, res, next) => {
   const { userId } = curRefreshToken;
   const accessToken = createAccessToken(userId.toString());
 
+  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: START -------------
   // the web have problem where new refresh token is not setted in cookie when the old one revoked
   // now use one refresh token for the entire session
   //TODO: will fix this later
   // const newRefreshToken = createRefreshToken(userId.toString());
 
   // update in db
-  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: END -------------
   // await Promise.all([
   //   // marke cur token as used
   //   RefreshToken.findByIdAndUpdate(
