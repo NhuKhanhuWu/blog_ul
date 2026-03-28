@@ -1,6 +1,6 @@
 /** @format */
 
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import { Dispatch, ReactNode, SetStateAction, useState } from "react";
 import { Sheet } from "react-modal-sheet";
 
 import styles from "../../styles/component/BlogCmt.module.scss";
@@ -11,6 +11,7 @@ import CmtItem from "./CmtItem";
 export interface ICmtModal extends ICmtMinimize {
   setSort: Dispatch<SetStateAction<string>>;
   children?: ReactNode;
+  blogId: string;
 }
 
 function CmtModal({
@@ -20,13 +21,16 @@ function CmtModal({
   totalCmts,
   cmts,
   children: loadAndErr,
+  blogId,
 }: ICmtModal) {
+  const [isUsingCmtForm, setUsingCmtForm] = useState(false);
+
   return (
     <Sheet
-      className={!isOpen ? "hidden" : ""}
+      className={`${!isOpen ? "hidden" : ""} light`}
       isOpen={isOpen}
       onClose={() => setIsOpen(false)}>
-      <Sheet.Container className={styles.cmtContainer}>
+      <Sheet.Container className={styles.modalContainer}>
         <Sheet.Header className={styles.header}>
           {/* <div className={styles.header}> */}
           <p>{totalCmts} comments</p>
@@ -39,8 +43,14 @@ function CmtModal({
           {/* </div> */}
         </Sheet.Header>
 
-        <Sheet.Content>
-          <CmtForm />
+        <Sheet.Content className={styles.modalContent}>
+          <div className={styles.cmtFormCotainer}>
+            <CmtForm
+              blogId={blogId}
+              isUsing={isUsingCmtForm}
+              setIsUsing={setUsingCmtForm}
+            />
+          </div>
 
           <div className={styles.cmts}>
             {cmts.map((cmt) => (

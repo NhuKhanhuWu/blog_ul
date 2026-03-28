@@ -1,5 +1,7 @@
 /** @format */
 
+import { InfiniteData } from "@tanstack/react-query";
+
 export interface ICmt {
   _id: string;
   userId: {
@@ -14,8 +16,8 @@ export interface ICmt {
   upVotes: number;
   downVotes: number;
   replyCount: number;
-  voteType: 0 | 1 | -1; // user vote type for this cmt (0: not vote; 1:upVote; -1:downVote)
-  isDeleted: boolean;
+  // user vote type for this cmt (0: not vote; 1:upVote; -1:downVote)
+  voteType: 0 | 1 | -1;
   createdAt: Date;
 }
 
@@ -24,3 +26,5 @@ export interface IGetCmtRes {
   totalResult: number;
   nextPage: number | undefined;
 }
+
+export type CmtCache = InfiniteData<{ data: ICmt[]; nextPage?: number }>;

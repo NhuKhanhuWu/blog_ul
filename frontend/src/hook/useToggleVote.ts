@@ -1,15 +1,10 @@
 /** @format */
 
-import {
-  InfiniteData,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toggleVote } from "../api/vote";
 import { IToggleVote, IVoteResponse } from "../interface/voteTypes";
-import { ICmt } from "../interface/cmtTypes";
+import { CmtCache } from "../interface/cmtTypes";
 
-type CmtCache = InfiniteData<{ data: ICmt[]; nextPage?: number }>;
 type CmtQueryKey = ["cmt", ...unknown[]];
 
 type MutationContext = {
@@ -36,12 +31,12 @@ export function useToggleVote() {
       // update cache page have targerId
       queryClient.setQueriesData<CmtCache>(
         { queryKey, exact: false },
-        (old) => {
-          if (!old) return old;
+        (oldData) => {
+          if (!oldData) return oldData;
 
           return {
-            ...old,
-            pages: old.pages.map((page) => ({
+            ...oldData,
+            pages: oldData.pages.map((page) => ({
               ...page,
               data: page.data.map((cmt) => {
                 if (cmt._id !== targetId) return cmt;

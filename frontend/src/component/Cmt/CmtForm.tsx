@@ -9,7 +9,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppSelector } from "../../hook/reduxHooks";
 import styles from "../../styles/component/BlogCmt.module.scss";
 import defaultAvatar from "../../utils/defaultAvatar";
-import { IoSendSharp } from "react-icons/io5";
+import { Dispatch, SetStateAction } from "react";
+import { useCreateCmt } from "../../hook/cmt/useCreateCmt";
+import Loader from "../Loader";
 
 const formSchema = yup.object().shape({
   content: yup
@@ -20,15 +22,31 @@ const formSchema = yup.object().shape({
 
 type TFormSchema = yup.InferType<typeof formSchema>;
 
-function CmtForm() {
+interface ICmtForm {
+  isUsing: boolean;
+  setIsUsing: Dispatch<SetStateAction<boolean>>;
+  blogId: string;
+  parentId?: string;
+}
+
+function CmtForm({ isUsing, setIsUsing, blogId, parentId }: ICmtForm) {
   // TODO: handle create cmt logic
   const { isAuthenticated } = useAppSelector((state) => state.auth);
+
+  // handling form
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    reset,
+    formState: { errors: formError },
   } = useForm({ resolver: yupResolver(formSchema) });
+
+  // handling send create cmt request
+  const { mutate, isPending, isError: fetchError } = useCreateCmt();
+
   const username = useAppSelector((state) => state.auth.user?.name) || "";
+
+  // get avatar
   const avatar =
     useAppSelector((state) => state.auth.user?.avatar) ||
     defaultAvatar(username);
@@ -44,9 +62,19 @@ function CmtForm() {
     );
   }
 
-  function submitHandler(data: TFormSchema) {
-    console.log(data);
+  function cancelCmt() {
+    reset(); // reset form
+    setIsUsing(false); // hide btns
   }
+
+  function submitHandler(data: TFormSchema) {
+    // send request to server
+    mutate({ blogId, parentId, content: data.content });
+    // close form after send cmt
+    cancelCmt();
+  }
+
+  if (isPending) return <Loader></Loader>;
 
   return (
     <form onSubmit={handleSubmit(submitHandler)} className={styles.cmtForm}>
@@ -58,16 +86,32 @@ function CmtForm() {
           className={styles.avatar}
         />
         <input
+          onFocus={() => setIsUsing(true)}
           {...register("content")}
           placeholder="Write your comment"
           className="input"></input>
 
-        <button className={styles.sendCmtBtn}>
-          <IoSendSharp />
-        </button>
+        {isUsing && (
+          <>
+            <button
+              onClick={() => cancelCmt()}
+              className={`${styles.sendCmtBtn} btn-secondary`}>
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className={`${styles.sendCmtBtn} btn-primary`}>
+              Send
+            </button>
+          </>
+        )}
       </div>
 
-      {errors.content && <p className="error-mgs">{errors.content.message}</p>}
+      {formError.content && (
+        <p className="error-mgs">{formError.content.message}</p>
+      )}
+
+      {fetchError && <p className="error-mgs">Something went wrong.</p>}
     </form>
   );
 }
