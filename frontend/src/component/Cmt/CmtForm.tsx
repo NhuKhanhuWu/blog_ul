@@ -11,7 +11,6 @@ import styles from "../../styles/component/BlogCmt.module.scss";
 import defaultAvatar from "../../utils/defaultAvatar";
 import { Dispatch, SetStateAction } from "react";
 import { useCreateCmt } from "../../hook/cmt/useCreateCmt";
-import Loader from "../Loader";
 
 const formSchema = yup.object().shape({
   content: yup
@@ -30,7 +29,6 @@ interface ICmtForm {
 }
 
 function CmtForm({ isUsing, setIsUsing, blogId, parentId }: ICmtForm) {
-  // TODO: handle create cmt logic
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   // handling form
@@ -69,12 +67,15 @@ function CmtForm({ isUsing, setIsUsing, blogId, parentId }: ICmtForm) {
 
   function submitHandler(data: TFormSchema) {
     // send request to server
-    mutate({ blogId, parentId, content: data.content });
-    // close form after send cmt
-    cancelCmt();
+    mutate(
+      { blogId, parentId, content: data.content },
+      {
+        onSettled: () =>
+          // close form after send cmt
+          cancelCmt(),
+      },
+    );
   }
-
-  if (isPending) return <Loader></Loader>;
 
   return (
     <form onSubmit={handleSubmit(submitHandler)} className={styles.cmtForm}>
@@ -100,8 +101,8 @@ function CmtForm({ isUsing, setIsUsing, blogId, parentId }: ICmtForm) {
             </button>
             <button
               type="submit"
-              className={`${styles.sendCmtBtn} btn-primary`}>
-              Send
+              className={`${styles.sendCmtBtn} btn-primary ${isPending ? "disabled" : ""}`}>
+              {isPending ? "Loading..." : "Send"}
             </button>
           </>
         )}
