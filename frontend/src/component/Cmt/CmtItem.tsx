@@ -32,7 +32,7 @@ const CmtItem = memo(({ cmt, depth = 0 }: { cmt: ICmt; depth?: number }) => {
   // Logic fetch dữ liệu lồng vào đúng nơi cần thiết
   const { data, isFetchingNextPage, isError, hasNextPage, fetchNextPage } =
     useInfiniteQuery({
-      queryKey: ["cmt-replies", cmt._id],
+      queryKey: ["cmt-replies", cmt._id.toString()],
       queryFn: ({ pageParam = 0 }) =>
         getCmtByBlog({
           blogId: cmt.blogId,
