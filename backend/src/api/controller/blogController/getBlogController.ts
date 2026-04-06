@@ -6,6 +6,7 @@ import ApiQueryHelper from "../../utils/ApiQueryHelper";
 import AppError from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
 import { getOne } from "../../utils/crudFactory";
+import VoteModel from "../../model/voteModel";
 
 // -------------constants-------------
 // Fields to project (return to client)
@@ -144,6 +145,7 @@ export const getOneBlogById = catchAsync(async (req, res) => {
 });
 
 export const getOneBlogBySlug = catchAsync(async (req, res, next) => {
+  const userId = req.user?._id;
   const slug = req.params.slug;
   const blog = await BlogModel.findOne({ slug: slug })
     .populate("categories", "name slug")
@@ -153,9 +155,30 @@ export const getOneBlogBySlug = catchAsync(async (req, res, next) => {
     throw new AppError("Blog not found", 404);
   }
 
+  // get vote type
+  // if user login
+  // 1: upVote
+  // -1: downVote
+  // 0: not vote
+  let voteType = 0; // 0 by default
+  if (userId) {
+    const voteRecord = await VoteModel.findOne({
+      userId,
+      targetId: blog._id,
+    });
+
+    if (voteRecord) voteType = voteRecord.voteType;
+  }
+
+  // add to response
+  const response = {
+    ...blog,
+    voteType,
+  };
+
   res.status(200).json({
     status: "success",
-    data: blog,
+    data: response,
   });
 });
 // -------------controllers-------------
