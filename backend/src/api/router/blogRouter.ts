@@ -28,7 +28,7 @@ const blogRouter = express.Router();
 
 // ------------ BLOGS ------------
 // get single blog by slug
-blogRouter.route("/slug/:slug").get(getOneBlogBySlug);
+blogRouter.route("/slug/:slug").get(loadUser, getOneBlogBySlug);
 
 // get multiple blogs with query & create blog
 blogRouter
@@ -38,9 +38,9 @@ blogRouter
 
 blogRouter
   .route("/:id")
-  .get(getOneBlogById) //get one blog by id
+  .get(loadUser, getOneBlogById) //get one blog by id
   .patch(protect, validate(BlogCreateSchema, "body"), updateBlog) // update blog
-  .delete(protect, deleteBlog); // get single blog by id
+  .delete(protect, deleteBlog);
 
 // ------------ CMTS ------------
 blogRouter

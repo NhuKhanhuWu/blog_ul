@@ -1,6 +1,6 @@
 /** @format */
 
-import { Types } from "mongoose";
+import { FlattenMaps, Types } from "mongoose";
 import { IBlogContent } from "../utils/schema/blogSchema";
 
 export interface IBlogInput {
@@ -22,4 +22,9 @@ export interface IBlogDocument extends IBlogInput {
   downVotes: Number;
   totalCmts: number;
   totalParentCmts: number;
+}
+
+export interface IBlogWithVote extends FlattenMaps<IBlogDocument> {
+  _id: Types.ObjectId;
+  voteType: number;
 }

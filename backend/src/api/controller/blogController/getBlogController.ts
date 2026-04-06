@@ -1,11 +1,14 @@
 /** @format */
 
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { BlogModel } from "../../model/blogModel";
 import ApiQueryHelper from "../../utils/ApiQueryHelper";
 import AppError from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
 import { getOne } from "../../utils/crudFactory";
+import VoteModel from "../../model/voteModel";
+import { Request } from "express";
+import { IBlogWithVote } from "../../interface/IBlog";
 
 // -------------constants-------------
 // Fields to project (return to client)
@@ -127,15 +130,41 @@ export const getMultBlog = catchAsync(async (req, res) => {
 });
 
 // get one blog
+const getVoteType = async (req: Request, blogId: Types.ObjectId) => {
+  const userId = req.user?._id; // get vote type
+
+  // if user login
+  // 1: upVote
+  // -1: downVote
+  // 0: not vote
+  let voteType = 0; // 0 by default
+  if (userId) {
+    const voteRecord = await VoteModel.findOne({
+      userId,
+      targetId: blogId,
+    });
+
+    if (voteRecord) voteType = voteRecord.voteType;
+  }
+
+  return voteType;
+};
+
 export const getOneBlogById = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const blog = await BlogModel.findById(id)
+  const blog = (await BlogModel.findById(id)
     .populate("categories", "name slug")
-    .populate("userId", "name slug avatar");
+    .populate("userId", "name slug avatar")
+    .lean()) as IBlogWithVote | null;
 
   if (!blog) {
     throw new AppError("Blog not found", 404);
   }
+
+  // get voteType
+  const voteType = await getVoteType(req, blog._id);
+  // add to response
+  blog.voteType = voteType;
 
   res.status(200).json({
     status: "success",
@@ -143,15 +172,21 @@ export const getOneBlogById = catchAsync(async (req, res) => {
   });
 });
 
-export const getOneBlogBySlug = catchAsync(async (req, res, next) => {
+export const getOneBlogBySlug = catchAsync(async (req, res) => {
   const slug = req.params.slug;
-  const blog = await BlogModel.findOne({ slug: slug })
+  const blog = (await BlogModel.findOne({ slug })
     .populate("categories", "name slug")
-    .populate("userId", "name slug avatar");
+    .populate("userId", "name slug avatar")
+    .lean()) as IBlogWithVote | null;
 
   if (!blog) {
     throw new AppError("Blog not found", 404);
   }
+
+  // get voteType
+  const voteType = await getVoteType(req, blog._id);
+  // add to response
+  blog.voteType = voteType;
 
   res.status(200).json({
     status: "success",
