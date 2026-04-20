@@ -5,29 +5,32 @@ import {
   checkOtp,
   sendSignUpOtp,
   createUser,
-  signupEmailLimiter,
-  signupIpLimiter,
 } from "../controller/authController/signUpController";
+import { signupIpLimiter } from "../middleware/auth.middleware";
+import { signupEmailLimiter } from "../middleware/auth.middleware";
 import { login } from "../controller/authController/loginController";
 import {
   checkResetPasswordToken,
   forgotPassword,
-  forgotPasswordOtpLimiterEmail,
-  forgotPasswordOtpLimiterIP,
   resetPassword,
-} from "../controller/authController/forgotPasswordController";
+} from "../controller/authController/passwordController";
+import { forgotPasswordOtpLimiterIP } from "../middleware/auth.middleware";
+import { forgotPasswordOtpLimiterEmail } from "../middleware/auth.middleware";
 import {
-  getMeController,
+  getMe,
   getUserBySlug,
 } from "../controller/userController/getUserController";
-import { protect } from "../controller/authController/protectController";
-import { changePassController } from "../controller/userController/changePassController";
+import { changePass } from "../controller/userController/changePassController";
 import {
-  changeEmailController,
-  changeEmailLimiterByIP,
-  changeEmailLimiterByUser,
+  changeEmail,
   checkChangeEmailController,
 } from "../controller/userController/changeEmailController";
+import {
+  changeEmailByIPLimiter,
+  changePassLimiter,
+  updateUserLimiter,
+} from "../middleware/user.middleware";
+import { changeEmailByUserLimiter } from "../middleware/user.middleware";
 import logout from "../controller/authController/logoutController";
 import { refreshToken } from "../controller/authController/refreshTokenController";
 import {
@@ -35,6 +38,7 @@ import {
   getUserCmtVote,
 } from "../controller/voteController/getVoteController";
 import { updateMe } from "../controller/userController/updateAccountController";
+import { protect } from "../middleware/auth.middleware";
 const userRouter = express.Router();
 
 // -------------------- Auth Routes -------------------- //
@@ -67,18 +71,21 @@ userRouter.post("/refresh-token", refreshToken);
 // -------------------- Auth Routes -------------------- //
 
 // -------------------- User Routes -------------------- //
-userRouter.route("/me").get(protect, getMeController).post(protect, updateMe);
+userRouter
+  .route("/me")
+  .get(protect, getMe)
+  .post(updateUserLimiter, protect, updateMe);
 
 userRouter.route("/:slug").get(getUserBySlug);
 
-userRouter.patch("/change-password", protect, changePassController);
+userRouter.patch("/change-password", changePassLimiter, protect, changePass);
 
 userRouter.post(
   "/change-email",
+  changeEmailByUserLimiter,
+  changeEmailByIPLimiter,
   protect,
-  changeEmailLimiterByUser,
-  changeEmailLimiterByIP,
-  changeEmailController,
+  changeEmail,
 );
 
 userRouter.post("/change-email/verify", checkChangeEmailController);

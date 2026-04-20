@@ -12,6 +12,9 @@ interface RateLimitOptions {
 
   // function to generate a unique key per request (default: req.ip)
   keyGenerator?: (req: Request) => string;
+
+  // only count fail request
+  skipSuccessfulRequests?: boolean;
 }
 
 export function createLimiter({
@@ -19,12 +22,14 @@ export function createLimiter({
   windowMs,
   message,
   keyGenerator,
+  skipSuccessfulRequests = false,
 }: RateLimitOptions) {
   return rateLimit({
     windowMs, // e.g., 3 * 60 * 1000 = 3 minutes
     max, // e.g., 1 request in the window
     message:
       typeof message === "function" ? message : { status: "fail", message },
-    keyGenerator: keyGenerator || ((req) => req.ip || "unknown"), // default to IP if not provided
+    keyGenerator: keyGenerator || ((req) => req.ip || "unknown"), // default to IP if not provided,
+    skipSuccessfulRequests,
   });
 }
