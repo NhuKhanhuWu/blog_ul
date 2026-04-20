@@ -9,10 +9,10 @@ export const validate =
   (schema: ZodObject, source: TValidationSource = "body") =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Validate đúng nguồn dữ liệu được chỉ định (mặc định là body)
+      // Validate source of data (body by default)
       const validatedData = await schema.parseAsync(req[source]);
 
-      // Gán ngược lại dữ liệu đã parse (để nhận được data đã transform/strip)
+      // attach parsed data to body
       req[source] = validatedData;
 
       return next();
@@ -20,7 +20,7 @@ export const validate =
       if (error instanceof ZodError) {
         return res.status(400).json({
           status: "fail",
-          // Format lại lỗi của Zod để client dễ đọc
+          // Format Zod error
           errors: error.issues.map((issue) => ({
             path: issue.path.join("."),
             message: issue.message,

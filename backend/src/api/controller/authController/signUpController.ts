@@ -10,32 +10,11 @@ import { otpEmail } from "../../utils/email/emailTemplate";
 import { sendTokenEmail } from "../../utils/email/emailService";
 import signToken from "../../utils/token/signToken";
 import getToken from "../../utils/token/getToken";
-import { createLimiter } from "../../utils/createLimiter";
 
 interface DecodedToken extends JwtPayload {
   email: string;
 }
 
-// CREATE RATE LIMITTER: START
-// by email
-export const signupEmailLimiter = createLimiter({
-  max: 1, // 1 request
-  windowMs: 60 * 1000, // 3 mins,
-  message:
-    "You can only request signup OTP once every 1 minute with this email.",
-  keyGenerator: (req) => req.body.email,
-});
-
-// by IP
-export const signupIpLimiter = createLimiter({
-  max: 15, // 15 request
-  windowMs: 60 * 60 * 1000, // 1 hour,
-  message:
-    "You can only request signup OTP 15 times every 1 hour with this IP.",
-});
-// CREATE RATE LIMITTER: END
-
-// SIGN UP CONTROLLERS: START
 // 1. send verification email (otp)
 export const sendSignUpOtp = catchAsync(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -57,7 +36,7 @@ export const sendSignUpOtp = catchAsync(
     await PendingEmailsModel.findOneAndUpdate(
       { email },
       { otp, otpExpires },
-      { upsert: true, new: true }
+      { upsert: true, new: true },
     );
 
     // 4. send email
@@ -71,9 +50,9 @@ export const sendSignUpOtp = catchAsync(
         htmlMessage: emailMessage,
       },
       res,
-      next
+      next,
     );
-  }
+  },
 );
 
 // 2. check otp
@@ -109,13 +88,13 @@ export const createUser = catchAsync(async (req, res) => {
   if (!token)
     throw new AppError(
       "Please validate for email before execute this action!",
-      401
+      401,
     );
 
   // check email
   const decoded = jwt.verify(
     token,
-    process.env.JWT_SECRET as string
+    process.env.JWT_SECRET as string,
   ) as DecodedToken;
   const { email } = decoded;
 

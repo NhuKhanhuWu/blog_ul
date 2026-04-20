@@ -4,7 +4,7 @@ import UserModel from "../../model/userModel";
 import AppError from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
 
-export const changePassController = catchAsync(async (req, res, next) => {
+export const changePass = catchAsync(async (req, res, next) => {
   const { password, passwordConfirm, currentPassword } = req.body;
   const { accessToken } = req;
 
