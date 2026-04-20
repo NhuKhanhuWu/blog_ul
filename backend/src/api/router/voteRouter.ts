@@ -1,16 +1,22 @@
 /** @format */
 
 import express from "express";
-import { protect } from "../controller/authController/protectController";
 import { toggleVote } from "../controller/voteController/toggleVoteController";
 import { validate } from "../utils/validate";
 import { toggleVoteSchema } from "../utils/schema/voteSchema";
+import { protect } from "../middleware/auth.middleware";
+import { toggleVoteLimiter } from "../middleware/vote.middleware";
 
 const voteRouter = express.Router();
 
 // toggle vote
 voteRouter
   .route("/")
-  .post(protect, validate(toggleVoteSchema, "body"), toggleVote);
+  .post(
+    toggleVoteLimiter,
+    protect,
+    validate(toggleVoteSchema, "body"),
+    toggleVote,
+  );
 
 export default voteRouter;

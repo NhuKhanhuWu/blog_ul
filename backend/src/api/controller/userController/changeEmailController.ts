@@ -3,34 +3,13 @@
 import UserModel from "../../model/userModel";
 import AppError from "../../utils/AppError";
 import catchAsync from "../../utils/catchAsync";
-import { createLimiter } from "../../utils/createLimiter";
 import { sendTokenEmail } from "../../utils/email/emailService";
 import { changeEmailEmail } from "../../utils/email/emailTemplate";
 import getToken from "../../utils/token/getToken";
 import signToken from "../../utils/token/signToken";
 import verifyToken from "../../utils/token/verifyToken";
 
-// --------------------------- limiters ---------------------------
-export const changeEmailLimiterByUser = createLimiter({
-  max: 1,
-  windowMs: 60 * 1000,
-  message:
-    "You can only request change email every 1 minute with your account.",
-  keyGenerator: (req) => req.user?.id,
-});
-
-export const changeEmailLimiterByIP = createLimiter({
-  max: 15,
-  windowMs: 60 * 60 * 1000,
-  message:
-    "You can only request change email 15 times every 1 hour with your device.",
-  keyGenerator: (req) => req.ip || "",
-});
-
-// --------------------------- limiters ---------------------------
-
-// --------------------------- controllers ---------------------------
-export const changeEmailController = catchAsync(async (req, res, next) => {
+export const changeEmail = catchAsync(async (req, res, next) => {
   // check if password and new email are provided
   const { password, newEmail } = req.body;
   const { accessToken } = req;
@@ -68,7 +47,7 @@ export const changeEmailController = catchAsync(async (req, res, next) => {
       htmlMessage: message,
     },
     res,
-    next
+    next,
   );
 
   // respond
@@ -105,4 +84,3 @@ export const checkChangeEmailController = catchAsync(async (req, res, next) => {
     message: "Email changed successfully!",
   });
 });
-// --------------------------- controllers ---------------------------

@@ -9,7 +9,7 @@ const GET_BY_SLUG_FIELDS = {
   avatar: 1,
 };
 
-export const getMeController = catchAsync(async (req, res) => {
+export const getMe = catchAsync(async (req, res) => {
   // get user from req object
   // const userId = req.user?._id;
   const user = req.user;

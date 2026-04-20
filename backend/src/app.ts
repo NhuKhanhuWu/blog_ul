@@ -13,6 +13,7 @@ import blogListRouter from "./api/router/blogListRouter";
 import cmtRouter from "./api/router/cmtRouter";
 import voteRouter from "./api/router/voteRouter";
 import categoryRouter from "./api/router/categoryRouter";
+import { globalLimiter } from "./api/middleware/global.middleware";
 
 const app = express();
 app.use(express.json());
@@ -34,6 +35,9 @@ app.use(
     credentials: true,
   }),
 );
+
+// GLOBAL LIMITER
+app.use(globalLimiter);
 
 // ROUTER
 app.use("/api/v1/user", userRouter);

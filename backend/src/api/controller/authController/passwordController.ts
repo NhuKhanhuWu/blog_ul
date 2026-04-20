@@ -4,7 +4,6 @@ import { Request, Response, NextFunction } from "express";
 import UserModel from "../../model/userModel";
 import catchAsync from "../../utils/catchAsync";
 import { sendTokenEmail } from "../../utils/email/emailService";
-import { createLimiter } from "../../utils/createLimiter";
 import signToken from "../../utils/token/signToken";
 import { resetPasswordEmail } from "../../utils/email/emailTemplate";
 import { IUserDocument } from "../../interface/IUser";
@@ -12,31 +11,6 @@ import getToken from "../../utils/token/getToken";
 import AppError from "../../utils/AppError";
 import verifyToken from "../../utils/token/verifyToken";
 import { IJwtPayload } from "../../interface/IJwtPayload";
-
-// ---------------------------
-// Rate Limiters
-// ---------------------------
-// For forgot-password OTP: limit 1 request per 3 mins by email
-export const forgotPasswordOtpLimiterEmail = createLimiter({
-  max: 1,
-  windowMs: 60 * 1000,
-  message:
-    "You can only request a password reset once every 1 minute with this email.",
-  keyGenerator: (req) => req.body.email,
-});
-
-// For forgot-password OTP: limit 10 request per 1 hour by IP
-export const forgotPasswordOtpLimiterIP = createLimiter({
-  max: 15,
-  windowMs: 60 * 60 * 1000,
-  message:
-    "You can only request a password reset 15 times every 1 hour with your device.",
-  keyGenerator: (req) => req.ip || "",
-});
-
-// ---------------------------
-// Controllers
-// ---------------------------
 
 // FORGOT PASSWORD
 export const forgotPassword = catchAsync(
@@ -68,7 +42,7 @@ export const forgotPassword = catchAsync(
         htmlMessage: message,
       },
       res,
-      next
+      next,
     );
 
     // send response
@@ -76,7 +50,7 @@ export const forgotPassword = catchAsync(
       status: "success",
       message: "Reset link sent to email!",
     });
-  }
+  },
 );
 
 // check token in the reset password link middleware
@@ -106,7 +80,7 @@ export const checkResetPasswordToken = catchAsync(
     req.user = user;
     req.body.email = user.email; // attach email to body for resetPassword controller (so user doesn't have to provide it again)
     next();
-  }
+  },
 );
 
 // RESET PASSWORD
