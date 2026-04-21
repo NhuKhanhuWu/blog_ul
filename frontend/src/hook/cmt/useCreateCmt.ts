@@ -1,9 +1,9 @@
 /** @format */
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createCmt } from "../../api/cmt/createCmt";
-import { CmtCache } from "../../interface/cmtTypes";
-import { IBlogDetail } from "../../interface/blogTypes";
+import { CmtCache } from "../../types/comment.type";
+import { BlogDetailProps } from "../../types/blog.type";
+import { createCmt } from "../../api/comment.api";
 
 export function useCreateCmt() {
   const queryClient = useQueryClient();
@@ -60,7 +60,7 @@ export function useCreateCmt() {
       }
 
       // update blog's total cmt
-      queryClient.setQueriesData<IBlogDetail>(
+      queryClient.setQueriesData<BlogDetailProps>(
         { queryKey: ["blog"] },
         (oldData) => {
           if (!oldData) return oldData;

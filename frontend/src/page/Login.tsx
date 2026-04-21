@@ -6,12 +6,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Link, useNavigate } from "react-router-dom";
 
 import styles from "../styles/component/Auth.module.scss";
-import { emaiSchema, passwordSchema } from "../utils/formSchema";
-import AuthHeader from "../component/Auth/AuthHeader";
-import { Email, Password } from "../component/Auth/AuthInputs";
-import AuthFooter from "../component/Auth/AuthFooter";
+import { emaiSchema, passwordSchema } from "../utils/form-schema";
+import AuthHeader from "../component/auth/AuthHeader";
+import { Email, Password } from "../component/auth/AuthInputs";
+import AuthFooter from "../component/auth/AuthFooter";
 import { useAppDispatch, useAppSelector } from "../hook/reduxHooks";
-import { loginThunk } from "../redux/authSlice";
+import { loginThunk } from "../redux/auth.slice";
 
 const formSchema = yup.object().shape({
   email: emaiSchema,

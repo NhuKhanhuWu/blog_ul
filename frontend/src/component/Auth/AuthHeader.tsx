@@ -1,7 +1,7 @@
 /** @format */
 
 import styles from "../../styles/component/Auth.module.scss";
-import getLogo from "../../utils/getLogo";
+import getLogo from "../../utils/get-logo";
 
 interface Props {
   title: string;

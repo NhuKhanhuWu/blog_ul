@@ -5,15 +5,15 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { Request, Response, NextFunction } from "express";
 
-import AppError from "./api/utils/AppError";
-import globalErrHandler from "./api/controller/errorController";
-import userRouter from "./api/router/userRouter";
-import blogRouter from "./api/router/blogRouter";
-import blogListRouter from "./api/router/blogListRouter";
-import cmtRouter from "./api/router/cmtRouter";
-import voteRouter from "./api/router/voteRouter";
-import categoryRouter from "./api/router/categoryRouter";
-import { globalLimiter } from "./api/middleware/global.middleware";
+import AppError from "./api/utils/error/app-error";
+import globalErrHandler from "./api/controllers/error.controller";
+import userRouter from "./api/routers/user.router";
+import blogRouter from "./api/routers/blog.router";
+import blogListRouter from "./api/routers/blog-list.router";
+import cmtRouter from "./api/routers/comment.router";
+import voteRouter from "./api/routers/vote.router";
+import categoryRouter from "./api/routers/category.router";
+import { globalLimiter } from "./api/middlewares/global.middleware";
 
 const app = express();
 app.use(express.json());

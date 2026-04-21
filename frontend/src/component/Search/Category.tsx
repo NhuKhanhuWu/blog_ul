@@ -1,7 +1,7 @@
 /** @format */
 
 import { useFormContext } from "react-hook-form";
-import { ICategoryInput, TSearchFormValues } from "../../interface/searchTypes";
+import { ICategoryInput, TSearchFormValues } from "../../types/search.type";
 
 export function Category({ category, selectedIds }: ICategoryInput) {
   const { setValue, setError, clearErrors } =
