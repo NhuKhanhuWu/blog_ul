@@ -1,16 +1,18 @@
 /** @format */
 
-import { BlogModel } from "../model/blogModel";
-import CommentModel from "../model/commentModel";
-import AppError from "../utils/AppError";
-import { CreateCmtBody, CreateCmtParams } from "../utils/schema/cmtSchema";
+import { BlogModel } from "../models/blog.model";
+import CommentModel from "../models/comment.model";
+import AppError from "../utils/error/app-error";
+import {
+  createCmtBodySchema,
+  createCmtParamsSchema,
+} from "../validation/comment.validation";
 import { Types } from "mongoose";
-import { NextFunction, Request } from "express";
-import catchAsync from "../utils/catchAsync";
+import catchAsync from "../utils/error/catch-async";
 
 export const validateCmtConstraints = async (
-  params: CreateCmtParams,
-  body: CreateCmtBody,
+  params: createCmtParamsSchema,
+  body: createCmtBodySchema,
 ) => {
   const blogId = params.id;
   const { content, parentId } = body;

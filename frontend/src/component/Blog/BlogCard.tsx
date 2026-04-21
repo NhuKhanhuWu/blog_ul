@@ -1,12 +1,12 @@
 /** @format */
 
 import { FaRegThumbsUp } from "react-icons/fa";
-import { IBlogCard } from "../../interface/blogTypes";
+import { BlogCardProps } from "../../types/blog.type";
 import styles from "../../styles/component/BlogList.module.scss";
 import { formatDate } from "../../utils/date";
 import { Link } from "react-router-dom";
 
-function Authors({ blog }: IBlogCard) {
+function Authors({ blog }: BlogCardProps) {
   const { authors } = blog;
   return (
     <div className="smTxt">
@@ -16,7 +16,7 @@ function Authors({ blog }: IBlogCard) {
   );
 }
 
-function BlogCard({ blog }: IBlogCard) {
+function BlogCard({ blog }: BlogCardProps) {
   const placehoderImg =
     "https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU";
 

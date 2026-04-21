@@ -8,12 +8,12 @@ import {
 } from "react-icons/fa";
 import { PiShareFatBold } from "react-icons/pi";
 
-import { TNormalizedBlog } from "../../interface/blogTypes";
-import defaultAvatar from "../../utils/defaultAvatar";
+import { NormalizedBlog } from "../../types/blog.type";
+import defaultAvatar from "../../utils/default-avatar";
 import styles from "../../styles/component/BlogAction.module.scss";
 import { MdBookmark, MdOutlineBookmarkBorder } from "react-icons/md";
 
-function BlogAction({ blog }: { blog: TNormalizedBlog }) {
+function BlogAction({ blog }: { blog: NormalizedBlog }) {
   const avatar = blog.userId.avatar || defaultAvatar(blog.userId.name);
   // TODO: handle vote blog
   // TODO: handle share blog

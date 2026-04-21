@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useSearch } from "../context/SearchContext";
-import { TSearchFormValues } from "../interface/searchTypes";
+import { TSearchFormValues } from "../types/search.type";
 import { useFormContext } from "react-hook-form";
 
 type Logic = "or" | "and";
