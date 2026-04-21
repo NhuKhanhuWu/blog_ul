@@ -1,7 +1,7 @@
 /** @format */
 
-import BlogList from "../component/Blog/BlogList";
-import SearchBar from "../component/Search/SearchBar";
+import BlogList from "../component/blog/BlogList";
+import SearchBar from "../component/search/SearchBar";
 import { SearchProvider } from "../context/SearchContext";
 import styles from "../styles/page/Homepage.module.scss";
 

@@ -1,0 +1,104 @@
+/** @format */
+
+import { Request, Response, NextFunction } from "express";
+import UserModel from "../../models/user.model";
+import catchAsync from "../../utils/error/catch-async";
+import { sendTokenEmail } from "../../utils/email/email-service";
+import signToken from "../../utils/token/sign-token";
+import { resetPasswordEmail } from "../../utils/email/email-template";
+import { UserDocument } from "../../types/user.type";
+import getToken from "../../utils/token/get-token";
+import AppError from "../../utils/error/app-error";
+import verifyToken from "../../utils/token/verify-token";
+import { JwtPayload } from "../../types/jwt-payload.type";
+
+// FORGOT PASSWORD
+export const forgotPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    // get email
+    const { email } = req.body as { email?: string };
+    if (!email) return next(new Error("Email required"));
+
+    // 1. get user by email
+    const user = (await UserModel.findOne({ email })) as UserDocument | null;
+
+    // still send success status to prevent attacker from guessing emails
+    if (!user) {
+      return res.status(200).json({
+        status: "success",
+        message: "Token sent to email!",
+      });
+    }
+
+    // 2. create token, expire in 5min
+    const token = signToken({ id: user._id }, "10m");
+
+    // 3. send email
+    const message = resetPasswordEmail(token);
+    await sendTokenEmail(
+      {
+        email,
+        subject: "Your password reset link in Blogie",
+        htmlMessage: message,
+      },
+      res,
+      next,
+    );
+
+    // send response
+    res.status(200).json({
+      status: "success",
+      message: "Reset link sent to email!",
+    });
+  },
+);
+
+// check token in the reset password link middleware
+export const checkResetPasswordToken = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    // get token from request
+    const token = getToken(req);
+    if (!token) {
+      return next(new AppError("Token is missing", 400));
+    }
+
+    // verify token
+    let decode: JwtPayload;
+    try {
+      decode = verifyToken(token, process.env.JWT_SECRET!, true) as JwtPayload;
+    } catch (err) {
+      return next(new AppError("Invalid or expired token", 401));
+    }
+
+    // get user from token
+    const user = await UserModel.findById((decode as { id: string }).id);
+    if (!user) {
+      return next(new AppError("The user no longer exists.", 400));
+    }
+
+    // attach user to request object
+    req.user = user;
+    req.body.email = user.email; // attach email to body for resetPassword controller (so user doesn't have to provide it again)
+    next();
+  },
+);
+
+// RESET PASSWORD
+export const resetPassword = catchAsync(async (req: Request, res: Response) => {
+  // 1. get user
+  const user = (await UserModel.findOne({
+    email: req.body.email,
+  })) as UserDocument;
+
+  // 2. update password
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordChangedAt = new Date();
+  await user.save();
+
+  //  response
+  res.status(201).json({
+    status: "success",
+    message: "Password reset successfully!",
+  });
+});
