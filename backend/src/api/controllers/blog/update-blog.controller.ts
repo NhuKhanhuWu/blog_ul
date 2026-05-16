@@ -25,11 +25,11 @@ export const updateBlog = catchAsync(async (req, res) => {
   }
 
   // check if update fields are valid
-  const isValid = updateBlogSchema.safeParse(req.body);
+  // const isValid = updateBlogSchema.safeParse(req.body);
 
-  if (!isValid.success) {
-    throw new AppError("Invalid blog update data", 400);
-  }
+  // if (!isValid.success) {
+  //   throw new AppError("Invalid blog update data", 400);
+  // }
 
   // update blog
   const updatedBlog = await BlogModel.findByIdAndUpdate(
