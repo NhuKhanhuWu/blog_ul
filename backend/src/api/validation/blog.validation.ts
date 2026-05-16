@@ -9,13 +9,13 @@ import { objectIdSchema } from "./object-id.validation";
 
 // Title
 export const titleValidator = z
-  .string("Title cannot be empty")
+  .string("Title must be string")
   .min(1, "Title cannot be empty")
   .max(150, "Title cannot exceed 150 characters");
 
 // Author (single)
 export const authorValidator = z
-  .string("Author name cannot be empty")
+  .string("Author name must be string")
   .min(1, "Author name cannot be empty")
   .max(50, "Author name cannot exceed 50 characters");
 
@@ -78,24 +78,28 @@ export const contentValidator = z
    🧩 Blog Schemas
 ----------------------------------- */
 
-export const createBlogSchema = z
-  .object({
-    title: titleValidator,
-    authors: authorsValidator,
-    categories: categoriesValidator,
-    content: contentValidator,
-    isPrivate: z.boolean().optional(),
-  })
-  .strict();
+export const createBlogSchema = z.object({
+  body: z
+    .object({
+      title: titleValidator,
+      authors: authorsValidator,
+      categories: categoriesValidator,
+      content: contentValidator,
+      isPrivate: z.boolean().optional(),
+    })
+    .strict(),
+});
 
-export const updateBlogSchema = z
-  .object({
-    title: titleValidator.optional(),
-    authors: authorsValidator.optional(),
-    categories: categoriesValidator.optional(),
-    content: contentValidator.optional(),
-    isPrivate: z.boolean().optional(),
-  })
-  .refine((data) => Object.keys(data).length > 0, {
-    message: "Request body cannot be empty",
-  });
+export const updateBlogSchema = z.object({
+  body: z
+    .object({
+      title: titleValidator.optional(),
+      authors: authorsValidator.optional(),
+      categories: categoriesValidator.optional(),
+      content: contentValidator.optional(),
+      isPrivate: z.boolean().optional(),
+    })
+    .refine((data) => Object.keys(data).length > 0, {
+      message: "Request body cannot be empty",
+    }),
+});

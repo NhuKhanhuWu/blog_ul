@@ -2,7 +2,7 @@
 
 import express from "express";
 import { toggleVote } from "../controllers/vote/toggle-vote.controller";
-import { validate } from "../validation/validate";
+import { validateRequest } from "../validation/validate";
 import { toggleVoteSchema } from "../validation/vote.validation";
 import { protect } from "../middlewares/auth.middleware";
 import { toggleVoteLimiter } from "../middlewares/vote.middleware";
@@ -15,7 +15,7 @@ voteRouter
   .post(
     toggleVoteLimiter,
     protect,
-    validate(toggleVoteSchema, "body"),
+    validateRequest(toggleVoteSchema),
     toggleVote,
   );
 
