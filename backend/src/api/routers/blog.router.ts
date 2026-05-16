@@ -11,12 +11,11 @@ import { updateBlog } from "../controllers/blog/update-blog.controller";
 import { deleteBlog } from "../controllers/blog/delete-blog.controller";
 import { getCmtByBlog } from "../controllers/comment/get-comment.controller";
 import { createCmt } from "../controllers/comment/create-comment.controller";
-import { createCmtLimiter } from "../middlewares/comment.middleware";
+import {
+  createCmtLimiter,
+  validateCmtConstraints,
+} from "../middlewares/comment.middleware";
 import { validateRequest } from "../validation/validate";
-// import {
-//   cmtBodySchema,
-//   createCmtParamsSchema,
-// } from "../validation/comment.validation";
 import { loadUser, protect } from "../middlewares/auth.middleware";
 import {
   createBlogLimiter,
@@ -65,6 +64,7 @@ blogRouter
     createCmtLimiter,
     protect,
     validateRequest(createCmtParamsSchema),
+    validateCmtConstraints,
     createCmt,
   );
 

@@ -3,9 +3,9 @@ import express from "express";
 import { getCmtByUser } from "../controllers/comment/get-comment.controller";
 import { updateCmt } from "../controllers/comment/update-comment.controller";
 import { softDeleteCmt } from "../controllers/comment/delete-comment.controller";
-import { authorizedCmt } from "../services/comment.service";
 import { protect } from "../middlewares/auth.middleware";
 import {
+  authorizedCmt,
   deleteCmtLimiter,
   updateCmtLimiter,
 } from "../middlewares/comment.middleware";
