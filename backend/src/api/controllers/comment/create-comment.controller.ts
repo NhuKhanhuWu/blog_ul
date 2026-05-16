@@ -4,16 +4,10 @@ import CommentModel from "../../models/comment.model";
 import catchAsync from "../../utils/error/catch-async";
 import { BlogModel } from "../../models/blog.model";
 import { validateCmtConstraints } from "../../services/comment.service";
-import {
-  createCmtBodySchema,
-  createCmtParamsSchema,
-} from "../../validation/comment.validation";
 
 export const createCmt = catchAsync(async (req, res) => {
-  const { blogId, parentId, content, parentCmt } = await validateCmtConstraints(
-    req.params as createCmtParamsSchema,
-    req.body as createCmtBodySchema,
-  );
+  const { blogId, parentId, content, parentCmt } =
+    await validateCmtConstraints(req);
 
   // create comment
   const comment = await CommentModel.create({

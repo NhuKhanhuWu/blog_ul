@@ -5,15 +5,21 @@ import { ZodObject, ZodError } from "zod";
 
 type TValidationSource = "body" | "query" | "params";
 
-export const validate =
+export const validateRequest =
   (schema: ZodObject, source: TValidationSource = "body") =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Validate source of data (body by default)
-      const validatedData = await schema.parseAsync(req[source]);
+      // validate all data from request
+      const validated = await schema.parseAsync({
+        body: req.body,
+        query: req.query,
+        params: req.params,
+      });
 
-      // attach parsed data to body
-      req[source] = validatedData;
+      // re-attach validated data to req
+      if (validated.body) req.body = validated.body;
+      if (validated.query) req.query = validated.query as any;
+      if (validated.params) req.params = validated.params as any;
 
       return next();
     } catch (error) {

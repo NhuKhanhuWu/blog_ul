@@ -3,19 +3,13 @@
 import { BlogModel } from "../models/blog.model";
 import CommentModel from "../models/comment.model";
 import AppError from "../utils/error/app-error";
-import {
-  createCmtBodySchema,
-  createCmtParamsSchema,
-} from "../validation/comment.validation";
 import { Types } from "mongoose";
 import catchAsync from "../utils/error/catch-async";
+import { Request } from "express";
 
-export const validateCmtConstraints = async (
-  params: createCmtParamsSchema,
-  body: createCmtBodySchema,
-) => {
-  const blogId = params.id;
-  const { content, parentId } = body;
+export const validateCmtConstraints = async (req: Request) => {
+  const blogId = req.params.id;
+  const { content, parentId } = req.body;
 
   // 1. Blog phải tồn tại
   const post = await BlogModel.findById(blogId);

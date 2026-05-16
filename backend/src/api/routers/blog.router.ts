@@ -12,18 +12,22 @@ import { deleteBlog } from "../controllers/blog/delete-blog.controller";
 import { getCmtByBlog } from "../controllers/comment/get-comment.controller";
 import { createCmt } from "../controllers/comment/create-comment.controller";
 import { createCmtLimiter } from "../middlewares/comment.middleware";
-import { validate } from "../validation/validate";
-import {
-  cmtBodySchema,
-  createCmtParamsSchema,
-} from "../validation/comment.validation";
+import { validateRequest } from "../validation/validate";
+// import {
+//   cmtBodySchema,
+//   createCmtParamsSchema,
+// } from "../validation/comment.validation";
 import { loadUser, protect } from "../middlewares/auth.middleware";
 import {
   createBlogLimiter,
   deleteBlogLimiter,
   updateBlogLimiter,
 } from "../middlewares/blog.middleware";
-import { createBlogSchema } from "../validation/blog.validation";
+import {
+  createBlogSchema,
+  updateBlogSchema,
+} from "../validation/blog.validation";
+import { createCmtParamsSchema } from "../validation/comment.validation";
 
 const blogRouter = express.Router();
 
@@ -37,8 +41,8 @@ blogRouter
   .get(getMultBlog)
   .post(
     createBlogLimiter,
+    validateRequest(createBlogSchema),
     protect,
-    validate(createBlogSchema, "body"),
     createBlog,
   );
 
@@ -47,8 +51,8 @@ blogRouter
   .get(loadUser, getOneBlogById) //get one blog by id
   .patch(
     updateBlogLimiter,
+    validateRequest(updateBlogSchema),
     protect,
-    validate(createBlogSchema, "body"),
     updateBlog,
   ) // update blog
   .delete(deleteBlogLimiter, protect, deleteBlog);
@@ -60,8 +64,7 @@ blogRouter
   .post(
     createCmtLimiter,
     protect,
-    validate(createCmtParamsSchema, "params"),
-    validate(cmtBodySchema, "body"),
+    validateRequest(createCmtParamsSchema),
     createCmt,
   );
 
