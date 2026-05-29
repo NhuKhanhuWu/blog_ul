@@ -3,10 +3,8 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodObject, ZodError } from "zod";
 
-type TValidationSource = "body" | "query" | "params";
-
 export const validateRequest =
-  (schema: ZodObject, source: TValidationSource = "body") =>
+  (schema: ZodObject) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // validate all data from request

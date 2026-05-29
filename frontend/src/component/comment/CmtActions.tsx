@@ -9,12 +9,12 @@ import {
 import { Cmt } from "../../types/comment.type";
 import styles from "../../styles/component/BlogCmt.module.scss";
 import { MdOutlineMessage } from "react-icons/md";
-import { useToggleVote } from "../../hook/useToggleVote";
+import { useToggleCmtVote } from "../../hook/useToggleVote";
 import { useState } from "react";
 import CmtForm from "./CmtForm";
 
 function CmtActions({ cmt }: { cmt: Cmt }) {
-  const { mutate, isPending } = useToggleVote();
+  const { mutate, isPending } = useToggleCmtVote();
   const [isRepling, setIsRepling] = useState(false);
 
   const handleVote = (type: 1 | -1) => {

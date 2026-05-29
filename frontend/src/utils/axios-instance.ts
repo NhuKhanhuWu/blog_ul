@@ -64,7 +64,7 @@ axiosInstance.interceptors.response.use(
             // push to queue (store request need to retry => currently sleep)
             failQueue.push({ resolve, reject });
           })
-            // retry reuquest after awake
+            // retry request after awake
             .then((token) => {
               ogRequest.headers.Authorization = `Bearer ${token}`;
               return axiosInstance(ogRequest);

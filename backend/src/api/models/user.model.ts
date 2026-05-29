@@ -5,6 +5,7 @@ import validator from "validator";
 import bcrypt from "bcrypt";
 import { UserDocument } from "../types/user.type";
 import { generateUniqueSlug } from "../utils/helpers/generate-unique-slug";
+import { BlogListModel } from "./blog-list.model";
 
 const { Schema } = mongoose;
 
@@ -88,7 +89,7 @@ userSchema.methods.checkPassword = async function (candidatePassword: string) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-// check if password changed after token issued
+// check if password changed after token is issued
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
   if (this.passwordChangedAt) {
     const changedTimestamp = Math.floor(
@@ -102,19 +103,38 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
 };
 
 // Indexes for quick lookups
-userSchema.index({ email: 1 });
+// userSchema.index({ email: 1 });
 userSchema.index({ name: "text", email: "text" });
 
-// when user create acc
+// create slug & default blog list when user create acc
 userSchema.pre("save", async function (next) {
   if (!this.isModified("name")) return next();
 
+  // create slug
   const UserModel = this.constructor as mongoose.Model<any>;
   this.slug = await generateUniqueSlug(
     UserModel,
     this.name,
     this._id.toString(),
   );
+
+  // create blog list
+  const defaultList = BlogListModel.findOne({
+    userId: this._id,
+    name: "Read later",
+    isDefault: true,
+  });
+
+  if (!defaultList) {
+    await BlogListModel.create({
+      name: "Read later",
+      userId: this._id,
+      isDefault: true,
+      isPrivate: true,
+      blogs: [],
+    });
+  }
+
   next();
 });
 
