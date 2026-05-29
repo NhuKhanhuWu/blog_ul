@@ -2,9 +2,10 @@
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Provider } from "react-redux";
 import { lazy } from "react";
-import "./styles/general.scss";
+import toast, { Toaster } from "react-hot-toast";
 import { store } from "./redux/store.ts";
 
 // lazy load
@@ -34,7 +35,22 @@ function App() {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+        <ReactQueryDevtools initialIsOpen={false} />
+
+        <Toaster
+          position="bottom-left"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              borderRadius: "10px",
+              background: "var(--bg-body)",
+              color: "var(--text-main)",
+              border: "1px solid var(--border-color)",
+              zIndex: 9999,
+            },
+          }}
+        />
+
         <RouterProvider router={router}></RouterProvider>
       </QueryClientProvider>
     </Provider>

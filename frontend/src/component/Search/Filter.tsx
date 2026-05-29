@@ -1,17 +1,13 @@
 /** @format */
 
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { ICategory } from "../../interface/categoryTypes";
+import { ICategory } from "../../types/category.type";
 import styles from "../../styles/component/SearchBar.module.scss";
 import { useFormContext } from "react-hook-form";
-import { TSearchFormValues } from "../../interface/searchTypes";
+import { TSearchFormValues } from "../../types/search.type";
 import { useCategories } from "../../hook/useCategories";
 import { useDebounce } from "../../hook/useDebounce";
-
-interface ICategoryInput {
-  category: ICategory;
-  selectedIds: string[];
-}
+import { Category } from "./Category";
 
 interface ICategories {
   categories: ICategory[];
@@ -30,38 +26,6 @@ interface SelectedCatsProps {
   selectedIds: string[];
   allCategories: ICategory[];
   onRemove: (id: string) => void;
-}
-
-function Category({ category, selectedIds }: ICategoryInput) {
-  const { setValue } = useFormContext<TSearchFormValues>();
-  const isChecked = selectedIds.includes(category._id);
-
-  const handleChange = () => {
-    if (isChecked) {
-      // Nếu đang chọn thì bỏ chọn
-      setValue(
-        "categories",
-        selectedIds.filter((id) => id !== category._id),
-      );
-    } else {
-      // Nếu chưa chọn thì thêm vào
-      setValue("categories", [...selectedIds, category._id]);
-    }
-  };
-
-  return (
-    <div className="checkbox">
-      <input
-        id={category._id}
-        type="checkbox"
-        value={category._id}
-        // make sure checkbox always in right state when search
-        checked={isChecked}
-        onChange={handleChange}
-      />
-      <label htmlFor={category._id}>{category.name}</label>
-    </div>
-  );
 }
 
 function UnSelectedCats({ categories, loadMoreBtn }: ICategories) {
@@ -160,8 +124,8 @@ function LoadMoreBtn({
   return (
     <>
       <div
-        className={`${styles.link} ${
-          isFetchingNextPage && styles.disabled
+        className={`${
+          isFetchingNextPage && "disabled"
         } ${styles.loadMoreBtn} link`}
         onClick={handleClick}>
         {isFetchingNextPage ? "Loading..." : "Load more"}
@@ -173,7 +137,11 @@ function LoadMoreBtn({
 }
 
 function Filter() {
-  const { watch, setValue } = useFormContext<TSearchFormValues>();
+  const {
+    watch,
+    setValue,
+    formState: { errors },
+  } = useFormContext<TSearchFormValues>();
 
   // get data from form
   const categoryName = watch("categoryName");
@@ -242,6 +210,10 @@ function Filter() {
         <span>Cat.: </span>
         <CategoriesOption />
       </div>
+
+      {errors.categories && (
+        <p className="error-mgs">{errors.categories.message}</p>
+      )}
 
       {/* use allKnownCategories so chips won't disappear when search */}
       <SelectedCats

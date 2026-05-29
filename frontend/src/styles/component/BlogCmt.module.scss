@@ -1,5 +1,6 @@
 /** @format */
 
+// --------- cmt item -----------
 .avatar {
   width: 4rem;
   border-radius: 999px;
@@ -28,7 +29,7 @@
   display: flex;
   gap: 4rem;
   align-items: center;
-  border-bottom: 1px $dark-200 solid;
+  border-bottom: 1px var(--border-color) solid;
   padding: 1.6rem 0;
 
   p {
@@ -37,15 +38,8 @@
   }
 }
 
-.cmtContainer {
+.modalContainer {
   padding: 0 2rem;
-}
-
-.cmtForm,
-.notLoginMgs {
-  border-bottom: 1px $dark-200 solid;
-  padding: 1rem 0;
-  font-size: 1.6rem;
 }
 
 .cmts {
@@ -80,6 +74,7 @@
   margin: 0.8rem 0 1.4rem;
   max-height: 10rem;
   overflow: hidden;
+  font-weight: 500;
 
   &.expand {
     max-height: fit-content;
@@ -96,11 +91,41 @@
   font-size: 1.6rem;
   align-items: center;
   margin-bottom: 1rem;
-  color: $light-800;
+  color: var(--text-muted);
 
   span {
     display: flex;
     align-items: center;
     gap: 0.6rem;
   }
+}
+
+.showHideBtn {
+  display: flex;
+  gap: 4rem;
+}
+
+// ------- cmt form -------
+.cmtFormCotainer {
+  margin: 2rem 0;
+}
+
+.cmtForm,
+.notLoginMgs {
+  font-size: 1.6rem;
+  margin-bottom: 2rem;
+
+  img {
+    width: 3rem;
+  }
+}
+
+.formInput {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.sendCmtBtn {
+  padding: 0.5rem 1rem;
 }

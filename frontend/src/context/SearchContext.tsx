@@ -12,7 +12,7 @@ import {
   searchReducer,
   SearchState,
   SearchAction,
-} from "../reducer/searchReducer";
+} from "../reducer/search.reducer";
 
 interface SearchContextType {
   state: SearchState;

@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { Link, NavLink } from "react-router";
 import styles from "../styles/component/Navbar.module.scss";
 import { useAppSelector } from "../hook/reduxHooks";
-import getLogo from "../utils/getLogo";
+import getLogo from "../utils/get-logo";
 
 const navItemsGeneral = [
   { text: "Home", link: "/" },

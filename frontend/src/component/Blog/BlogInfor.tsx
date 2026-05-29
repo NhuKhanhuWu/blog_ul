@@ -1,11 +1,12 @@
 /** @format */
 
 import styles from "../../styles/component/BlogInfor.module.scss";
-import { TNormalizedBlog, TNormalizedContent } from "../../interface/blogTypes";
+import { NormalizedBlog, NormalizedContent } from "../../types/blog.type";
 import { Link } from "react-router-dom";
 import { formatDate } from "../../utils/date";
+import BlogAction from "./BlogAction";
 
-function ContentItem({ item }: { item: TNormalizedContent }) {
+function ContentItem({ item }: { item: NormalizedContent }) {
   // title
   if (item.type === "title")
     return <p className={styles.sectionTitle}>{item.text}</p>;
@@ -38,7 +39,7 @@ function ContentItem({ item }: { item: TNormalizedContent }) {
   return <p className={styles.paragraph}>{item.text}</p>;
 }
 
-function BlogContent({ blog }: { blog: TNormalizedBlog }) {
+function BlogContent({ blog }: { blog: NormalizedBlog }) {
   return (
     <div className={styles.blogContent}>
       {blog.content.map((item, index) => (
@@ -48,7 +49,7 @@ function BlogContent({ blog }: { blog: TNormalizedBlog }) {
   );
 }
 
-function Categories({ blog }: { blog: TNormalizedBlog }) {
+function Categories({ blog }: { blog: NormalizedBlog }) {
   return (
     <div className={styles.categoriesContainer}>
       <div>Categories:</div>
@@ -70,7 +71,7 @@ function Categories({ blog }: { blog: TNormalizedBlog }) {
   );
 }
 
-function BlogInfor({ blog }: { blog: TNormalizedBlog }) {
+function BlogInfor({ blog }: { blog: NormalizedBlog }) {
   return (
     <>
       <div className="smTxt">
@@ -81,6 +82,7 @@ function BlogInfor({ blog }: { blog: TNormalizedBlog }) {
       <h1 className={styles.title}>{blog?.title}</h1>
 
       <BlogContent blog={blog} />
+      <BlogAction blog={blog} />
 
       <Categories blog={blog} />
     </>

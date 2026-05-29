@@ -4,7 +4,8 @@ import { Outlet } from "react-router";
 import NavBar from "../component/NavBar";
 import { useAppDispatch } from "../hook/reduxHooks";
 import { useEffect } from "react";
-import { getMeThunk, refreshThunk } from "../redux/authSlice";
+import { getMeThunk, refreshThunk } from "../redux/auth.slice";
+import "../styles/general.scss";
 
 function AppLayout() {
   // auto login when reload/open website

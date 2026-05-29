@@ -5,14 +5,14 @@ import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSearch } from "../../context/SearchContext";
 import Modal from "../Modal";
+import styles from "../../styles/component/SearchBar.module.scss";
 import Title from "./Title";
 import Sort from "./Sort";
 import Filter from "./Filter";
-import styles from "../../styles/component/SearchBar.module.scss";
 import useSyncSearchForm from "../../hook/useSyncSearchForm";
-import { formSchema, TSearchFormValues } from "../../interface/searchTypes";
+import { formSchema, TSearchFormValues } from "../../types/search.type";
 import { useSearchParams } from "react-router-dom";
-import { updateSearchUrl } from "../../utils/updateSearchUrl";
+import { updateSearchUrl } from "../../utils/update-search-url";
 
 interface ISearchForm {
   onClose?: () => void;
@@ -41,7 +41,7 @@ function SubmitClearBtns() {
         type="button"
         className="btn-secondary"
         onClick={() => resetForm()}>
-        Clear
+        Reset
       </button>
     </div>
   );
@@ -133,7 +133,7 @@ function SearchBar() {
           isCollapsed ? styles.collapsed : styles.expanded
         }`}>
         <button
-          className={`${styles.collapseBtn} btn-secondary`}
+          className={`${styles.collapseBtn} btn-primary`}
           onClick={() => setIsCollapsed((prev) => !prev)}>
           <IoSearchSharp />
         </button>
