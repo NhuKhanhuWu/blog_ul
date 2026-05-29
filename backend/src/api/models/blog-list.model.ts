@@ -1,15 +1,16 @@
 /** @format */
 
-import { model, Schema, Types } from "mongoose";
+import { Model, model, Schema, Types } from "mongoose";
 import { BlogList } from "../types/blog-list.type";
 import AppError from "../utils/error/app-error";
 
-const blogListSchema = new Schema<BlogList>(
+const BlogListSchema = new Schema<BlogList>(
   {
     name: {
       type: String,
       required: true,
       trim: true,
+      maxlength: [100, "Blog's name cannot exceed 100 characters"],
     },
 
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
@@ -17,16 +18,30 @@ const blogListSchema = new Schema<BlogList>(
     description: {
       type: String,
       default: "",
+      maxlength: [500, "Description cannot exceed 500 characters"],
     },
 
-    blogs: [
-      {
-        type: Types.ObjectId,
-        ref: "Blog",
+    blogs: {
+      type: [
+        {
+          type: Types.ObjectId,
+          ref: "Blog",
+        },
+      ],
+      validate: {
+        validator: function (blogs: Types.ObjectId[]) {
+          return blogs.length <= 500;
+        },
+        message: "A list can contain at most 500 blogs",
       },
-    ],
+    },
 
     isPrivate: {
+      type: Boolean,
+      default: false,
+    },
+
+    isDefault: {
       type: Boolean,
       default: false,
     },
@@ -38,18 +53,19 @@ const blogListSchema = new Schema<BlogList>(
   },
 );
 
-// send unique error for duplicate blog list name per user
-blogListSchema.post(
-  ["save", "findOneAndUpdate"],
-  function (error: any, doc: any, next: any) {
-    if (error.code === 11000) {
-      return next(new AppError("Blog list name must be unique per user.", 400));
-    }
+// check if user try to create >50 list
+BlogListSchema.pre("save", async function (next) {
+  if (this.isNew) {
+    const LIMIT = 50;
+    const { userId } = this;
+    const model = this.constructor as Model<BlogList>;
+    const listCnt = await model.countDocuments({ userId });
 
-    next(error);
-  },
-);
+    if (listCnt >= LIMIT)
+      throw new AppError("You can only have at most 50 list", 403);
+  }
 
-blogListSchema.index({ userId: 1, name: 1 }, { unique: true });
+  next();
+});
 
-export const BlogListModel = model<BlogList>("BlogList", blogListSchema);
+export const BlogListModel = model<BlogList>("BlogList", BlogListSchema);

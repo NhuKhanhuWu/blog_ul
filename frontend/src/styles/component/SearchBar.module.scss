@@ -8,10 +8,11 @@
 .searchMobileToggle {
   position: fixed;
   bottom: 2rem;
-  right: 2rem;
+  left: 2rem;
   width: 5rem;
   height: 5rem;
   border-radius: 50%;
+  border: 1px var(--border-color) solid;
   font-size: 2.2rem;
   display: flex;
   align-items: center;
@@ -22,13 +23,10 @@
 }
 
 .searchForm {
-  background-color: $light-200;
-  padding: 2rem;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
   margin: auto;
-  border: 1px $dark-900 solid;
 }
 
 .searchOption {

@@ -15,7 +15,7 @@ import {
   createCmtLimiter,
   validateCmtConstraints,
 } from "../middlewares/comment.middleware";
-import { validateRequest } from "../validation/validate";
+import { validateRequest } from "../validation/validateRequest";
 import { loadUser, protect } from "../middlewares/auth.middleware";
 import {
   createBlogLimiter,

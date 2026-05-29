@@ -167,7 +167,7 @@ BlogSchema.post("findOneAndDelete", function (doc) {
   if (doc) {
     const blogId = doc._id;
 
-    // QUAN TRỌNG: Không dùng await ở đây => đẩy vào hàng chờ => giải phóng luồng chính
+    // IMPORTANT: Do not use await here => push to wait queue => free main thread
     CommentModel.deleteMany({ blogId: blogId })
       .then((result) => {
         console.log(`${result.deletedCount} comments deleted in background`);

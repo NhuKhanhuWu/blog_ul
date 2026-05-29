@@ -4,6 +4,7 @@ import styles from "../../styles/component/BlogInfor.module.scss";
 import { NormalizedBlog, NormalizedContent } from "../../types/blog.type";
 import { Link } from "react-router-dom";
 import { formatDate } from "../../utils/date";
+import BlogAction from "./BlogAction";
 
 function ContentItem({ item }: { item: NormalizedContent }) {
   // title
@@ -81,6 +82,7 @@ function BlogInfor({ blog }: { blog: NormalizedBlog }) {
       <h1 className={styles.title}>{blog?.title}</h1>
 
       <BlogContent blog={blog} />
+      <BlogAction blog={blog} />
 
       <Categories blog={blog} />
     </>

@@ -40,7 +40,10 @@ export interface BlogDetailProps {
   slug: string;
   authors: string[];
 
-  userId: string;
+  userId: {
+    name: string;
+    avatar: string;
+  };
 
   categories: ICategory[];
 
@@ -52,6 +55,8 @@ export interface BlogDetailProps {
 
   upVotes: number;
   downVotes: number;
+
+  voteType: number;
 
   totalCmts: number;
   totalParentCmt: number;

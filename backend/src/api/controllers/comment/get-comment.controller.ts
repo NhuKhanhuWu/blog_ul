@@ -4,6 +4,7 @@ import CommentModel from "../../models/comment.model";
 import catchAsync from "../../utils/error/catch-async";
 import { BlogModel } from "../../models/blog.model";
 import AppError from "../../utils/error/app-error";
+import { Request } from "express";
 
 const SORT_MAP: Record<string, Record<string, 1 | -1>> = {
   newest: { createdAt: -1 },
@@ -189,9 +190,9 @@ export const getCmtByBlog = catchAsync(async (req, res, next) => {
       : null;
 
   // find blog to gett totalCmts and totalParentCmts
-  const blog = await BlogModel.findById(blogId).select(
-    "totalCmts totalParentCmts",
-  );
+  const blog = await BlogModel.findById(blogId)
+    .select("totalCmts totalParentCmts")
+    .lean(); // use lean for better performance since we only need data and no mongoose document methods
 
   if (!blog) {
     throw new AppError("Blog not found", 400);
@@ -215,7 +216,7 @@ export const getCmtByBlog = catchAsync(async (req, res, next) => {
   }
 
   // attach metadata
-  (req as any)._extraMetadata = {
+  req._extraMetadata = {
     totalCmts: blog.totalCmts || 0,
     totalParentCmts: blog.totalParentCmts || 0,
     nextPage, // replies sẽ được set ở getCmt
@@ -228,7 +229,7 @@ export const getCmtByBlog = catchAsync(async (req, res, next) => {
 export const getCmtByUser = catchAsync(async (req, res, next) => {
   const userId = new Types.ObjectId(req.user?._id);
 
-  (req as any)._commentFilter = {
+  req._commentFilter = {
     userId,
     isDeleted: false,
   };

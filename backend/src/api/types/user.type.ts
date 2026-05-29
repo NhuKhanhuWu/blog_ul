@@ -11,7 +11,7 @@ export interface UserInput {
 }
 
 export interface UserDocument extends Document {
-  _id: Types.ObjectId; // MongoDB always uses ObjectId
+  _id: Types.ObjectId;
   name: string;
   slug: string;
   email: string;
