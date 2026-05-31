@@ -7,9 +7,9 @@ import { Link, useNavigate } from "react-router-dom";
 
 import styles from "../styles/component/Auth.module.scss";
 import { emaiSchema, passwordSchema } from "../utils/form-schema";
-import AuthHeader from "../component/auth1/AuthHeader";
-import { Email, Password } from "../component/auth1/AuthInputs";
-import AuthFooter from "../component/auth1/AuthFooter";
+import AuthHeader from "../component/auth/AuthHeader";
+import { Email, Password } from "../component/auth/AuthInputs";
+import AuthFooter from "../component/auth/AuthFooter";
 import { useAppDispatch, useAppSelector } from "../hook/reduxHooks";
 import { loginThunk } from "../redux/auth.slice";
 
