@@ -40,6 +40,7 @@ import Loader from "../Loader";
 import { FaPlus } from "react-icons/fa6";
 import useAddBlog from "../../hook/blog-list/useAddBlog";
 import useRemoveBlog from "../../hook/blog-list/useRemoveBlog";
+import { Link } from "react-router-dom";
 
 function Author({ blog }: { blog: NormalizedBlog }) {
   const name = blog?.userId?.name || "Unknown";
@@ -131,7 +132,6 @@ function Share() {
 }
 
 function BookMark({ blogId }: { blogId: string }) {
-  // TODO: handle mark blog
   const [isOpenModal, setIsOpenModal] = useState(false);
   const user = useAppSelector((state) => state.auth).user;
   const {
@@ -186,43 +186,55 @@ function BookMark({ blogId }: { blogId: string }) {
     <>
       {/* modal */}
       <ModalOverlay isShow={isOpenModal} setIsShow={setIsOpenModal}>
-        <div className={styles.bookmarkModal}>
-          {/* header */}
-          <div className={styles.bookmarkHeader}>
-            <p>Save to...</p>
+        {!user ? (
+          // if not login, show this message
+          <div className={styles.bookmarkGuest}>
+            <p className={styles.bookmarkHeader}>Want to save this blog?</p>
+            <p>Login to add your favorite blog to your list</p>
+            <Link to="/login" className="btn-primary">
+              Login
+            </Link>
           </div>
+        ) : (
+          // if login, show bookmark lists
+          <div className={styles.bookmarkModal}>
+            {/* header */}
+            <p className={styles.bookmarkHeader}>Save to...</p>
 
-          {/* lists */}
-          <div className={styles.bookmarkList}>
-            {isPending && <Loader />}
-            {isGetListErr && <p className="error-mgs">Something went wrong.</p>}
+            {/* lists */}
+            <div className={styles.bookmarkList}>
+              {isPending && <Loader />}
+              {isGetListErr && (
+                <p className="error-mgs">Something went wrong.</p>
+              )}
 
-            {data?.map((list) => (
-              <div
-                className={styles.bookmarkItem}
-                key={list._id}
-                onClick={() =>
-                  handleMarkBlog(list._id, list.containsCurrentBlog)
-                }>
-                <div className={styles.bookmarkInfo}>
-                  <p>{list.name}</p>
-                  <p>{list.isPrivate ? "Private" : "Public"}</p>
+              {data?.map((list) => (
+                <div
+                  className={styles.bookmarkItem}
+                  key={list._id}
+                  onClick={() =>
+                    handleMarkBlog(list._id, list.containsCurrentBlog)
+                  }>
+                  <div className={styles.bookmarkInfo}>
+                    <p>{list.name}</p>
+                    <p>{list.isPrivate ? "Private" : "Public"}</p>
+                  </div>
+                  {list.containsCurrentBlog ? (
+                    <MdBookmark />
+                  ) : (
+                    <MdOutlineBookmarkBorder />
+                  )}
                 </div>
-                {list.containsCurrentBlog ? (
-                  <MdBookmark />
-                ) : (
-                  <MdOutlineBookmarkBorder />
-                )}
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          {/* create new blog btn */}
-          <button className="btn-secondary">
-            <FaPlus />
-            New list
-          </button>
-        </div>
+            {/* create new blog btn */}
+            <button className="btn-secondary">
+              <FaPlus />
+              New list
+            </button>
+          </div>
+        )}
       </ModalOverlay>
 
       {/* bookmark icon */}
