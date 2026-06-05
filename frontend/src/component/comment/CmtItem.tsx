@@ -43,7 +43,7 @@ const CmtItem = memo(({ cmt, depth = 0 }: { cmt: Cmt; depth?: number }) => {
         }),
       initialPageParam: 0,
       getNextPageParam: (lastPage) => lastPage.nextPage,
-      enabled: isShowReply && depth < 3, // Chống đệ quy vô hạn
+      enabled: isShowReply && depth < 3, // avoidl infinite fetch when open reply and have more than 3 level of reply
     });
 
   const replies = useMemo(
@@ -53,13 +53,13 @@ const CmtItem = memo(({ cmt, depth = 0 }: { cmt: Cmt; depth?: number }) => {
 
   return (
     <CmtLayout cmt={cmt}>
-      {/* Phần nội dung chính */}
+      {/* main content */}
       <div className={styles.cmtTxt}>
         <CmtContent cmt={cmt} isExpand={isExpand} setIsExpand={setIsExpand} />
         <CmtActions cmt={cmt} />
       </div>
 
-      {/* Danh sách replies: Chỉ render khi mở */}
+      {/* replies: only render when open */}
       {isShowReply && (
         <div className={styles.repliesList}>
           {isError && <span className="error-mgs">Error loading replies</span>}

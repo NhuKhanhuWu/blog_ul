@@ -3,7 +3,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useSearch } from "../../context/SearchContext";
 import { SearchState } from "../../reducer/search.reducer";
-import BlogCard from "./BlogCard";
+import BlogCardBig from "./BlogCardBig";
 import { getBlogs } from "../../api/blog.api";
 import Loader from "../Loader";
 import Error from "../Error";
@@ -58,7 +58,7 @@ function BlogList() {
   return (
     <div className={styles.blogList}>
       {blogs?.map((blog) => (
-        <BlogCard blog={blog} key={blog._id} />
+        <BlogCardBig blog={blog} key={blog._id} />
       ))}
 
       <InfinityObserver lastElementRef={lastElementRef}>

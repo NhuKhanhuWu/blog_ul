@@ -11,6 +11,7 @@ import normalizeBlog from "../utils/normalize-heading";
 import { BlogDetailProps } from "../types/blog.type";
 import { AxiosError } from "axios";
 import styles from "../styles/page/BlogDetail.module.scss";
+import RecommendedBlogs from "../component/blog/RecommendedBlogs";
 
 function BlogDetail() {
   const { slug = "" } = useParams();
@@ -28,12 +29,14 @@ function BlogDetail() {
 
   return (
     <div className={styles.container}>
-      <BlogInfor blog={blog} />
+      <div className={styles.blogSection}>
+        <BlogInfor blog={blog} />
+        <BlogCmt blogId={blog._id} totalCmts={blog.totalCmts} />
+      </div>
 
-      {/* commnent */}
-      <BlogCmt blogId={blog._id} totalCmts={blog.totalCmts} />
-
-      {/* recommened blog */}
+      <div className={styles.recommendedSection}>
+        <RecommendedBlogs curBlog={blog} />
+      </div>
     </div>
   );
 }

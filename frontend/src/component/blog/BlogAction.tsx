@@ -47,10 +47,19 @@ function Author({ blog }: { blog: NormalizedBlog }) {
   const avatar = blog?.userId?.avatar || defaultAvatar(name);
 
   return (
-    <div className={styles.author}>
-      <img src={avatar} alt="avatar" />
-      <p className={styles.name}>{name}</p>
-    </div>
+    <>
+      {blog.userId?.slug ? (
+        <Link to={`/profile/${blog.userId?.slug}`} className={styles.author}>
+          <img src={avatar} alt="avatar" />
+          <p className={styles.name}>{name}</p>
+        </Link>
+      ) : (
+        <span className={styles.author}>
+          <img src={avatar} alt="avatar" />
+          <p className={styles.name}>{name}</p>
+        </span>
+      )}
+    </>
   );
 }
 
@@ -69,7 +78,7 @@ function Vote({ blog }: { blog: NormalizedBlog }) {
   };
 
   return (
-    <div className={styles.votes}>
+    <div className={`${styles.votes} btn`}>
       {/* upvote */}
       <span className={styles.icon} onClick={() => handleVote(1)}>
         {blog.voteType === 1 ? <FaThumbsUp /> : <FaRegThumbsUp />}
@@ -87,7 +96,7 @@ function Vote({ blog }: { blog: NormalizedBlog }) {
 function Share() {
   const [isSharing, setIsSharing] = useState(false);
   const url = window.location.href;
-  const iconSize = 45;
+  const iconSize = 50;
 
   return (
     <>
@@ -191,7 +200,7 @@ function BookMark({ blogId }: { blogId: string }) {
           <div className={styles.bookmarkGuest}>
             <p className={styles.bookmarkHeader}>Want to save this blog?</p>
             <p>Login to add your favorite blog to your list</p>
-            <Link to="/login" className="btn-primary">
+            <Link to="/auth/login" className="btn-primary">
               Login
             </Link>
           </div>

@@ -91,7 +91,7 @@ function SearchForm({ onClose, closeBtn }: ISearchForm) {
 
 function SearchBar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const { state } = useSearch();
   const methods = useForm<TSearchFormValues>({
     resolver: yupResolver(formSchema),

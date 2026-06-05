@@ -7,7 +7,7 @@ export interface BlogSimplify {
   title: string;
   slug: string;
   upVotes?: number;
-  pub_date: string;
+  pub_date: Date;
   authors: string[];
   img?: string;
   preview: {
@@ -43,6 +43,7 @@ export interface BlogDetailProps {
   userId: {
     name: string;
     avatar: string;
+    slug: string;
   };
 
   categories: ICategory[];

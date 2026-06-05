@@ -32,10 +32,12 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  const isDev = import.meta.env.VITE_NODE_ENV === "development";
+
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools initialIsOpen={false} />
+        {isDev && <ReactQueryDevtools initialIsOpen={false} />}
 
         <Toaster
           position="bottom-left"

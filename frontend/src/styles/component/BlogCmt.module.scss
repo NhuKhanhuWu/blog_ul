@@ -6,6 +6,12 @@
   border-radius: 999px;
 }
 
+.blogCmtDesktop {
+  border-top: 2px solid var(--text-muted);
+  margin-top: 2rem;
+}
+
+// MOBILE
 .cmtMinimize {
   background-color: $dark-100;
   margin-top: 2rem;
@@ -33,7 +39,7 @@
   padding: 1.6rem 0;
 
   p {
-    font-size: 2.6rem;
+    font-size: 1.8rem;
     font-weight: 700;
   }
 }
@@ -82,7 +88,7 @@
 }
 
 .seeMoreBtn {
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .cmtActions {
@@ -113,7 +119,7 @@
 .cmtForm,
 .notLoginMgs {
   font-size: 1.6rem;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
 
   img {
     width: 3rem;
@@ -128,4 +134,21 @@
 
 .sendCmtBtn {
   padding: 0.5rem 1rem;
+}
+
+// responsive
+@include respond(lg) {
+  .header {
+    padding: 1rem 0;
+    border: none;
+  }
+
+  .cmtFormCotainer {
+    margin: 1rem 0;
+  }
+
+  .cmtContent {
+    font-size: 1.4rem;
+    font-weight: 400;
+  }
 }
