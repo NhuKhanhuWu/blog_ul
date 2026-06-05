@@ -16,7 +16,7 @@ function Authors({ blog }: BlogCardProps) {
   );
 }
 
-function BlogCard({ blog }: BlogCardProps) {
+function BlogCardBig({ blog }: BlogCardProps) {
   const placehoderImg =
     "https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU";
 
@@ -44,4 +44,4 @@ function BlogCard({ blog }: BlogCardProps) {
   );
 }
 
-export default BlogCard;
+export default BlogCardBig;

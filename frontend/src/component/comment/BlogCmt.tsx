@@ -1,15 +1,18 @@
 /** @format */
 
-import { useMemo, useState } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
-
+import { useState } from "react";
 import Loader from "../Loader.tsx";
 import Error from "../Error.tsx";
 import { useIntersectionObserver } from "../../hook/useIntersectionObserver.ts";
 import InfinityObserver from "../InfinityObserver.tsx";
-import { getCmtByBlog } from "../../api/comment.api.ts";
 import CmtMinimize from "./CmtMinimize.tsx";
 import CmtModal from "./CmtModal.tsx";
+import useGetBlogCmt from "../../hook/cmt/useGetBlogCmt.ts";
+import CmtItem from "./CmtItem.tsx";
+import toast from "react-hot-toast";
+import { useMediaQuery } from "react-responsive";
+import styles from "../../styles/component/BlogCmt.module.scss";
+import CmtForm from "./CmtForm.tsx";
 
 interface IBlogInfor {
   blogId: string;
@@ -21,22 +24,13 @@ function BlogCmtMobile({ blogId, totalCmts }: IBlogInfor) {
   const [isOpen, setIsOpen] = useState(false);
 
   const {
-    data,
+    cmts,
     isPending,
     isFetchingNextPage,
     isError,
     hasNextPage,
     fetchNextPage,
-  } = useInfiniteQuery({
-    queryKey: ["cmt", blogId, sort],
-    queryFn: ({ pageParam: page = 0 }) => getCmtByBlog({ blogId, sort, page }),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-  });
-  const cmts = useMemo(
-    () => data?.pages.flatMap((p) => p.data) || [],
-    [data?.pages],
-  );
+  } = useGetBlogCmt({ blogId, sort });
 
   const { lastElementRef } = useIntersectionObserver(
     fetchNextPage,
@@ -75,10 +69,73 @@ function BlogCmtMobile({ blogId, totalCmts }: IBlogInfor) {
   );
 }
 
+function BlogCmtDesktop({ blogId, totalCmts }: IBlogInfor) {
+  const [sort, setSort] = useState("top");
+  const [isCommenting, setIsCommenting] = useState(false);
+
+  const {
+    cmts,
+    isPending,
+    isFetchingNextPage,
+    isError,
+    hasNextPage,
+    fetchNextPage,
+  } = useGetBlogCmt({ blogId, sort });
+  const { lastElementRef } = useIntersectionObserver(
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+  );
+
+  if (isError)
+    return toast.error("Cannot load comments, please try again later");
+
+  return (
+    <div className={styles.blogCmtDesktop}>
+      {/* header */}
+      <div className={styles.header}>
+        <p>{totalCmts} comments</p>
+
+        <select name="sort" onChange={(e) => setSort(e.target.value)}>
+          <option value="top">Most related</option>
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+        </select>
+      </div>
+
+      {/* new cmt form */}
+      <div className={styles.cmtFormCotainer}>
+        <CmtForm
+          blogId={blogId}
+          isUsing={isCommenting}
+          setIsUsing={setIsCommenting}
+        />
+      </div>
+
+      {/* cmts */}
+      <div className={styles.cmts}>
+        {cmts.map((cmt) => (
+          <CmtItem cmt={cmt} key={cmt._id}></CmtItem>
+        ))}
+
+        <InfinityObserver lastElementRef={lastElementRef}>
+          {(isPending || isFetchingNextPage) && <Loader />}
+        </InfinityObserver>
+      </div>
+    </div>
+  );
+}
+
 function BlogCmt({ blogId, totalCmts }: IBlogInfor) {
+  const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
+
   return (
     <>
-      <BlogCmtMobile blogId={blogId} totalCmts={totalCmts} />
+      {isDesktop ? (
+        <BlogCmtDesktop blogId={blogId} totalCmts={totalCmts} />
+      ) : (
+        <BlogCmtMobile blogId={blogId} totalCmts={totalCmts} />
+      )}
     </>
   );
 }

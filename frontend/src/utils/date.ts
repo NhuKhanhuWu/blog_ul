@@ -3,7 +3,7 @@
 import { formatDistanceToNow } from "date-fns";
 import { enUS } from "date-fns/locale";
 
-export function formatDate(date: string) {
+export function formatDate(date: Date | string) {
   const formattedDate = new Date(date).toLocaleDateString("en-US", {
     month: "short",
     day: "2-digit",
@@ -15,7 +15,6 @@ export function formatDate(date: string) {
 
 export function getDateDistance(time: Date) {
   const result = formatDistanceToNow(new Date(time), {
-    addSuffix: true,
     locale: enUS,
   });
 
