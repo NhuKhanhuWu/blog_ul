@@ -13,7 +13,7 @@ import { MdPassword } from "react-icons/md";
 import { GoXCircleFill } from "react-icons/go";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
-import styles from "../../styles/component/Auth.module.scss";
+import styles from "./Auth.module.scss";
 import { Path } from "react-hook-form";
 import { useState } from "react";
 

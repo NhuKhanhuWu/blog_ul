@@ -10,10 +10,10 @@ import { store } from "./redux/store.ts";
 
 // lazy load
 const AppLayout = lazy(() => import("./layout/AppLayout.tsx"));
-const Homepage = lazy(() => import("./page/Homepage"));
-const BlogDetail = lazy(() => import("./page/BlogDetail.tsx"));
-const Login = lazy(() => import("./page/Login.tsx"));
-const Logout = lazy(() => import("./page/Logout.tsx"));
+const Homepage = lazy(() => import("./page/Homepage/Homepage.tsx"));
+const BlogDetail = lazy(() => import("./page/BlogDetail/BlogDetail.tsx"));
+const Login = lazy(() => import("./page/Login/Login.tsx"));
+const Logout = lazy(() => import("./page/Logout/Logout.tsx"));
 
 const router = createBrowserRouter([
   {
@@ -33,7 +33,7 @@ const queryClient = new QueryClient({
 
 function App() {
   const isDev = import.meta.env.VITE_NODE_ENV === "development";
-
+  // TODO: update ui (follow sample img)
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>

@@ -1,0 +1,80 @@
+/** @format */
+
+.blogCard {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.blogImg {
+  width: 90%;
+  height: auto;
+}
+
+.title {
+  font-size: 2.8rem;
+  font-weight: 600;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.blogTxt {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  width: 85%;
+}
+
+.preview {
+  font-size: 1.4rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.borderMobile {
+  height: 1px;
+  width: 90%;
+  background-color: $light-600;
+}
+
+@include respond(md) {
+  .blogCard {
+    border: 1px solid $dark-900;
+    padding: 1rem;
+    height: 100%;
+    border-radius: 2rem;
+  }
+
+  .blogImg {
+    width: 100%;
+    border-radius: 1rem;
+  }
+
+  .title {
+    font-size: 2.2rem;
+  }
+
+  .blogTxt {
+    width: 95%;
+    flex: 1;
+  }
+
+  .blogTxt > :last-child {
+    margin-top: auto;
+  }
+
+  .borderMobile {
+    display: none;
+  }
+}
+
+@include respond(lg) {
+  .title {
+    font-size: 2rem;
+  }
+}

@@ -126,6 +126,11 @@ select {
   font-style: normal;
 }
 
+.avatar-sm {
+  width: 4rem;
+  border-radius: 999px;
+}
+
 .checkbox {
   display: flex;
   gap: 1rem;

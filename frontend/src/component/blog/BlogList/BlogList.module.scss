@@ -1,0 +1,29 @@
+/** @format */
+
+// ===== MOBILE DEFAULT (<480px) ====
+.blogList {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  flex: 1;
+  margin-top: 2rem;
+}
+
+// ===== TABLET (>=768px) ====
+@include respond(md) {
+  .blogList {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: self-start;
+    margin: 2rem 1rem;
+  }
+}
+
+// ===== DESKTOP (>=1024px) ====
+@include respond(lg) {
+  .blogList {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

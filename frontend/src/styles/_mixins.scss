@@ -1,0 +1,14 @@
+/** @format */
+@use "./_breakpoints.scss" as *;
+
+// ==== SEARCH BAR: START ====
+@mixin searchOption {
+  display: flex;
+  align-items: flex-end;
+  gap: 2rem;
+
+  @include respond(lg) {
+    gap: 1rem;
+  }
+}
+// ==== SEARCH BAR: END ====
