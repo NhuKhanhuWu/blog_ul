@@ -1,0 +1,12 @@
+/** @format */
+
+.cmtItemContainer {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.cmt,
+.cmtTxt {
+  flex: 1;
+}

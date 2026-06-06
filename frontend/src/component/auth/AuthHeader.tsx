@@ -1,6 +1,6 @@
 /** @format */
 
-import styles from "../../styles/component/Auth.module.scss";
+import styles from "./Auth.module.scss";
 import getLogo from "../../utils/get-logo";
 
 interface Props {

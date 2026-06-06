@@ -1,0 +1,35 @@
+/** @format */
+.avatar {
+  width: 4rem;
+  border-radius: 999px;
+}
+
+.cmtForm {
+  margin: 2rem 0;
+}
+
+.cmtForm,
+.notLoginMgs {
+  font-size: 1.6rem;
+  margin-bottom: 3rem;
+
+  img {
+    width: 3rem;
+  }
+}
+
+.formInput {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.sendCmtBtn {
+  padding: 0.5rem 1rem;
+}
+
+@include respond(lg) {
+  .cmtFormCotainer {
+    margin: 1rem 0;
+  }
+}

@@ -1,0 +1,41 @@
+/** @format */
+
+// --------- cmt item -----------
+
+.blogCmtDesktop {
+  border-top: 2px solid var(--text-muted);
+  margin-top: 2rem;
+}
+
+// MOBILE
+.header {
+  display: flex;
+  gap: 4rem;
+  align-items: center;
+  border-bottom: 1px var(--border-color) solid;
+  padding: 1.6rem 0;
+
+  p {
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+}
+
+.cmts {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  margin-top: 1rem;
+}
+
+// responsive
+@include respond(lg) {
+  .header {
+    padding: 1rem 0;
+    border: none;
+  }
+
+  .cmtFormCotainer {
+    margin: 1rem 0;
+  }
+}
