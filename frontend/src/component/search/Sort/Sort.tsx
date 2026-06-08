@@ -9,12 +9,9 @@ function Sort() {
 
   return (
     <div className={styles.searchOption}>
-      <span>Sort by:</span>
+      <p>Sort by</p>
 
-      <select
-        className="flex-1"
-        style={{ width: "235px" }}
-        {...register("sort")}>
+      <select className="flex-1" {...register("sort")}>
         <option value="-upVotes">Popular</option>
         <option value="-pub_date">Newest</option>
         <option value="pub_date">Oldest</option>

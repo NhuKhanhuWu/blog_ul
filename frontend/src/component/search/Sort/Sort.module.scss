@@ -3,4 +3,8 @@
 
 .searchOption {
   @include mixin.searchOption;
+
+  select {
+    width: 100%;
+  }
 }

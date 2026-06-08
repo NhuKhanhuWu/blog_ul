@@ -8,12 +8,11 @@ export default function Title() {
 
   return (
     <div className={styles.searchOption}>
-      <span>Title:</span>
       <input
         {...register("title")}
         className="input"
         type="text"
-        placeholder="Search..."></input>
+        placeholder="Search blogs..."></input>
     </div>
   );
 }

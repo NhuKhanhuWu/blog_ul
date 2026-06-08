@@ -24,6 +24,16 @@ $light-700: #8e8e99;
 $light-800: #6b6b75;
 $light-900: #474750;
 
+$blue-100: #9abce7;
+$blue-200: #86afe2;
+$blue-300: #72a1dd;
+$blue-400: #5d94d8;
+$blue-500: #4986d3;
+$blue-600: #3579ce;
+$blue-700: #306db9;
+$blue-800: #2a61a5;
+$blue-900: #255590;
+
 $colors: (
   "dark": (
     900: #070605,
@@ -48,7 +58,17 @@ $colors: (
     900: #474750,
   ),
   "error": #bc4545,
-  "blue": #3b82f6,
+  "blue": (
+    100: #d7e4f5,
+    200: #c2d7f0,
+    300: #aec9eb,
+    400: #9abce7,
+    500: #86afe2,
+    600: #72a1dd,
+    700: #5d94d8,
+    800: #4986d3,
+    900: #3579ce,
+  ),
 );
 
 // Spacing
@@ -65,8 +85,9 @@ $spacing-lg: 2.4rem;
   --bg-card: #{map.get($colors, "light", 100)};
   --text-main: #{map.get($colors, "dark", 900)};
   --text-muted: #{map.get($colors, "dark", 300)};
-  --border-color: #{map.get($colors, "dark", 900)};
-  --accent-color: #{map.get($colors, "dark", 900)};
+  --border-color: #{map.get($colors, "light", 500)};
+  --accent-color: #{map.get($colors, "blue", 800)};
+  --blue-bg: #{map.get($colors, "blue", 100)};
   --btn-bg: #{map.get($colors, "dark", 900)};
   --btn-text: #{map.get($colors, "light", 200)};
   --error-color: #{map.get($colors, "error")};
@@ -78,8 +99,9 @@ $spacing-lg: 2.4rem;
   --bg-card: #{map.get($colors, "dark", 700)};
   --text-main: #{map.get($colors, "light", 100)};
   --text-muted: #{map.get($colors, "light", 600)};
-  --border-color: #{map.get($colors, "light", 600)};
-  --accent-color: #{map.get($colors, "blue")};
+  --border-color: #{map.get($colors, "light", 500)};
+  --accent-color: #{map.get($colors, "blue", 500)};
+  --blue-bg: #{map.get($colors, "blue", 300)};
   --btn-bg: #{map.get($colors, "light", 100)};
   --btn-text: #{map.get($colors, "dark", 900)};
   --error-color: #ff6b6b;
