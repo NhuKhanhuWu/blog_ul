@@ -3,12 +3,10 @@
 
 // ==== SEARCH BAR: START ====
 @mixin searchOption {
-  display: flex;
-  align-items: flex-end;
-  gap: 2rem;
-
-  @include respond(lg) {
-    gap: 1rem;
+  p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
   }
 }
 // ==== SEARCH BAR: END ====

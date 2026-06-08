@@ -2,24 +2,20 @@
 
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { ICategory } from "../../../types/category.type";
-import styles from "./Filter.module.scss";
+import styles from "./Categories.module.scss";
 import { useFormContext } from "react-hook-form";
 import { TSearchFormValues } from "../../../types/search.type";
 import { useCategories } from "../../../hook/useCategories";
 import { useDebounce } from "../../../hook/useDebounce";
 import { Category } from "../Category/Category";
+import { useIntersectionObserver } from "../../../hook/useIntersectionObserver";
+import InfinityObserver from "../../ui/InfinityObserver/InfinityObserver";
+import Loader from "../../ui/Loader/Loader";
 
 interface ICategories {
   categories: ICategory[];
   isPending: boolean;
-  loadMoreBtn: ReactNode;
-}
-
-interface ILoadMoreBtn {
-  isFetchingNextPage: boolean;
-  hasNextPage: boolean;
-  isError: boolean;
-  fetchNextPage: () => void;
+  infinityObserver: ReactNode;
 }
 
 interface SelectedCatsProps {
@@ -28,7 +24,7 @@ interface SelectedCatsProps {
   onRemove: (id: string) => void;
 }
 
-function UnSelectedCats({ categories, loadMoreBtn }: ICategories) {
+function UnSelectedCats({ categories, infinityObserver }: ICategories) {
   const { watch } = useFormContext<TSearchFormValues>();
   const selectedIds = watch("categories") || [];
 
@@ -42,7 +38,7 @@ function UnSelectedCats({ categories, loadMoreBtn }: ICategories) {
         );
       })}
 
-      {loadMoreBtn}
+      {infinityObserver}
     </div>
   );
 }
@@ -94,49 +90,20 @@ function CategoriesOption() {
 
   return (
     <div className={styles.filterOption}>
-      <div className="checkbox">
-        <input type="radio" value="and" id="and" {...register("logic")} />
-        <label htmlFor="and">and</label>
-      </div>
-
-      <div className="checkbox">
-        <input type="radio" value="or" id="or" {...register("logic")} />
-        <label htmlFor="or">or</label>
-      </div>
-
+      <select {...register("logic")}>
+        <option value="or" id="or">
+          or
+        </option>
+        <option value="and" id="and">
+          and
+        </option>
+      </select>
       <CategorySearch />
     </div>
   );
 }
 
-function LoadMoreBtn({
-  isFetchingNextPage,
-  hasNextPage,
-  isError,
-  fetchNextPage,
-}: ILoadMoreBtn) {
-  const cantLoadMore = isFetchingNextPage || !hasNextPage || !navigator.onLine;
-
-  const handleClick = () => {
-    if (!cantLoadMore) fetchNextPage();
-  };
-
-  return (
-    <>
-      <div
-        className={`${
-          isFetchingNextPage && "disabled"
-        } ${styles.loadMoreBtn} link`}
-        onClick={handleClick}>
-        {isFetchingNextPage ? "Loading..." : "Load more"}
-      </div>
-
-      {isError && <p className="error-mgs">Something went wrong</p>}
-    </>
-  );
-}
-
-function Filter() {
+function Categories() {
   const {
     watch,
     setValue,
@@ -149,14 +116,13 @@ function Filter() {
   const debouncedCategoryName = useDebounce(categoryName, 500);
 
   // fetch categories from api
-  const {
-    data,
+  const { data, fetchNextPage, hasNextPage, isPending, isFetchingNextPage } =
+    useCategories(debouncedCategoryName);
+  const { lastElementRef } = useIntersectionObserver(
     fetchNextPage,
-    hasNextPage,
-    isPending,
     isFetchingNextPage,
-    isFetchNextPageError,
-  } = useCategories(debouncedCategoryName);
+    hasNextPage,
+  );
 
   // flat categories, cache with useMemo to reduce re-render
   const apiCategories = useMemo(
@@ -207,7 +173,7 @@ function Filter() {
   return (
     <div>
       <div className={styles.searchOption}>
-        <span>Cat.: </span>
+        <p>Categories </p>
         <CategoriesOption />
       </div>
 
@@ -224,21 +190,16 @@ function Filter() {
 
       {/* display cats from api */}
       <UnSelectedCats
-        loadMoreBtn={
-          hasNextPage ? (
-            <LoadMoreBtn
-              isFetchingNextPage={isFetchingNextPage}
-              isError={isFetchNextPageError}
-              fetchNextPage={fetchNextPage}
-              hasNextPage={hasNextPage}
-            />
-          ) : null
-        }
         categories={apiCategories}
         isPending={isPending || isFetchingNextPage}
+        infinityObserver={
+          <InfinityObserver lastElementRef={lastElementRef}>
+            {(isPending || isFetchingNextPage) && <Loader />}
+          </InfinityObserver>
+        }
       />
     </div>
   );
 }
 
-export default Filter;
+export default Categories;

@@ -89,9 +89,9 @@ button {
 }
 
 input {
+  border: solid 1px var(--border-color);
   outline: none;
-  border: none;
-  background-color: transparent; // Để không bị đè màu trắng mặc định
+  background-color: transparent;
   color: var(--text-main);
 }
 
@@ -99,7 +99,8 @@ input[type="checkbox"] {
   appearance: none;
   width: 20px;
   height: 20px;
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
+  border-radius: 3px;
   cursor: pointer;
 
   &:checked {
@@ -114,9 +115,32 @@ input[type="radio"] {
 }
 
 select {
-  height: 3rem;
-  border: none;
+  border: solid 1px var(--border-color);
+  outline: none;
   padding: 0 1.6rem;
+  height: 4rem;
+  border-radius: 5px;
+  border-width: 1.5px;
+  min-width: 8rem;
+
+  /* 1. Hide the default browser arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* 2. Insert a custom SVG down arrow */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23070605' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+  background-repeat: no-repeat;
+
+  /* 3. Position the arrow nicely from the right edge */
+  background-position: right 1.2rem center;
+  background-size: 1.6rem;
+
+  cursor: pointer;
+
+  @include respond(lg) {
+    height: 3.4rem;
+  }
 }
 
 :root {
@@ -142,31 +166,28 @@ select {
 }
 
 .input {
-  border: none;
-  border-bottom: 1px var(--border-color) solid;
   padding: 0.4rem 1.4rem;
   width: 100%;
   display: flex;
   gap: 1rem;
   flex: 1;
-  height: 2.6rem;
+  height: 4rem;
+  border-radius: 5px;
+  border-width: 1.5px;
+  transition: all 0.3s;
+
+  @include respond(lg) {
+    height: 3.4rem;
+  }
 }
 
 .input:focus {
-  border-width: 2px;
+  background-color: var(--blue-bg);
 }
 
 .light {
-  input[type="checkbox"]:checked {
-    background-color: $dark-900;
-  }
-
   input[type="radio"] {
     accent-color: $dark-900;
-  }
-
-  select {
-    border-bottom: 1px solid $dark-900;
   }
 
   .error-mgs {
@@ -176,9 +197,9 @@ select {
   }
 }
 
-.btn {
-  cursor: pointer;
-}
+// .btn {
+//   cursor: pointer;
+// }
 
 .btn-primary {
   border: 1px solid var(--border-color);
@@ -190,6 +211,7 @@ select {
   align-items: center;
   font-family: "Parkinsans", sans-serif;
   transition: all 0.3s;
+  border-radius: 5px;
 
   &:hover {
     background-color: var(--bg-body);

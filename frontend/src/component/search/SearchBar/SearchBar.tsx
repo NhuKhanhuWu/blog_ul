@@ -1,22 +1,22 @@
 /** @format */
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { IoSearchSharp } from "react-icons/io5";
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSearch } from "../../../context/SearchContext";
-import Modal from "../../ui/Modal/Modal";
 import styles from "./SearchBar.module.scss";
 import Title from "../Title/Title";
 import Sort from "../Sort/Sort";
-import Filter from "../Filter/Filter";
+import Categories from "../Categories/Categories";
 import useSyncSearchForm from "../../../hook/useSyncSearchForm";
 import { formSchema, TSearchFormValues } from "../../../types/search.type";
 import { useSearchParams } from "react-router-dom";
 import { updateSearchUrl } from "../../../utils/update-search-url";
+import { Sheet } from "react-modal-sheet";
+import { MdClose } from "react-icons/md";
 
 interface ISearchForm {
   onClose?: () => void;
-  closeBtn?: ReactNode;
 }
 
 function SubmitClearBtns() {
@@ -47,7 +47,7 @@ function SubmitClearBtns() {
   );
 }
 
-function SearchForm({ onClose, closeBtn }: ISearchForm) {
+function SearchForm({ onClose }: ISearchForm) {
   const { dispatch } = useSearch();
   const { handleSubmit } = useFormContext<TSearchFormValues>();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -76,13 +76,14 @@ function SearchForm({ onClose, closeBtn }: ISearchForm) {
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className={styles.searchForm}>
-        <Title />
-        <Sort />
-        <Filter />
+        <div className={styles.formFieldsContainer}>
+          <Title />
+          <Sort />
+          <Categories />
+        </div>
 
         <div className={styles.formBtns}>
           <SubmitClearBtns />
-          {closeBtn}
         </div>
       </form>
     </>
@@ -90,8 +91,8 @@ function SearchForm({ onClose, closeBtn }: ISearchForm) {
 }
 
 function SearchBar() {
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const { state } = useSearch();
   const methods = useForm<TSearchFormValues>({
     resolver: yupResolver(formSchema),
@@ -101,46 +102,64 @@ function SearchBar() {
 
   return (
     <FormProvider {...methods}>
+      {/* header */}
+
       {/* Mobile Toggle */}
       <button
         className={styles.searchMobileToggle}
-        onClick={() => setIsMobileOpen(true)}>
+        onClick={() => setIsOpen(true)}>
         <IoSearchSharp />
       </button>
 
       {/* Mobile Modal */}
-      <div className={`${!isMobileOpen && "hidden"}`}>
-        <Modal isShow={true} setIsShow={setIsMobileOpen}>
-          <div className={styles.searchModal}>
-            <SearchForm
-              onClose={() => setIsMobileOpen(false)}
-              closeBtn={
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => setIsMobileOpen(false)}>
-                  Close
-                </button>
-              }
-            />
-          </div>
-        </Modal>
-      </div>
+      <Sheet
+        className={`${!isOpen && "hidden"}`}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}>
+        <Sheet.Container>
+          <Sheet.Header>
+            <div className={styles.header}>
+              <p className={styles.headerTitle}>Filter Blogs</p>
+              <MdClose onClick={() => setIsOpen(false)} />
+            </div>
+          </Sheet.Header>
+
+          <Sheet.Content>
+            <div className={styles.searchMobile}>
+              <SearchForm onClose={() => setIsOpen(false)} />
+            </div>
+          </Sheet.Content>
+        </Sheet.Container>
+      </Sheet>
 
       {/* Desktop Sidebar */}
       <aside
-        className={`${styles.searchSidebar} ${
-          isCollapsed ? styles.collapsed : styles.expanded
+        className={`${styles.searchDesktop} ${
+          isCollapsed ? styles.collapsed : ""
         }`}>
-        <button
-          className={`${styles.collapseBtn} btn-primary`}
-          onClick={() => setIsCollapsed((prev) => !prev)}>
-          <IoSearchSharp />
-        </button>
+        {isCollapsed ? (
+          <button
+            className={`${styles.collapseBtn} ${styles.icon}`}
+            onClick={() => setIsCollapsed(false)}>
+            <IoSearchSharp />
+          </button>
+        ) : (
+          /* Show the full panel contents ONLY when the sidebar is expanded */
+          <>
+            <div className={styles.header}>
+              <p className={styles.headerTitle}>Filter Blogs</p>
+              {/* Clicking this sets isCollapsed to true */}
+              <MdClose
+                onClick={() => setIsCollapsed(true)}
+                className={styles.icon}
+              />
+            </div>
 
-        <div className={`${isCollapsed && "hidden"}`}>
-          <SearchForm />
-        </div>
+            <div className={styles.searchFormWrapper}>
+              <SearchForm />
+            </div>
+          </>
+        )}
       </aside>
     </FormProvider>
   );

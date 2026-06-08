@@ -23,5 +23,7 @@ export function useCategories(categoryName?: string) {
 
     networkMode: "online",
     retry: false,
+    staleTime: 1000 * 60 * 10, // 10 minutes
+    gcTime: 1000 * 60 * 15, // Keep in garbage collection cache for 15 minutes
   });
 }
