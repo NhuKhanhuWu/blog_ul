@@ -8,6 +8,7 @@ import { getDateDistance } from "../../../utils/date";
 function BlogCardSm({ blog }: BlogCardProps) {
   const placehoderImg =
     "https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU";
+  // placeholder-img.jpg
 
   return (
     <Link to={`/blog/${blog.slug}`} className={styles.card}>
@@ -29,7 +30,7 @@ function BlogCardSm({ blog }: BlogCardProps) {
         <div className={styles.meta}>
           <p className={styles.date}>{getDateDistance(blog.pub_date)}</p>
           <span className={styles.separator}>•</span>
-          <div className="vertical-center smTxt">
+          <div className={`vertical-center smTxt ${styles.like}`}>
             <FaRegThumbsUp />
             {blog.upVotes || 0}
           </div>

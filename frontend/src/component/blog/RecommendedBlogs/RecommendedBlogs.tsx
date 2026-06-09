@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import Loader from "../../ui/Loader/Loader";
 import BlogCardSm from "../BlogCardSm/BlogCardSm";
 import BlogCardBig from "../BlogCardBig/BlogCardBig";
+import styles from "./RecommendedBlogs.module.scss";
 
 function RecommendedBlogs({ curBlog }: { curBlog: BlogDetailProps }) {
   // query recommended blogs based on current blog's categories, using OR logic
@@ -46,7 +47,9 @@ function RecommendedBlogs({ curBlog }: { curBlog: BlogDetailProps }) {
   }, [isError]);
 
   return (
-    <>
+    <div className={styles.recommendedSection}>
+      <p className={styles.header}>Related blogs</p>
+
       {blogs.map((blog) =>
         isDesktop ? (
           <BlogCardSm key={blog._id} blog={blog} />
@@ -54,11 +57,10 @@ function RecommendedBlogs({ curBlog }: { curBlog: BlogDetailProps }) {
           <BlogCardBig key={blog._id} blog={blog} />
         ),
       )}
-
       <InfinityObserver lastElementRef={lastElementRef}>
         {(isFetchingNextPage || isPending) && <Loader />}
       </InfinityObserver>
-    </>
+    </div>
   );
 }
 

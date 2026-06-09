@@ -35,9 +35,7 @@ function BlogDetail() {
         <BlogCmt blogId={blog._id} totalCmts={blog.totalCmts} />
       </div>
 
-      <div className={styles.recommendedSection}>
-        <RecommendedBlogs curBlog={blog} />
-      </div>
+      <RecommendedBlogs curBlog={blog} />
     </div>
   );
 }

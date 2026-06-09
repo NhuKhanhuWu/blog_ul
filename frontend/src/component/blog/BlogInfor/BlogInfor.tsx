@@ -17,7 +17,7 @@ function ContentItem({ item }: { item: NormalizedContent }) {
 
   // quote
   if (item.type === "quote")
-    return <blockquote className={styles.qoute}>{item.text}</blockquote>;
+    return <blockquote className={styles.quote}>{item.text}</blockquote>;
 
   // highlight
   if (item.type === "highlight")

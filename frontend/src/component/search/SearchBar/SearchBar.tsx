@@ -23,6 +23,7 @@ function SubmitClearBtns() {
   const { reset } = useFormContext<TSearchFormValues>();
   const initValue = formSchema.getDefault();
   const { dispatch } = useSearch();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   function resetForm() {
     // reset form
@@ -30,6 +31,9 @@ function SubmitClearBtns() {
 
     // reset search state
     dispatch({ type: "RESET" });
+
+    // update url
+    updateSearchUrl({ searchParams, setSearchParams, data: initValue });
   }
 
   return (
