@@ -5,7 +5,6 @@
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
   align-items: start;
-  border-radius: 1rem;
   background-color: var(--bg-body);
 }
 
@@ -15,6 +14,7 @@
   aspect-ratio: 16 / 9;
   overflow: hidden;
   background-color: #000;
+  border-radius: 1rem;
 }
 
 .blogImg {
@@ -55,6 +55,10 @@
   flex-wrap: wrap;
   color: var(--text-muted);
   font-size: 1.2rem;
+
+  .like {
+    color: var(--accent-color);
+  }
 }
 
 .date {

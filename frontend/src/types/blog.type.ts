@@ -81,6 +81,7 @@ export type NormalizedBlog = Omit<BlogDetailProps, "content"> & {
 
 export interface GetBlogsResponse {
   data: BlogSimplify[];
+  totalResult: number;
   nextPage: number | undefined;
 }
 
