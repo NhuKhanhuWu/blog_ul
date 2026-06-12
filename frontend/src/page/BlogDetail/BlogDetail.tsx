@@ -27,7 +27,7 @@ function BlogDetail() {
   if (isPending) return <Loader />;
 
   const blog = normalizeBlog(data);
-
+  // TODO: update ui of this page
   return (
     <div className={styles.container}>
       <div className={styles.blogSection}>

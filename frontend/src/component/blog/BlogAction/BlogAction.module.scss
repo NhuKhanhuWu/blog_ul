@@ -1,9 +1,9 @@
 /** @format */
 
-.wrapper {
+.container {
   display: flex;
   align-items: center;
-  gap: 2rem; // 16px
+  justify-content: space-between;
   padding: 1.25rem 0; // 10px
 
   .author {
@@ -23,19 +23,19 @@
   }
 
   .actions {
-    margin-left: auto;
     display: flex;
     gap: 1.5rem;
 
     .icon {
-      width: 4.5rem;
-      height: 4.5rem;
       border-radius: 50%;
+      height: 5rem;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 2.25rem;
-      background-color: $dark-100;
+      font-size: 2rem;
+      background-color: var(--bg-gray);
+      padding: 1rem 1.5rem;
+      cursor: pointer;
     }
 
     .shareIcons {
@@ -62,10 +62,20 @@
   }
 
   .votes {
-    background-color: $dark-100;
+    background-color: var(--bg-gray);
     display: flex;
     padding: 0 0.4rem;
     border-radius: 999px;
+
+    span:first-child {
+      border-right: 1.5px solid var(--text-muted);
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+    }
+
+    svg {
+      margin-right: 0.5rem;
+    }
   }
 
   // book mark

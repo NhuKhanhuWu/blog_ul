@@ -3,4 +3,9 @@
 .showHideBtn {
   display: flex;
   gap: 4rem;
+
+  button {
+    color: var(--accent-color);
+    gap: 0.6rem;
+  }
 }

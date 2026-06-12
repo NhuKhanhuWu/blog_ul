@@ -28,6 +28,7 @@ function CmtContent({ cmt, isExpand, setIsExpand }: ICmtTxt) {
         {cmt.content}
       </p>
 
+      {/* expand cmt btn (when the cmt is too long) */}
       {!isExpand && cmt.content.length > 200 && (
         <span onClick={() => setIsExpand(true)} className={styles.seeMoreBtn}>
           See more

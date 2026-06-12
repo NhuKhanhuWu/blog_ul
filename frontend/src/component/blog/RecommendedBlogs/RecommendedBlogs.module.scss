@@ -1,6 +1,9 @@
 /** @format */
 .recommendedSection {
   margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
 }
 
 .header {
@@ -8,15 +11,7 @@
   font-weight: 500;
 }
 
-@include respond(sm-xl) {
-  .recommendedSection {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-}
-
-@include respond(lg) {
+@include respond(md) {
   .recommendedSection {
     flex: 1;
     display: flex;

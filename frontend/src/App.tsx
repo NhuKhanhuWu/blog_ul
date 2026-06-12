@@ -33,7 +33,7 @@ const queryClient = new QueryClient({
 
 function App() {
   const isDev = import.meta.env.VITE_NODE_ENV === "development";
-  // TODO: update ui (follow sample img)
+
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>

@@ -4,22 +4,38 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
+
+  // username
+  a {
+    font-weight: 500;
+    font-size: 1.6rem;
+  }
+
+  // created date
+  span {
+    color: var(--text-muted);
+  }
 }
 
 .cmtContent {
   font-size: 1.6rem;
   margin: 0.8rem 0 1.4rem;
-  max-height: 10rem;
+  // max-height: 10rem;
   overflow: hidden;
-  font-weight: 500;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 
   &.expand {
-    max-height: fit-content;
+    overflow: auto;
+    display: contents;
   }
 }
 
 .seeMoreBtn {
   font-weight: 500;
+  color: var(--accent-color);
 }
 
 @include respond(lg) {
