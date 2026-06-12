@@ -94,6 +94,11 @@ const authSlide = createSlice({
         state.accessToken = action.payload.accessToken;
         state.isAuthenticated = true;
       })
+      .addCase(refreshThunk.rejected, (state) => {
+        state.user = null;
+        state.accessToken = null;
+        state.isAuthenticated = false;
+      })
 
       // get me
       .addCase(getMeThunk.fulfilled, (state, action) => {

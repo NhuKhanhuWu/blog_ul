@@ -93,22 +93,25 @@ input[type="radio"] {
 select {
   border: solid 1px var(--border-color);
   outline: none;
-  padding: 0 1.6rem;
+  padding: 0 3.6rem 0 1.6rem;
   height: 4rem;
   border-radius: 5px;
   border-width: 1.5px;
   min-width: 8rem;
 
-  /* 1. Hide the default browser arrow */
+  /* Tell the browser to scale the width to the content */
+  field-sizing: content;
+
+  /* Hide the default browser arrow */
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
 
-  /* 2. Insert a custom SVG down arrow */
+  /*  Insert a custom SVG down arrow */
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23070605' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
   background-repeat: no-repeat;
 
-  /* 3. Position the arrow nicely from the right edge */
+  /*  Position the arrow nicely from the right edge */
   background-position: right 1.2rem center;
   background-size: 1.6rem;
 
@@ -127,8 +130,17 @@ select {
 }
 
 .avatar-sm {
+  width: 3rem;
+  border-radius: 999px;
+}
+
+.avatar-md {
   width: 4rem;
   border-radius: 999px;
+
+  @include respond(lg) {
+    width: 3.5rem;
+  }
 }
 
 .checkbox {
@@ -178,7 +190,7 @@ select {
 // }
 
 .btn-primary {
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
   background-color: var(--btn-bg-primary);
   color: var(--btn-text-primary);
   cursor: pointer;
@@ -196,14 +208,9 @@ select {
 }
 
 .btn-secondary {
-  @extend .btn-primary; // Kế thừa từ primary
+  @extend .btn-primary;
   background-color: var(--bg-body);
   color: var(--text-main);
-
-  // &:hover {
-  //   background-color: var(--btn-bg-primary);
-  //   color: var(--btn-text-primary);
-  // }
 }
 
 .btn-reset--input {

@@ -15,7 +15,7 @@ const CmtLayout = ({ cmt, children }: { cmt: Cmt; children: ReactNode }) => (
   <div className={styles.cmtItemContainer}>
     <Link to={`/profile/${cmt.userId.slug}`}>
       <img
-        className="avatar-sm"
+        className={cmt.parentId ? "avatar-sm" : "avatar-md"}
         src={cmt.userId.avatar ?? defaultAvatar(cmt.userId.slug)}
         loading="lazy"
         alt="avatar"

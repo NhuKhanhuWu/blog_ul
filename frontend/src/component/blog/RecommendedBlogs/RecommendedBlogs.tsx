@@ -40,7 +40,7 @@ function RecommendedBlogs({ curBlog }: { curBlog: BlogDetailProps }) {
   );
 
   // responsive
-  const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
+  const isTablet = useMediaQuery({ query: "(min-width: 768px)" });
 
   useEffect(() => {
     if (isError) toast.error("Failed to load recommended blogs");
@@ -51,10 +51,10 @@ function RecommendedBlogs({ curBlog }: { curBlog: BlogDetailProps }) {
       <p className={styles.header}>Related blogs</p>
 
       {blogs.map((blog) =>
-        isDesktop ? (
+        isTablet ? (
           <BlogCardSm key={blog._id} blog={blog} />
         ) : (
-          <BlogCardBig key={blog._id} blog={blog} />
+          <BlogCardBig key={blog._id} blog={blog} isList={true} />
         ),
       )}
       <InfinityObserver lastElementRef={lastElementRef}>

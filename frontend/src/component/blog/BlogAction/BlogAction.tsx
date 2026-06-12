@@ -41,6 +41,7 @@ import useAddBlog from "../../../hook/blog-list/useAddBlog";
 import { getMultBlogList } from "../../../api/blog-list.api";
 import useRemoveBlog from "../../../hook/blog-list/useRemoveBlog";
 import Loader from "../../ui/Loader/Loader";
+import axios from "axios";
 
 function Author({ blog }: { blog: NormalizedBlog }) {
   const name = blog?.userId?.name || "Unknown";
@@ -64,7 +65,7 @@ function Author({ blog }: { blog: NormalizedBlog }) {
 }
 
 function Vote({ blog }: { blog: NormalizedBlog }) {
-  const { mutate, isPending } = useToggleBlogVote(blog.slug);
+  const { mutate, isPending, isError, error } = useToggleBlogVote(blog.slug);
   const isLogin = useAppSelector((state) => state.auth.isAuthenticated);
 
   const handleVote = (type: 1 | -1) => {
@@ -76,6 +77,11 @@ function Vote({ blog }: { blog: NormalizedBlog }) {
     if (isPending) return;
     mutate({ targetId: blog._id, voteType: type, targetType: "blog" });
   };
+
+  if (isError && axios.isAxiosError(error) && error.response?.status === 429) {
+    toast.error("Voting too fast. Please wait a moment");
+    // return null;
+  }
 
   return (
     <div className={`${styles.votes} btn`}>
@@ -258,7 +264,7 @@ function BookMark({ blogId }: { blogId: string }) {
 
 function BlogAction({ blog }: { blog: NormalizedBlog }) {
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.container}>
       <Author blog={blog} />
 
       {/* ---------- actions ---------- */}

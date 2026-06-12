@@ -12,7 +12,6 @@ interface IReplyToggleButton {
   isFetching: boolean;
 }
 
-// Component nút bấm: Tách riêng để dễ quản lý logic hiển thị
 const ReplyBtns = ({
   cmt,
   isOpen,
@@ -25,7 +24,7 @@ const ReplyBtns = ({
 
   return (
     <div className={styles.showHideBtn}>
-      {/* Nút Load More: Chỉ hiện khi đang mở và còn trang */}
+      {/* btn Load More: only show when there is more */}
       {isOpen && hasNextPage && (
         <button
           onClick={(e) => {
@@ -45,17 +44,15 @@ const ReplyBtns = ({
       )}
 
       <button className="flex" onClick={onToggle}>
-        <span className="flex">
-          {isOpen ? (
-            <>
-              <IoIosArrowUp /> Hide
-            </>
-          ) : (
-            <>
-              <IoIosArrowDown /> {cmt.replyCount} replies
-            </>
-          )}
-        </span>
+        {isOpen ? (
+          <>
+            <IoIosArrowUp /> Hide
+          </>
+        ) : (
+          <>
+            <IoIosArrowDown /> {cmt.replyCount} replies
+          </>
+        )}
       </button>
     </div>
   );

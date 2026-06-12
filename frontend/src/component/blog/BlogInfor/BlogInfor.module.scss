@@ -4,6 +4,10 @@
   padding: 2rem;
 }
 
+.meta {
+  color: var(--text-muted);
+}
+
 .title {
   font-family: "Forum", serif;
   font-size: 4rem;
@@ -51,10 +55,17 @@
 }
 
 .categories {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  // display: grid;
+  // grid-template-columns: repeat(4, 1fr);
+  // gap: 1rem;
+  display: flex;
+  flex-wrap: wrap; /* Allows items to drop to the next line */
   gap: 1rem;
   margin-top: 1rem;
+
+  a {
+    padding: 1rem;
+  }
 }
 
 .category {

@@ -74,10 +74,9 @@ function Categories({ blog }: { blog: NormalizedBlog }) {
 function BlogInfor({ blog }: { blog: NormalizedBlog }) {
   return (
     <>
-      <div className="smTxt">
-        <p>{blog?.authors.join(", ")}</p>
-        <p>{formatDate(blog?.pub_date || "")}</p>
-      </div>
+      <p className={`smTxt ${styles.meta}`}>
+        {blog?.authors.join(", ")} • {formatDate(blog?.pub_date || "")}
+      </p>
 
       <h1 className={styles.title}>{blog?.title}</h1>
 

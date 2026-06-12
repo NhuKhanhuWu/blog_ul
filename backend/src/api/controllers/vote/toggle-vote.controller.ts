@@ -8,12 +8,32 @@ import VoteModel from "../../models/vote.model";
 import AppError from "../../utils/error/app-error";
 import catchAsync from "../../utils/error/catch-async";
 
-interface IGetAction {
-  existingVote: Vote;
-  voteType: number;
-}
-
 type VoteAction = "create" | "delete" | "update";
+
+// Constants
+const VOTE_TYPES = {
+  UPVOTE: 1,
+  DOWNVOTE: -1,
+} as const;
+
+// Score update mappings for different vote actions
+const SCORE_UPDATES: Record<
+  VoteAction,
+  Record<number, Record<string, number>>
+> = {
+  create: {
+    [VOTE_TYPES.UPVOTE]: { upVotes: 1 },
+    [VOTE_TYPES.DOWNVOTE]: { downVotes: 1 },
+  },
+  delete: {
+    [VOTE_TYPES.UPVOTE]: { upVotes: -1 },
+    [VOTE_TYPES.DOWNVOTE]: { downVotes: -1 },
+  },
+  update: {
+    [VOTE_TYPES.UPVOTE]: { upVotes: 1, downVotes: -1 },
+    [VOTE_TYPES.DOWNVOTE]: { upVotes: -1, downVotes: 1 },
+  },
+};
 
 const updateVoteScore = async ({
   targetType,
@@ -24,18 +44,7 @@ const updateVoteScore = async ({
   const TargetModel: Model<any> =
     targetType === "blog" ? BlogModel : CommentModel;
 
-  let update: Record<string, number> = {};
-
-  if (action === "create") {
-    update = voteType === 1 ? { upVotes: 1 } : { downVotes: 1 };
-  } else if (action === "delete") {
-    update = voteType === 1 ? { upVotes: -1 } : { downVotes: -1 };
-  } else if (action === "update") {
-    update =
-      voteType === 1
-        ? { upVotes: 1, downVotes: -1 }
-        : { upVotes: -1, downVotes: 1 };
-  }
+  const update = SCORE_UPDATES[action][voteType] as Record<string, number>;
 
   const target = await TargetModel.findOneAndUpdate(
     { _id: targetId },
@@ -48,18 +57,10 @@ const updateVoteScore = async ({
   return target;
 };
 
-const getAction = ({
-  existingVote,
-  voteType,
-}: IGetAction): { action: VoteAction } => {
-  let action: VoteAction;
-  if (!existingVote) action = "create";
-  // same vote type => delete vote
-  else if (existingVote.voteType === voteType) action = "delete";
-  // diff vote type => opposite type
-  else action = "update";
-
-  return { action };
+const getAction = (existingVote: Vote | null, voteType: number): VoteAction => {
+  if (!existingVote) return "create";
+  if (existingVote.voteType === voteType) return "delete";
+  return "update";
 };
 
 export const toggleVote = catchAsync(async (req, res) => {
@@ -67,17 +68,16 @@ export const toggleVote = catchAsync(async (req, res) => {
   const userId = req.user?._id;
   const { targetId, voteType, targetType } = req.body;
 
-  // get action type
-  const existingVote = (await VoteModel.findOne({
+  // get existing vote and determine action
+  const existingVote = await VoteModel.findOne({
     userId,
     targetId,
     targetType,
-  })) as Vote;
+  });
 
-  const { action } = getAction({ existingVote, voteType });
+  const action = getAction(existingVote, voteType);
 
-  //--------- update/create/delete vote document -----------
-  // create vote
+  // update/create/delete vote document
   if (action === "create") {
     await VoteModel.create({
       userId,
@@ -85,19 +85,15 @@ export const toggleVote = catchAsync(async (req, res) => {
       targetType,
       voteType,
     });
-  }
-  // delete vote
-  else if (action === "delete")
-    await VoteModel.findByIdAndDelete(existingVote._id);
-  // update vote
-  else {
-    await VoteModel.findByIdAndUpdate(existingVote._id, {
+  } else if (action === "delete") {
+    await VoteModel.findByIdAndDelete(existingVote!._id);
+  } else {
+    await VoteModel.findByIdAndUpdate(existingVote!._id, {
       voteType,
     });
   }
-  //--------- update/create/delete vote document -----------
 
-  // update cache value in target
+  // update vote scores on target
   const target = await updateVoteScore({
     targetType,
     targetId,
@@ -105,10 +101,10 @@ export const toggleVote = catchAsync(async (req, res) => {
     action,
   });
 
-  //   response
+  // response
   res.status(201).json({
     status: "success",
-    action, // create | update | delete
+    action,
     voteType: action === "delete" ? 0 : voteType,
     upVotes: target.upVotes,
     downVotes: target.downVotes,

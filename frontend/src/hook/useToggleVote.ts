@@ -162,9 +162,18 @@ export function useToggleBlogVote(slug: string) {
       console.error("Vote failed:", err);
     },
 
-    // refresh to match with server
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey });
+    // update vote amount after success
+    onSuccess: (serverData) => {
+      queryClient.setQueryData<BlogDetailProps>(queryKey, (old) => {
+        if (!old) return old;
+
+        return {
+          ...old,
+          voteType: serverData.voteType,
+          upVotes: serverData.upVotes,
+          downVotes: serverData.downVotes,
+        };
+      });
     },
   });
 }
