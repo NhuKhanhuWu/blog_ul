@@ -57,6 +57,7 @@
 .formBtns {
   display: flex;
   justify-content: space-between;
+  background-color: var(--bg-body);
 
   .searchFormActions {
     display: flex;

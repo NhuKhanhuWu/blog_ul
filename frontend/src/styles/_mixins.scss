@@ -10,3 +10,14 @@
   }
 }
 // ==== SEARCH BAR: END ====
+
+// ==== MODAL: START ====
+@mixin modalHeader {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+}
+// ==== MODAL: END ====
+
+// ==== AUTH: START ====
+// ==== AUTH: END ====

@@ -16,7 +16,7 @@ export function Category({ category, selectedIds }: ICategoryInput) {
         selectedIds.filter((id) => id !== category._id),
       );
     } else {
-      if (selectedIds.length >= 5) {
+      if (selectedIds.length > 5) {
         setError("categories", {
           type: "max",
           message: "You can only select up to 5 categories at a time",
