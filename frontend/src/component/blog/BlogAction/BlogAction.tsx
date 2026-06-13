@@ -42,6 +42,7 @@ import { getMultBlogList } from "../../../api/blog-list.api";
 import useRemoveBlog from "../../../hook/blog-list/useRemoveBlog";
 import Loader from "../../ui/Loader/Loader";
 import axios from "axios";
+import LoginMessage from "../../ui/LoginMessageModal/LoginMessage";
 
 function Author({ blog }: { blog: NormalizedBlog }) {
   const name = blog?.userId?.name || "Unknown";
@@ -67,10 +68,11 @@ function Author({ blog }: { blog: NormalizedBlog }) {
 function Vote({ blog }: { blog: NormalizedBlog }) {
   const { mutate, isPending, isError, error } = useToggleBlogVote(blog.slug);
   const isLogin = useAppSelector((state) => state.auth.isAuthenticated);
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
   const handleVote = (type: 1 | -1) => {
     if (!isLogin) {
-      toast.error("Please login to vote");
+      setIsOpenModal(true);
       return;
     }
 
@@ -80,11 +82,18 @@ function Vote({ blog }: { blog: NormalizedBlog }) {
 
   if (isError && axios.isAxiosError(error) && error.response?.status === 429) {
     toast.error("Voting too fast. Please wait a moment");
-    // return null;
   }
 
   return (
     <div className={`${styles.votes} btn`}>
+      {/* not login modal */}
+      <ModalOverlay isShow={isOpenModal} setIsShow={setIsOpenModal}>
+        <LoginMessage
+          header="Want to votw this blog"
+          message="Login to vote for your favorite blog"
+        />
+      </ModalOverlay>
+
       {/* upvote */}
       <span className={styles.icon} onClick={() => handleVote(1)}>
         {blog.voteType === 1 ? <FaThumbsUp /> : <FaRegThumbsUp />}
@@ -109,6 +118,8 @@ function Share() {
       {isSharing && (
         <ModalOverlay isShow={isSharing} setIsShow={setIsSharing}>
           <div className={styles.shareContainer}>
+            <p className={styles.modalHeader}>Share this blog</p>
+
             <div className={styles.shareIcons}>
               <FacebookShareButton url={url}>
                 <FacebookIcon size={iconSize} round />
@@ -202,19 +213,14 @@ function BookMark({ blogId }: { blogId: string }) {
       {/* modal */}
       <ModalOverlay isShow={isOpenModal} setIsShow={setIsOpenModal}>
         {!user ? (
-          // if not login, show this message
-          <div className={styles.bookmarkGuest}>
-            <p className={styles.bookmarkHeader}>Want to save this blog?</p>
-            <p>Login to add your favorite blog to your list</p>
-            <Link to="/auth/login" className="btn-primary">
-              Login
-            </Link>
-          </div>
+          <LoginMessage
+            header="Want to save this blog?"
+            message="Login to add your favorite blog to your list"></LoginMessage>
         ) : (
           // if login, show bookmark lists
           <div className={styles.bookmarkModal}>
             {/* header */}
-            <p className={styles.bookmarkHeader}>Save to...</p>
+            <p className={styles.modalHeader}>Save this blog</p>
 
             {/* lists */}
             <div className={styles.bookmarkList}>

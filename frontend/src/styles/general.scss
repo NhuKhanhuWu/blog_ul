@@ -64,7 +64,8 @@ button {
   background-color: transparent;
 }
 
-input {
+input,
+.input {
   border: solid 1px var(--border-color);
   outline: none;
   background-color: transparent;
@@ -149,6 +150,12 @@ select {
   align-items: center;
 }
 
+.error-mgs {
+  color: var(--error-color);
+  font-style: italic;
+  font-weight: 300;
+}
+
 .flex {
   display: flex;
 }
@@ -176,12 +183,6 @@ select {
 .light {
   input[type="radio"] {
     accent-color: $dark-900;
-  }
-
-  .error-mgs {
-    color: rgb(188, 69, 69);
-    font-style: italic;
-    font-weight: 300;
   }
 }
 
