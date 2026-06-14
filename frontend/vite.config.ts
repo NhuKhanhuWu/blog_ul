@@ -3,7 +3,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath } from "url";
-import { dirname, resolve } from "path";
+import path, { dirname, resolve } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -32,6 +32,7 @@ export default defineConfig({
         @use "@/styles/variables" as *;
         @use "@/styles/breakpoints" as *;
       `,
+        includePaths: [path.resolve(__dirname, "src/styles")],
       },
     },
   },

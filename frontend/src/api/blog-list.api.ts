@@ -1,6 +1,11 @@
 /** @format */
 
-import { BlogListData, BlogListSimplify } from "../types/blog-list.type";
+import {
+  BlogListData,
+  BlogListSimplify,
+  CreateListProps,
+  CreateListRes,
+} from "../types/blog-list.type";
 import axiosInstance from "../utils/axios-instance";
 
 export async function getMultBlogList(
@@ -32,4 +37,12 @@ export async function removeBlogFromList(
   blogId: string,
 ): Promise<void> {
   await axiosInstance.delete(`/blog-list/${listId}/blogs/${blogId}`);
+}
+
+export async function createBlogList(
+  listData: CreateListProps,
+): Promise<CreateListRes> {
+  const res = await axiosInstance.post("/blog-list", { ...listData });
+
+  return res.data;
 }

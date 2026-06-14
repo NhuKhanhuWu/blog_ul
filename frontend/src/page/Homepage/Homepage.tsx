@@ -1,6 +1,6 @@
 /** @format */
 
-import BlogList from "../../component/blog/BlogList/BlogList";
+import Blogs from "../../component/blog/Blogs/Blogs";
 import SearchBar from "../../component/search/SearchBar/SearchBar";
 import { SearchProvider } from "../../context/SearchContext";
 import styles from "./Homepage.module.scss";
@@ -10,7 +10,7 @@ function Homepage() {
     <div className={styles.homepageContainer}>
       <SearchProvider>
         <SearchBar></SearchBar>
-        <BlogList />
+        <Blogs />
       </SearchProvider>
     </div>
   );

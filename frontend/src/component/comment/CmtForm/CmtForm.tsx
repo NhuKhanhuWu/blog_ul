@@ -40,7 +40,7 @@ function CmtForm({ isUsing, setIsUsing, blogId, parentId }: ICmtForm) {
   } = useForm({ resolver: yupResolver(formSchema) });
 
   // handling send create cmt request
-  const { mutate, isPending, isError: fetchError } = useCreateCmt();
+  const { mutate, isPending } = useCreateCmt();
 
   const username = useAppSelector((state) => state.auth.user?.name) || "";
 
@@ -111,8 +111,6 @@ function CmtForm({ isUsing, setIsUsing, blogId, parentId }: ICmtForm) {
       {formError.content && (
         <p className="error-mgs">{formError.content.message}</p>
       )}
-
-      {fetchError && <p className="error-mgs">Something went wrong.</p>}
     </form>
   );
 }

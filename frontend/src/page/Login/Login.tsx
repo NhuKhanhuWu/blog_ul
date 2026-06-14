@@ -12,8 +12,6 @@ import { Email, Password } from "../../component/auth/AuthInputs";
 import AuthFooter from "../../component/auth/AuthFooter";
 import { useAppDispatch, useAppSelector } from "../../hook/reduxHooks";
 import { loginThunk } from "../../redux/auth.slice";
-import toast from "react-hot-toast";
-import { useEffect } from "react";
 
 const formSchema = yup.object().shape({
   email: emaiSchema,
@@ -50,24 +48,22 @@ function Login() {
     }
   }
 
-  useEffect(() => {
-    if (error) toast.error(error);
-  }, [error]);
-
   return (
     <div className={styles.wrapper}>
       <form className={styles.form} onSubmit={handleSubmit(submitHandler)}>
         <AuthHeader subtitle="Log in to your account" title="Welcome back" />
 
-        {/* {error && <p className="error-mgs">{error}</p>} */}
+        {error && <p className="error-mgs">{error}</p>}
 
         <Email
+          isLoading={isLoading}
           control={control}
           errors={formErrors}
           register={register}
           resetField={resetField}
         />
         <Password
+          isLoading={isLoading}
           control={control}
           errors={formErrors}
           register={register}

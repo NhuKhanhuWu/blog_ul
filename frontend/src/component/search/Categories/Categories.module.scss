@@ -2,7 +2,7 @@
 @use "../../../styles/_mixins.scss" as mixin;
 
 .searchOption {
-  @include mixin.searchOption;
+  @include mixin.formField;
 }
 
 .categories {
