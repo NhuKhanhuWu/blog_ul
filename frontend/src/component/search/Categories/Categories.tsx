@@ -90,13 +90,9 @@ function CategoriesOption() {
 
   return (
     <div className={styles.filterOption}>
-      <select {...register("logic")}>
-        <option value="or" id="or">
-          or
-        </option>
-        <option value="and" id="and">
-          and
-        </option>
+      <select {...register("logic")} id="logic">
+        <option value="or">or</option>
+        <option value="and">and</option>
       </select>
       <CategorySearch />
     </div>
@@ -173,7 +169,7 @@ function Categories() {
   return (
     <div>
       <div className={styles.searchOption}>
-        <p>Categories </p>
+        <label htmlFor="logic">Categories </label>
         <CategoriesOption />
       </div>
 

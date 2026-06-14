@@ -1,16 +1,16 @@
 /** @format */
 
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useSearch } from "../../../context/SearchContext";
-import { SearchState } from "../../../reducer/search.reducer";
-import BlogCardBig from "../BlogCardBig/BlogCardBig";
-import { getBlogs } from "../../../api/blog.api";
-import Loader from "../../ui/Loader/Loader";
-import Error from "../../ui/Error/Error";
-import styles from "./BlogList.module.scss";
-import InfinityObserver from "../../ui/InfinityObserver/InfinityObserver";
-import { useIntersectionObserver } from "../../../hook/useIntersectionObserver";
-import NotFound from "../../ui/NotFound/NotFound";
+import { useSearch } from "../../../context/SearchContext.tsx";
+import { SearchState } from "../../../reducer/search.reducer.ts";
+import BlogCardBig from "../../blog/BlogCardBig/BlogCardBig.tsx";
+import { getBlogs } from "../../../api/blog.api.ts";
+import Loader from "../../ui/Loader/Loader.tsx";
+import Error from "../../ui/Error/Error.tsx";
+import styles from "./Blogs.module.scss";
+import InfinityObserver from "../../ui/InfinityObserver/InfinityObserver.tsx";
+import { useIntersectionObserver } from "../../../hook/useIntersectionObserver.ts";
+import NotFound from "../../ui/NotFound/NotFound.tsx";
 import { useMemo, useState } from "react";
 import { FaList } from "react-icons/fa";
 import { FiGrid } from "react-icons/fi";
@@ -24,7 +24,7 @@ function getQuery(state: SearchState) {
   return query;
 }
 
-function BlogList() {
+function Blogs() {
   const { state } = useSearch();
   const query = getQuery(state);
   const {
@@ -99,4 +99,4 @@ function BlogList() {
   );
 }
 
-export default BlogList;
+export default Blogs;

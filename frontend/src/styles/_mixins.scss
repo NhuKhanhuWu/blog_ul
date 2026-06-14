@@ -2,22 +2,35 @@
 @use "./_breakpoints.scss" as *;
 
 // ==== SEARCH BAR: START ====
-@mixin searchOption {
-  p {
-    font-size: 1.2rem;
+@mixin formField {
+  label {
+    font-size: 1.6rem;
     font-weight: 600;
     margin-bottom: 0.4rem;
+
+    @include respond(lg) {
+      font-size: 1.2rem;
+    }
   }
 }
 // ==== SEARCH BAR: END ====
 
 // ==== MODAL: START ====
 @mixin modalHeader {
-  font-size: 2rem;
+  font-size: 2.6rem;
   font-weight: 700;
   text-align: center;
+
+  @include respond(md) {
+    font-size: 2rem;
+  }
 }
 // ==== MODAL: END ====
 
-// ==== AUTH: START ====
-// ==== AUTH: END ====
+// ==== INPUT: START ====
+@mixin disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+  background-color: var(--bg-gray);
+}
+// ==== INPUT: END ====

@@ -1,0 +1,46 @@
+/** @format */
+
+@use "../../../styles/_mixins.scss" as mixin;
+
+.form {
+  width: 32rem;
+  padding: 1rem;
+
+  // space between elements
+  > * {
+    margin-bottom: 2rem;
+  }
+
+  > *:first-child {
+    @include respond(md) {
+      margin-bottom: 1rem;
+    }
+  }
+
+  > *:last-child {
+    margin-bottom: 0;
+    margin-left: auto;
+  }
+  // space between elements
+
+  .modalHeader {
+    @include mixin.modalHeader;
+  }
+
+  .field {
+    @include mixin.formField;
+    width: 100%;
+
+    > select {
+      width: 100%;
+    }
+  }
+
+  button {
+    padding: 0.8rem;
+  }
+
+  .disabled {
+    @include mixin.disabled;
+  }
+}

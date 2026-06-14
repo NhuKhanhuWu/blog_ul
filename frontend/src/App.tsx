@@ -1,12 +1,17 @@
 /** @format */
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  MutationCache,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Provider } from "react-redux";
 import { lazy } from "react";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { store } from "./redux/store.ts";
+import axios from "axios";
 
 // lazy load
 const AppLayout = lazy(() => import("./layout/AppLayout.tsx"));
@@ -28,7 +33,20 @@ const router = createBrowserRouter([
 ]);
 
 const queryClient = new QueryClient({
+  // cache for 60s
   defaultOptions: { queries: { staleTime: 60 * 1000 } },
+
+  // show error message on toast
+  mutationCache: new MutationCache({
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        const serverMessage = error.response?.data?.message || error.message;
+        toast.error(serverMessage);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    },
+  }),
 });
 
 function App() {

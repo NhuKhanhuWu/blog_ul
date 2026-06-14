@@ -65,11 +65,18 @@ button {
 }
 
 input,
+textarea,
 .input {
   border: solid 1px var(--border-color);
   outline: none;
   background-color: transparent;
   color: var(--text-main);
+}
+
+textarea {
+  font-family: "Parkinsans", sans-serif;
+  min-height: 15rem;
+  resize: none;
 }
 
 input[type="checkbox"] {
