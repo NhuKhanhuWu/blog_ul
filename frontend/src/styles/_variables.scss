@@ -89,7 +89,7 @@ $spacing-lg: 2.4rem;
   --border-color: #{map.get($colors, "light", 500)};
   --accent-color: #{map.get($colors, "blue", 900)};
   --blue-bg: #{map.get($colors, "blue", 100)};
-  --btn-bg-primary: #{map.get($colors, "dark", 900)};
+  --btn-bg-primary: #{map.get($colors, "blue", 900)};
   --btn-text-primary: #{map.get($colors, "light", 200)};
   --btn-text: #{map.get($colors, "light", 200)};
   --shadow-dark: #{map.get($colors, "dark", 100)};

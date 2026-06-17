@@ -1,0 +1,17 @@
+/** @format */
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: 1rem; // 8px
+
+  img {
+    width: 4rem; // 32px
+    height: 4rem;
+    border-radius: 50%;
+  }
+
+  .name {
+    font-size: 1.75rem; // ~14px
+  }
+}

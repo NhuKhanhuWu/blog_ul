@@ -1,6 +1,29 @@
 /** @format */
 @use "./_breakpoints.scss" as *;
 
+// general
+@mixin icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+@mixin icon-gray-bg {
+  @include icon;
+
+  border-radius: 50%;
+  height: 5rem;
+  background-color: var(--bg-gray);
+  padding: 1rem 1.5rem;
+
+  @include respond(md) {
+    padding: 1rem 1.2rem;
+    height: 4.5rem;
+  }
+}
+
 // ==== SEARCH BAR: START ====
 @mixin formField {
   label {
@@ -14,6 +37,51 @@
   }
 }
 // ==== SEARCH BAR: END ====
+
+// ==== BLOGS: START ====
+@mixin responsiveBlogLayout(
+  $flex-gap: 1rem,
+  $sm-xl-gap: 1rem,
+  $md-xl-gap: 1rem,
+  $lg-gap: 1rem,
+  $md-list-cols: 2,
+  $lg-list-cols: 2
+) {
+  display: flex;
+  flex-direction: column;
+  gap: $flex-gap;
+  align-items: center;
+
+  @include respond(sm-xl) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $sm-xl-gap;
+    align-items: self-start;
+
+    &.listMode {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @include respond(md-xl) {
+    gap: $md-xl-gap;
+
+    &.listMode {
+      grid-template-columns: repeat(#{$md-list-cols}, 1fr);
+    }
+  }
+
+  // ===== DESKTOP (>=1024px) ====
+  @include respond(lg) {
+    gap: $lg-gap;
+    grid-template-columns: repeat(3, 1fr);
+
+    &.listMode {
+      grid-template-columns: repeat(#{$lg-list-cols}, 1fr);
+    }
+  }
+}
+// ==== BLOGS: START ====
 
 // ==== MODAL: START ====
 @mixin modalHeader {
@@ -34,3 +102,58 @@
   background-color: var(--bg-gray);
 }
 // ==== INPUT: END ====
+
+// ==== PROFILE: START ====
+@mixin profileActions {
+  display: flex;
+  gap: 1.2rem; // 1.5 in MUI is usually 1.5 * 8rem = 12rem
+  justify-content: center;
+
+  a,
+  button {
+    padding: 1rem;
+
+    @include respond(md) {
+      padding: 0.8rem;
+    }
+  }
+}
+
+@mixin tabBtns {
+  // tab btns container
+  &:global(.MuiTabs-root) {
+    border-bottom: 1.5px solid var(--border-color);
+    position: sticky;
+    top: 8%;
+    // transform: translateY(90%);
+    background-color: var(--bg-body);
+    z-index: 888;
+
+    @include respond(sm-xl) {
+      margin: 0 2rem;
+    }
+  }
+
+  :global {
+    //  Targets the underline bar
+    .MuiTabs-indicator {
+      height: 2px;
+    }
+
+    // Targets individual tab buttons
+    .MuiTab-root {
+      text-transform: capitalize;
+      font-weight: bold;
+      font-size: 1.6rem;
+      min-width: auto;
+      transition: color 0.2s ease;
+      padding: 1rem 1.6rem;
+
+      &.Mui-selected {
+        color: var(--accent-color);
+      }
+    }
+  }
+}
+
+// ==== PROFILE: END ====

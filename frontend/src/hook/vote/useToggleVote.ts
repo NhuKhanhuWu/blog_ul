@@ -1,10 +1,10 @@
 /** @format */
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toggleVote } from "../api/vote.api";
-import { IToggleVote, IVoteResponse } from "../types/vote.type";
-import { CmtCache } from "../types/comment.type";
-import { BlogDetailProps } from "../types/blog.type";
+import { toggleVote } from "../../api/vote.api";
+import { IToggleVote, IVoteResponse } from "../../types/vote.type";
+import { CmtCache } from "../../types/comment.type";
+import { BlogDetailProps } from "../../types/blog.type";
 
 type CmtQueryKey = ["cmt", ...unknown[]];
 

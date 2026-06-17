@@ -8,7 +8,7 @@ import styles from "./SearchBar.module.scss";
 import Title from "../Title/Title";
 import Sort from "../Sort/Sort";
 import Categories from "../Categories/Categories";
-import useSyncSearchForm from "../../../hook/useSyncSearchForm";
+import useSyncSearchForm from "../../../hook/search/useSyncSearchForm";
 import { formSchema, TSearchFormValues } from "../../../types/search.type";
 import { useSearchParams } from "react-router-dom";
 import { updateSearchUrl } from "../../../utils/update-search-url";

@@ -5,20 +5,25 @@ import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import { FaPlus } from "react-icons/fa6";
 import { useAppSelector } from "../../../hook/reduxHooks";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import ModalOverlay from "../../ui/Modal/Modal";
 import useAddBlog from "../../../hook/blog-list/useAddBlog";
 import { getMultBlogList } from "../../../api/blog-list.api";
 import useRemoveBlog from "../../../hook/blog-list/useRemoveBlog";
 import Loader from "../../ui/Loader/Loader";
 import LoginMessage from "../../ui/LoginMessageModal/LoginMessage";
-import styles from "./BlogAction.module.scss";
+import styles from "./BookMark.module.scss";
 import BlogListForm from "../../blog-list/BlogListForm/BlogListForm";
 import { BlogListSimplify } from "../../../types/blog-list.type";
 
 interface BlogListProps {
   data: BlogListSimplify[] | undefined;
   handleMarkBlog: (listId: string, containsCurrentBlog: boolean) => void;
+}
+
+interface BookMarkProps {
+  blogId: string;
+  openBtn: ReactNode;
 }
 
 function BlogList({ data, handleMarkBlog }: BlogListProps) {
@@ -44,7 +49,7 @@ function BlogList({ data, handleMarkBlog }: BlogListProps) {
   );
 }
 
-function BookMark({ blogId }: { blogId: string }) {
+function BookMark({ blogId, openBtn }: BookMarkProps) {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const user = useAppSelector((state) => state.auth).user;
   const {
@@ -144,11 +149,7 @@ function BookMark({ blogId }: { blogId: string }) {
       )}
 
       {/* bookmark icon */}
-      <span
-        className={styles.icon}
-        onClick={() => setIsOpenModal(!isOpenModal)}>
-        <MdOutlineBookmarkBorder />
-      </span>
+      <span onClick={() => setIsOpenModal(!isOpenModal)}>{openBtn}</span>
     </>
   );
 }

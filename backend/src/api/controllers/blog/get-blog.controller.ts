@@ -18,20 +18,21 @@ const SELECTED_FIELDS = {
   pub_date: 1,
   slug: 1,
   upVotes: 1,
+  userId: 1,
   preview: { $arrayElemAt: ["$content", 0] },
   image: { $arrayElemAt: ["$images", 0] },
 };
 
 // Fields allowed for sorting
 const SORT_FIELDS = [
-  "pub_date", // newest/oldest
-  "-pub_date",
+  "-updatedAt", // newest/oldest
+  "updatedAt",
   "-upVotes", // alphabetical"title",
 ];
 
 // Fields allowed for filtering
 const FILTER_FIELDS = [
-  "pub_date", // filter by date range
+  "updatedAt", // filter by date range
   "userId", // filter by user
 ];
 // -------------constants-------------
@@ -103,7 +104,7 @@ export const getMultBlog = catchAsync(async (req, res) => {
     .findbyUser()
     .searchByTitle()
     .filter(FILTER_FIELDS)
-    .sort(SORT_FIELDS, "-pub_date")
+    .sort(SORT_FIELDS, "-updatedAt")
     .limitedFields(SELECTED_FIELDS);
 
   await queryInstance.paginate();

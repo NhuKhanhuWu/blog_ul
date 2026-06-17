@@ -1,4 +1,5 @@
 /** @format */
+@use "../../../styles/_mixins.scss" as *;
 
 // ===== MOBILE DEFAULT (<480px) ====
 .container {
@@ -37,35 +38,8 @@
   }
 }
 
-.blogList {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  align-items: center;
-}
-
-// ===== TABLET (>=768px) ====
-@include respond(sm-xl) {
-  .blogList {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    align-items: self-start;
-
-    &.listMode {
-      grid-template-columns: 1fr;
-    }
-  }
-}
-
-@include respond(md-xl) {
-  .blogList {
-    gap: 3rem;
-
-    &.listMode {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
+.blogsContainer {
+  @include responsiveBlogLayout;
 }
 
 // ===== DESKTOP (>=1024px) ====
@@ -74,14 +48,5 @@
     border-left: 1px solid var(--border-color);
     padding-left: 1rem;
     padding-top: 2rem;
-  }
-
-  .blogList {
-    gap: 2rem;
-    grid-template-columns: repeat(3, 1fr);
-
-    &.listMode {
-      grid-template-columns: 1fr 1fr;
-    }
   }
 }

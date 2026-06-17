@@ -82,7 +82,7 @@ function Blogs() {
       </div>
 
       <div
-        className={`${styles.blogList} ${viewMode === "list" && styles.listMode}`}>
+        className={`${styles.blogsContainer} ${viewMode === "list" && styles.listMode}`}>
         {blogs?.map((blog) => (
           <BlogCardBig
             isList={viewMode === "list"}

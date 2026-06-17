@@ -3,7 +3,7 @@
 import { Link } from "react-router-dom";
 import { NormalizedBlog } from "../../../types/blog.type";
 import defaultAvatar from "../../../utils/default-avatar";
-import styles from "./BlogAction.module.scss";
+import styles from "./Author.module.scss";
 
 function Author({ blog }: { blog: NormalizedBlog }) {
   const name = blog?.userId?.name || "Unknown";

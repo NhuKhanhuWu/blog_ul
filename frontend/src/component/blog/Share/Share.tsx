@@ -18,7 +18,7 @@ import { useState } from "react";
 import ModalOverlay from "../../ui/Modal/Modal";
 import { MdOutlineContentCopy } from "react-icons/md";
 import toast from "react-hot-toast";
-import styles from "./BlogAction.module.scss";
+import styles from "./Share.module.scss";
 
 function Share() {
   const [isSharing, setIsSharing] = useState(false);
