@@ -62,6 +62,7 @@ blockquote {
 button {
   border: none;
   background-color: transparent;
+  cursor: pointer;
 }
 
 input,
@@ -208,17 +209,19 @@ select {
   font-family: "Parkinsans", sans-serif;
   transition: all 0.3s;
   border-radius: 5px;
-
-  &:hover {
-    background-color: var(--accent-color);
-    color: var(--bg-body);
-  }
+  color: var(--bg-body);
 }
 
-.btn-secondary {
+.btn-secondary,
+.btn-primary:hover {
   @extend .btn-primary;
   background-color: var(--bg-body);
   color: var(--text-main);
+}
+
+.btn-secondary:hover {
+  background-color: var(--btn-bg-primary);
+  color: var(--bg-body);
 }
 
 .btn-reset--input {

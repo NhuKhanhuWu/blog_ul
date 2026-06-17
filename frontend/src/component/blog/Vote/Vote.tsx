@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useAppSelector } from "../../../hook/reduxHooks";
-import { useToggleBlogVote } from "../../../hook/useToggleVote";
+import { useToggleBlogVote } from "../../../hook/vote/useToggleVote";
 import { NormalizedBlog } from "../../../types/blog.type";
 import ModalOverlay from "../../ui/Modal/Modal";
 import LoginMessage from "../../ui/LoginMessageModal/LoginMessage";
@@ -12,7 +12,7 @@ import {
   FaThumbsDown,
   FaThumbsUp,
 } from "react-icons/fa";
-import styles from "./BlogAction.module.scss";
+import styles from "./Vote.module.scss";
 
 function Vote({ blog }: { blog: NormalizedBlog }) {
   const { mutate, isPending } = useToggleBlogVote(blog.slug);

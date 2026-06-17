@@ -1,28 +1,29 @@
 /** @format */
 
-export interface IUserPublic {
+export interface UserPublic {
   _id: string;
   name: string;
   avatar: string;
+  slug: string;
 }
 
-export interface IUser extends IUserPublic {
+export interface User extends UserPublic {
   email: string;
   role?: string;
 }
 
-export interface IAuthResponse {
-  user: IUser | null;
+export interface AuthResponse {
+  user: User | null;
   accessToken: string | null;
 }
 
-export interface IAuthState extends IAuthResponse {
+export interface AuthState extends AuthResponse {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
 }
 
-export interface ILogin {
+export interface Login {
   email: string;
   password: string;
 }

@@ -9,6 +9,7 @@ export interface BlogSimplify {
   upVotes?: number;
   pub_date: Date;
   authors: string[];
+  userId: string;
   img?: string;
   preview: {
     text: string;

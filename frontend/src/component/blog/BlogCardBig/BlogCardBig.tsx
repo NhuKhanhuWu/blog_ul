@@ -5,6 +5,7 @@ import { BlogCardProps } from "../../../types/blog.type";
 import styles from "./BlogCardBig.module.scss";
 import { formatDate } from "../../../utils/date";
 import { Link } from "react-router-dom";
+import BlogPopOver from "../BlogPopOver/BlogPopOver";
 
 interface BlogCard extends BlogCardProps {
   isList?: boolean;
@@ -26,33 +27,40 @@ function BlogCardBig({ blog, isList }: BlogCard) {
   // placeholder-img.jpg
 
   return (
-    <Link
-      to={`/blog/${blog.slug}`}
-      className={`${isList && styles.listMode} ${styles.blogCard}`}>
-      <div className={styles.imgWrapper}>
+    <div className={`${isList && styles.listMode} ${styles.blogCard}`}>
+      <Link to={`/blog/${blog.slug}`} className={styles.imgWrapper}>
         <img
           className={styles.blogImg}
           src={blog.img || placeholderImg}
           alt={blog.title}
         />
-      </div>
+      </Link>
 
       <div className={styles.blogTxt}>
-        <div className={styles.metaRow}>
-          <Authors blog={blog} />
-          <span className={styles.separator}>•</span>
-          <p className={styles.dateTxt}>{formatDate(blog.pub_date)}</p>
-        </div>
+        <Link to={`/blog/${blog.slug}`}>
+          <div className={styles.metaRow}>
+            <Authors blog={blog} />
+            <span className={styles.separator}>•</span>
+            <p className={styles.dateTxt}>{formatDate(blog.pub_date)}</p>
+          </div>
 
-        <h3 className={`font-serif ${styles.title}`}>{blog.title}</h3>
-        <p className={styles.preview}>{blog.preview.text}</p>
+          <h3 className={`font-serif ${styles.title}`}>{blog.title}</h3>
+          <p className={styles.preview}>{blog.preview.text}</p>
+        </Link>
 
         <div className={styles.engagementRow}>
-          <FaRegThumbsUp />
-          <span className={styles.voteCount}>{blog.upVotes || 0}</span>
+          <div className={styles.upVote}>
+            <FaRegThumbsUp />
+            <span className={styles.voteCount}>{blog.upVotes || 0}</span>
+          </div>
+
+          {/* TODO: Add popOver here */}
+          <div className={styles.popOver}>
+            <BlogPopOver blog={blog} />
+          </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
 

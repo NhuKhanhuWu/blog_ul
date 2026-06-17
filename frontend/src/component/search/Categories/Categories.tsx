@@ -5,7 +5,7 @@ import { ICategory } from "../../../types/category.type";
 import styles from "./Categories.module.scss";
 import { useFormContext } from "react-hook-form";
 import { TSearchFormValues } from "../../../types/search.type";
-import { useCategories } from "../../../hook/useCategories";
+import { useCategories } from "../../../hook/search/useCategories";
 import { useDebounce } from "../../../hook/useDebounce";
 import { Category } from "../Category/Category";
 import { useIntersectionObserver } from "../../../hook/useIntersectionObserver";

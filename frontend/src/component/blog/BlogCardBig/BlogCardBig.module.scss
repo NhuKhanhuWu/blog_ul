@@ -106,7 +106,7 @@
   color: var(--text-muted);
   margin-bottom: 1.6rem;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -114,10 +114,17 @@
 .engagementRow {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.8rem;
   font-size: 1.4rem;
   font-weight: 500;
   color: var(--accent-color); // Muted by default
+
+  .upVote {
+    svg {
+      margin-right: 0.2rem;
+    }
+  }
 }
 
 /* ==========================================================================
@@ -125,7 +132,7 @@
    ========================================================================== */
 @include respond(sm-xl) {
   .blogCard {
-    border: 1.5px solid var(--border-color); // Subtle wrapper frame ($light-500)
+    // border-bottom: 1.5px solid var(--border-color); // Subtle wrapper frame ($light-500)
     padding: 1.2rem;
     border-radius: 2rem;
     height: 100%; // Lets grid columns stretch evenly

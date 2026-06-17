@@ -12,6 +12,7 @@ import { lazy } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { store } from "./redux/store.ts";
 import axios from "axios";
+import { StyledEngineProvider } from "@mui/material/styles";
 
 // lazy load
 const AppLayout = lazy(() => import("./layout/AppLayout.tsx"));
@@ -19,6 +20,7 @@ const Homepage = lazy(() => import("./page/Homepage/Homepage.tsx"));
 const BlogDetail = lazy(() => import("./page/BlogDetail/BlogDetail.tsx"));
 const Login = lazy(() => import("./page/Login/Login.tsx"));
 const Logout = lazy(() => import("./page/Logout/Logout.tsx"));
+const Me = lazy(() => import("./page/Me/Me.tsx"));
 
 const router = createBrowserRouter([
   {
@@ -27,7 +29,8 @@ const router = createBrowserRouter([
       { element: <Homepage />, path: "/" },
       { element: <BlogDetail />, path: "/blog/:slug" },
       { element: <Login />, path: "/auth/login" },
-      { element: <Logout />, path: "user/logout" },
+      { element: <Logout />, path: "/user/logout" },
+      { element: <Me />, path: "/user/me" },
     ],
   },
 ]);
@@ -55,23 +58,25 @@ function App() {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        {isDev && <ReactQueryDevtools initialIsOpen={false} />}
+        <StyledEngineProvider injectFirst>
+          {isDev && <ReactQueryDevtools initialIsOpen={false} />}
 
-        <Toaster
-          position="bottom-left"
-          toastOptions={{
-            duration: 3000,
-            style: {
-              borderRadius: "10px",
-              background: "var(--bg-body)",
-              color: "var(--text-main)",
-              border: "1px solid var(--border-color)",
-              zIndex: 9999,
-            },
-          }}
-        />
+          <Toaster
+            position="bottom-left"
+            toastOptions={{
+              duration: 3000,
+              style: {
+                borderRadius: "10px",
+                background: "var(--bg-body)",
+                color: "var(--text-main)",
+                border: "1px solid var(--border-color)",
+                zIndex: 9999,
+              },
+            }}
+          />
 
-        <RouterProvider router={router}></RouterProvider>
+          <RouterProvider router={router}></RouterProvider>
+        </StyledEngineProvider>
       </QueryClientProvider>
     </Provider>
   );

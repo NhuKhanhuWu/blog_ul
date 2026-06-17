@@ -9,7 +9,7 @@ import {
 import { Cmt } from "../../../types/comment.type";
 import styles from "./CmtActions.module.scss";
 import { MdOutlineMessage } from "react-icons/md";
-import { useToggleCmtVote } from "../../../hook/useToggleVote";
+import { useToggleCmtVote } from "../../../hook/vote/useToggleVote";
 import { useState } from "react";
 import CmtForm from "../CmtForm/CmtForm";
 

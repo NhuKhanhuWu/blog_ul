@@ -1,0 +1,45 @@
+/** @format */
+
+.profileHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 2rem;
+  text-align: center;
+
+  .avatar {
+    width: 8rem;
+    height: 8rem;
+    border-radius: 999px;
+  }
+
+  .userDetail {
+    p {
+      margin-bottom: 2rem;
+    }
+  }
+
+  @include respond(sm-xl) {
+    flex-direction: row;
+    margin: 2rem;
+    text-align: left;
+
+    .avatar {
+      width: 10rem;
+      height: 10rem;
+    }
+
+    .userDetail {
+      h4 {
+        font-size: 2.4rem;
+      }
+
+      p {
+        @include respond(sm-xl) {
+          margin-bottom: 1rem;
+        }
+      }
+    }
+  }
+}
