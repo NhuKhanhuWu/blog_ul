@@ -67,18 +67,11 @@ function BookMark({ blogId, openBtn }: BookMarkProps) {
 
   // ---------mark blog handling---------
   // add blog to list
-  const {
-    mutate: addBlogFn,
-    isSuccess: isAddSuccess,
-    isError: isAddErr,
-  } = useAddBlog(blogId);
+  const { mutate: addBlogFn, isSuccess: isAddSuccess } = useAddBlog(blogId);
 
   // remove blog from list
-  const {
-    mutate: removeBlogFn,
-    isSuccess: isRemoveSuccess,
-    isError: isRemoveErr,
-  } = useRemoveBlog(blogId);
+  const { mutate: removeBlogFn, isSuccess: isRemoveSuccess } =
+    useRemoveBlog(blogId);
 
   function handleMarkBlog(listId: string, containsCurrentBlog: boolean) {
     // add blog if the current blog is not in the list
@@ -92,16 +85,12 @@ function BookMark({ blogId, openBtn }: BookMarkProps) {
   // add blog to list
   useEffect(() => {
     if (isAddSuccess) toast.success("Blog added to list");
-    if (isAddErr)
-      toast.error("Cannot add blog to list, please try again later");
-  }, [isAddSuccess, isAddErr]);
+  }, [isAddSuccess]);
 
   // remove blog from list
   useEffect(() => {
     if (isRemoveSuccess) toast.success("Blog remove from list");
-    if (isRemoveErr)
-      toast.error("Cannot remove blog from list, please try again later");
-  }, [isRemoveSuccess, isRemoveErr]);
+  }, [isRemoveSuccess]);
   // ---------mark blog handling---------
 
   return (

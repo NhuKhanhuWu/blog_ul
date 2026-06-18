@@ -5,6 +5,7 @@ import {
   BlogListSimplify,
   CreateListProps,
   CreateListRes,
+  UpdateBlogListArgs,
 } from "../types/blog-list.type";
 import axiosInstance from "../utils/axios-instance";
 
@@ -17,6 +18,33 @@ export async function getMultBlogList(
   if (blogId) query += `${query ? "&" : ""}currentBlogId=${blogId}`;
 
   const res = await axiosInstance.get(`/blog-list?${query}`);
+
+  return res.data.data;
+}
+
+export async function getBlogListById(
+  blogListId: string,
+): Promise<BlogListData> {
+  const res = await axiosInstance.get(`/blog-list/${blogListId}`);
+
+  return res.data.data;
+}
+
+export async function createBlogList(
+  listData: CreateListProps,
+): Promise<CreateListRes> {
+  const res = await axiosInstance.post("/blog-list", { ...listData });
+
+  return res.data;
+}
+
+export async function updateBlogList({
+  blogListId,
+  data,
+}: UpdateBlogListArgs): Promise<BlogListData> {
+  const res = await axiosInstance.patch(`/blog-list/${blogListId}`, {
+    ...data,
+  });
 
   return res.data.data;
 }
@@ -39,10 +67,6 @@ export async function removeBlogFromList(
   await axiosInstance.delete(`/blog-list/${listId}/blogs/${blogId}`);
 }
 
-export async function createBlogList(
-  listData: CreateListProps,
-): Promise<CreateListRes> {
-  const res = await axiosInstance.post("/blog-list", { ...listData });
-
-  return res.data;
+export async function deleteBlogList(blogListId: string): Promise<void> {
+  await axiosInstance.delete(`/blog-list/${blogListId}`);
 }

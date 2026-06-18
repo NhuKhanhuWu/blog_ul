@@ -20,15 +20,45 @@ export const getMultBlogList = catchAsync(async (req, res) => {
   // get blog lists
   const blogLists = await BlogListModel.aggregate([
     { $match: filter },
+
+    {
+      $lookup: {
+        from: "blogs", // Make sure this matches your exact MongoDB collection name for Blogs
+        let: { firstBlogId: { $arrayElemAt: ["$blogs", 0] } },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$_id", "$$firstBlogId"] } } },
+          { $project: { firstImage: { $arrayElemAt: ["$images", 0] } } },
+        ],
+        as: "thumbnailBlog",
+      },
+    },
+
+    // 3. Deconstruct the thumbnailBlog array
+    {
+      $unwind: {
+        path: "$thumbnailBlog",
+        preserveNullAndEmptyArrays: true, // Keeps lists that don't have any blogs yet
+      },
+    },
+
     {
       $project: {
         userId: 1,
         name: 1,
         isPrivate: 1,
+        isDefault: 1,
+
         // create a new field "containsCurrentBlog" to indicate if the current blog is in the list
         containsCurrentBlog: blogId
           ? { $in: [blogId, { $ifNull: ["$blogs", []] }] }
           : { $literal: false },
+
+        // amount of blog in this list
+        blogsCnt: { $size: { $ifNull: ["$blogs", []] } },
+
+        listAvatar: {
+          $ifNull: ["$thumbnailBlog.firstImage", null],
+        },
       },
     },
   ]);
@@ -40,7 +70,7 @@ export const getMultBlogList = catchAsync(async (req, res) => {
   });
 });
 
-export const getSingleBlogList = catchAsync(async (req, res) => {
+export const getBlogListById = catchAsync(async (req, res) => {
   // get blog list id & user id
   const blogListId = req.params.id;
   const userId = req.user?.id;

@@ -54,7 +54,6 @@ function BlogCardBig({ blog, isList }: BlogCard) {
             <span className={styles.voteCount}>{blog.upVotes || 0}</span>
           </div>
 
-          {/* TODO: Add popOver here */}
           <div className={styles.popOver}>
             <BlogPopOver blog={blog} />
           </div>

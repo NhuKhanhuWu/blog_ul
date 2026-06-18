@@ -32,12 +32,12 @@ function Me() {
       name: "Blogs",
       element: <BlogsTab user={user || undefined} />,
     },
-    { name: "Saved blogs", element: <BlogListsTab /> },
+    { name: "Saved", element: <BlogListsTab /> },
   ];
   const [curTab, setCurTab] = useState(0);
 
-  function handleChange(event: React.SyntheticEvent, newValue: number) {
-    // if (event) console.log(1);
+  function handleChange(_event: React.SyntheticEvent, newValue: number) {
+    // if (event) console.log("");
     setCurTab(newValue);
   }
 

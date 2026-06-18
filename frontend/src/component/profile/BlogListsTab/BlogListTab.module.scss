@@ -1,0 +1,66 @@
+/** @format */
+
+@use "../../../styles/_mixins.scss" as *;
+
+.createListBtn {
+  margin-bottom: 1rem;
+  padding: 0.8rem 1.2rem;
+}
+
+.blogListsContainer {
+  @include responsiveBlogLayout;
+  gap: 2rem;
+}
+
+.listItem {
+  display: flex;
+  gap: 2rem;
+}
+
+.imgWrapper {
+  display: block; // Makes the link behave like a layout box
+  width: 50%; // Takes up half the card space on desktop
+}
+
+.img {
+  @include blogImg;
+}
+
+.txtContainer {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.name {
+  @include blogTitle;
+
+  margin-bottom: 0;
+}
+
+// responsive
+@include respond(sm-xl) {
+  .listItem {
+    flex-direction: column;
+  }
+
+  .imgWrapper {
+    width: 100%;
+  }
+
+  .img {
+    width: 100%;
+  }
+}
+
+@include respond(md-xl) {
+  .blogListsContainer {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@include respond(lg) {
+  .blogListsContainer {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

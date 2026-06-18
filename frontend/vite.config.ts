@@ -11,6 +11,34 @@ const __dirname = dirname(__filename);
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // 1. Separate third-party dependencies
+          if (id.includes("node_modules")) {
+            return id
+              .toString()
+              .split("node_modules/")[1]
+              .split("/")[0]
+              .toString();
+          }
+
+          // 2. Automatically chunk all shared hooks
+          if (id.includes("src/hooks/")) {
+            return "app-shared-hooks";
+          }
+
+          // 3. Automatically chunk all utilities/helper files
+          if (id.includes("src/utils/")) {
+            return "app-shared-utils";
+          }
+        },
+      },
+    },
+  },
+
   base: "/", // works on Render
   resolve: {
     alias: {

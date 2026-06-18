@@ -2,29 +2,15 @@
 @use "../../../styles/_mixins.scss" as *;
 
 .popBtn {
-  padding: 0.8rem;
-  border-radius: 999px;
-  width: 3rem;
-  height: 3rem;
-  transition: all 0.3s;
-
-  &:hover {
-    background-color: var(--bg-gray);
-  }
+  @include popBtn;
 }
 
 .popContent {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.4rem;
+  @include popContent;
 }
 
 .popItem {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  cursor: pointer;
+  @include popItem;
 }
 
 .icon {

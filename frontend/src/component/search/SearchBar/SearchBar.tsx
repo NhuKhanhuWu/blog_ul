@@ -14,6 +14,7 @@ import { useSearchParams } from "react-router-dom";
 import { updateSearchUrl } from "../../../utils/update-search-url";
 import { Sheet } from "react-modal-sheet";
 import { MdClose } from "react-icons/md";
+import { useMediaQuery } from "react-responsive";
 
 interface ISearchForm {
   onClose?: () => void;
@@ -103,6 +104,7 @@ function SearchBar() {
     defaultValues: state,
     shouldUnregister: false,
   });
+  const isDesktop = useMediaQuery({ query: "(min-width:1024px)" });
 
   return (
     <FormProvider {...methods}>
@@ -116,55 +118,59 @@ function SearchBar() {
       </button>
 
       {/* Mobile Modal */}
-      <Sheet
-        className={`${!isOpen && "hidden"}`}
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}>
-        <Sheet.Container>
-          <Sheet.Header>
-            <div className={styles.header}>
-              <p className={styles.headerTitle}>Filter Blogs</p>
-              <MdClose onClick={() => setIsOpen(false)} />
-            </div>
-          </Sheet.Header>
+      {!isDesktop && (
+        <Sheet
+          className={`${!isOpen && "hidden"}`}
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}>
+          <Sheet.Container>
+            <Sheet.Header>
+              <div className={styles.header}>
+                <p className={styles.headerTitle}>Filter Blogs</p>
+                <MdClose onClick={() => setIsOpen(false)} />
+              </div>
+            </Sheet.Header>
 
-          <Sheet.Content>
-            <div className={styles.searchMobile}>
-              <SearchForm onClose={() => setIsOpen(false)} />
-            </div>
-          </Sheet.Content>
-        </Sheet.Container>
-      </Sheet>
+            <Sheet.Content>
+              <div className={styles.searchMobile}>
+                <SearchForm onClose={() => setIsOpen(false)} />
+              </div>
+            </Sheet.Content>
+          </Sheet.Container>
+        </Sheet>
+      )}
 
       {/* Desktop Sidebar */}
-      <aside
-        className={`${styles.searchDesktop} ${
-          isCollapsed ? styles.collapsed : ""
-        }`}>
-        {isCollapsed ? (
-          <button
-            className={`${styles.collapseBtn} ${styles.icon}`}
-            onClick={() => setIsCollapsed(false)}>
-            <IoSearchSharp />
-          </button>
-        ) : (
-          /* Show the full panel contents ONLY when the sidebar is expanded */
-          <>
-            <div className={styles.header}>
-              <p className={styles.headerTitle}>Filter Blogs</p>
-              {/* Clicking this sets isCollapsed to true */}
-              <MdClose
-                onClick={() => setIsCollapsed(true)}
-                className={styles.icon}
-              />
-            </div>
+      {isDesktop && (
+        <aside
+          className={`${styles.searchDesktop} ${
+            isCollapsed ? styles.collapsed : ""
+          }`}>
+          {isCollapsed ? (
+            <button
+              className={`${styles.collapseBtn} ${styles.icon}`}
+              onClick={() => setIsCollapsed(false)}>
+              <IoSearchSharp />
+            </button>
+          ) : (
+            /* Show the full panel contents ONLY when the sidebar is expanded */
+            <>
+              <div className={styles.header}>
+                <p className={styles.headerTitle}>Filter Blogs</p>
+                {/* Clicking this sets isCollapsed to true */}
+                <MdClose
+                  onClick={() => setIsCollapsed(true)}
+                  className={styles.icon}
+                />
+              </div>
 
-            <div className={styles.searchFormWrapper}>
-              <SearchForm />
-            </div>
-          </>
-        )}
-      </aside>
+              <div className={styles.searchFormWrapper}>
+                <SearchForm />
+              </div>
+            </>
+          )}
+        </aside>
+      )}
     </FormProvider>
   );
 }

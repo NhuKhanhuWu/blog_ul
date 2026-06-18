@@ -6,6 +6,7 @@ import { getBlogs } from "../../../api/blog.api";
 import { useMemo, useState } from "react";
 import BlogCardBig from "../../blog/BlogCardBig/BlogCardBig";
 import styles from "./BlogsTab.module.scss";
+import Loader from "../../ui/Loader/Loader";
 
 interface BlogsTabProps {
   user?: UserPublic;
@@ -14,7 +15,7 @@ interface BlogsTabProps {
 function BlogsTab({ user }: BlogsTabProps) {
   const [sort, setSort] = useState("-updatedAt"); // -updatedAt (newest), -upVotes (popular)
 
-  const { data } = useInfiniteQuery({
+  const { data, isPending } = useInfiniteQuery({
     queryKey: ["user-blogs", user?._id, sort],
     queryFn: ({ pageParam = 0 }) =>
       getBlogs({ query: `userId=${user?._id}&sort=${sort}`, pageParam }),
@@ -39,6 +40,8 @@ function BlogsTab({ user }: BlogsTabProps) {
       </div>
 
       <div className={styles.blogsContainer}>
+        {isPending && <Loader />}
+
         {blogs.map((blog) => (
           <BlogCardBig blog={blog} key={blog._id} />
         ))}

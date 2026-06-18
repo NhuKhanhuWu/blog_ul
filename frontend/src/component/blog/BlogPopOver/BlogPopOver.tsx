@@ -34,8 +34,6 @@ function BlogPopOver({ blog }: BlogCardProps) {
   // if user not login => return nothing
   if (!user) return;
 
-  // console.log(blog.userId.toString() === user._id.toString());
-
   return (
     <>
       <button onClick={handleClick} className={styles.popBtn}>
