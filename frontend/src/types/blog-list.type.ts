@@ -7,18 +7,16 @@ export interface BlogListSimplify {
   name: string;
   isPrivate: boolean;
   containsCurrentBlog: boolean;
+  blogsCnt: number;
+  listAvatar: string | null;
+  isDefault: boolean;
 }
 
-export interface BlogListData {
-  _id: string;
-  name: string;
-  userId: string;
+export interface BlogListData extends BlogListSimplify {
   description?: string;
   blogs: string[];
-  isPrivate: boolean;
   createdAt: Date;
   updatedAt: Date;
-  isDefault: boolean;
 }
 
 export interface BlogListActionInput {
@@ -64,4 +62,15 @@ export interface CreateListRes {
   description: string;
   isPrivate: boolean;
   isDefault: boolean;
+}
+
+export interface UpdateBlogListProps {
+  name?: string;
+  description?: string;
+  isPrivate?: boolean;
+}
+
+export interface UpdateBlogListArgs {
+  blogListId: string;
+  data: UpdateBlogListProps;
 }

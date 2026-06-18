@@ -6,10 +6,14 @@ import {
   removeBlogFromList,
   updateBlogList,
 } from "../controllers/blog-list/update-blog-list.controller";
-import { getMultBlogList } from "../controllers/blog-list/get-blog-list.controller";
+import {
+  getBlogListById,
+  getMultBlogList,
+} from "../controllers/blog-list/get-blog-list.controller";
 import { loadUser, protect } from "../middlewares/auth.middleware";
 import {
   createBlogListLimiter,
+  deleteBlogListLimiter,
   updateBlogListLimiter,
 } from "../middlewares/blog-list.middleware";
 import { validateRequest } from "../validation/validateRequest";
@@ -18,25 +22,26 @@ import {
   removeBlogFromListSchema,
   updateBlogListSchema,
 } from "../validation/blog-list.validation";
+import { deleteBlogList } from "../controllers/blog-list/delete-blog-list.controller";
 
 const blogListRouter = express.Router();
 
-// get my blog lists
-// create blog list
 blogListRouter
   .route("/")
-  .get(loadUser, getMultBlogList)
-  .post(createBlogListLimiter, protect, createBlogList);
+  .get(loadUser, getMultBlogList) // get my blog lists
+  .post(createBlogListLimiter, protect, createBlogList); // create blog list
 
 // update blog list
 blogListRouter
   .route("/:id")
+  .get(loadUser, getBlogListById) // get list detail by id
   .patch(
     updateBlogListLimiter,
     validateRequest(updateBlogListSchema),
     protect,
     updateBlogList,
-  );
+  )
+  .delete(protect, deleteBlogListLimiter, deleteBlogList);
 
 // add blog to list
 blogListRouter

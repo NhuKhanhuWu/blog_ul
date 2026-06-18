@@ -4,7 +4,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { getCategories } from "../../api/category.api";
 import { ICategoriesResponse } from "../../types/category.type";
 
-export function useCategories(categoryName?: string) {
+export function useCategories(categoryName?: string, enabled: boolean = false) {
   return useInfiniteQuery<ICategoriesResponse, Error>({
     queryKey: ["categories", categoryName],
 
@@ -25,5 +25,6 @@ export function useCategories(categoryName?: string) {
     retry: false,
     staleTime: 1000 * 60 * 10, // 10 minutes
     gcTime: 1000 * 60 * 15, // Keep in garbage collection cache for 15 minutes
+    enabled, // Only fetch when explicitly enabled
   });
 }

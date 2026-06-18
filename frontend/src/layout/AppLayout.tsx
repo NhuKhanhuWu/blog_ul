@@ -18,8 +18,8 @@ function AppLayout() {
     // refresh token & get user info when reload to store in redux
     const initAuth = async () => {
       try {
-        await dispatch(refreshThunk());
-        await dispatch(getMeThunk());
+        // Parallelize both requests instead of sequential
+        await Promise.all([dispatch(refreshThunk()), dispatch(getMeThunk())]);
       } finally {
         setAuthReady(true);
       }

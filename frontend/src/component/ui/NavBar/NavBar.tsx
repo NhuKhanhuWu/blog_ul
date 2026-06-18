@@ -41,8 +41,8 @@ function NavLinks({ isOpen, setIsOpen }: INavLinks) {
 
   return (
     <>
+      {/* ---- general links ----*/}
       <div className={styles.navLink}>
-        {/* ---- general links ----*/}
         {navItemsGeneral.map((item, i) => (
           <NavLink
             onClick={() => handleClose()}

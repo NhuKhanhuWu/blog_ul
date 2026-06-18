@@ -11,6 +11,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import styles from "./BlogListForm.module.scss";
 import useCreateList from "../../../hook/blog-list/useCreateList";
 import toast from "react-hot-toast";
+import useUpdateList from "../../../hook/blog-list/useUpdateList";
 
 interface BlogListFormFields {
   blogList: {
@@ -44,6 +45,7 @@ function BlogListForm({
       isPrivate: isUpdating && blogList ? blogList.isPrivate : true,
     },
   };
+
   const {
     register,
     handleSubmit,
@@ -53,9 +55,12 @@ function BlogListForm({
     defaultValues: initValue,
   });
 
-  // handle request
+  // handle create request
   const { mutate: mutateCreate, isPending: isPendingCreate } =
     useCreateList(blogId);
+
+  const { mutate: mutateUpdate, isPending: isPendingUpdate } =
+    useUpdateList(blogList);
 
   function handleCreateList(data: BlogListFormFields) {
     // create new list
@@ -73,10 +78,22 @@ function BlogListForm({
 
     // update list
     else {
-      // TODO: handle update list here
-      console.log("add handle update blog in BlogListForm.tsx");
+      mutateUpdate(
+        { blogListId: blogList._id, data: data.blogList },
+        {
+          onSuccess: () => {
+            // show message
+            toast.success("Blog list updated");
+
+            // close modal
+            setIsOpening(false);
+          },
+        },
+      );
     }
   }
+
+  const isDisabled = isPendingCreate || isPendingUpdate;
 
   return (
     <ModalOverlay isShow={isOpening} setIsShow={setIsOpening}>
@@ -87,7 +104,7 @@ function BlogListForm({
         <div className={styles.field}>
           <label>Name</label>
           <input
-            className={`input ${isPendingCreate && styles.disabled}`}
+            className={`input ${isDisabled && styles.disabled}`}
             {...register("blogList.name")}
           />
 
@@ -100,7 +117,7 @@ function BlogListForm({
         <div className={styles.field}>
           <label>Description</label>
           <textarea
-            className={`input ${isPendingCreate && styles.disabled}`}
+            className={`input ${isDisabled && styles.disabled}`}
             {...register("blogList.description")}
           />
         </div>
@@ -111,15 +128,14 @@ function BlogListForm({
 
           <select
             {...register("blogList.isPrivate")}
-            className={isPendingCreate ? styles.disabled : ""}>
+            className={isDisabled ? styles.disabled : ""}>
             <option value="true">Private</option>
             <option value="false">Public</option>
           </select>
         </div>
 
-        <button
-          className={`btn-secondary ${isPendingCreate && styles.disabled}`}>
-          Create list
+        <button className={`btn-secondary ${isDisabled && styles.disabled}`}>
+          Submit
         </button>
       </form>
     </ModalOverlay>

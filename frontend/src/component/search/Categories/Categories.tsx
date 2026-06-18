@@ -106,14 +106,20 @@ function Categories() {
     formState: { errors },
   } = useFormContext<TSearchFormValues>();
 
+  // Track if categories section is expanded/active
+  const [isExpanded, setIsExpanded] = useState(false);
+
   // get data from form
   const categoryName = watch("categoryName");
   const selectedIds = watch("categories") || [];
   const debouncedCategoryName = useDebounce(categoryName, 500);
 
+  // Only enable fetching when section is expanded OR when categories are already selected
+  const shouldFetchCategories = isExpanded || selectedIds.length > 0;
+
   // fetch categories from api
   const { data, fetchNextPage, hasNextPage, isPending, isFetchingNextPage } =
-    useCategories(debouncedCategoryName);
+    useCategories(debouncedCategoryName, shouldFetchCategories);
   const { lastElementRef } = useIntersectionObserver(
     fetchNextPage,
     isFetchingNextPage,
@@ -169,8 +175,14 @@ function Categories() {
   return (
     <div>
       <div className={styles.searchOption}>
-        <label htmlFor="logic">Categories </label>
-        <CategoriesOption />
+        <label htmlFor="logic">Categories</label>
+        <button
+          type="button"
+          className={styles.expandBtn}
+          onClick={() => setIsExpanded(!isExpanded)}
+          aria-expanded={isExpanded}>
+          {isExpanded ? "▼" : "▶"}
+        </button>
       </div>
 
       {errors.categories && (
@@ -178,22 +190,29 @@ function Categories() {
       )}
 
       {/* use allKnownCategories so chips won't disappear when search */}
-      <SelectedCats
-        selectedIds={selectedIds}
-        allCategories={allKnownCategories}
-        onRemove={handleRemove}
-      />
+      {selectedIds.length > 0 && (
+        <SelectedCats
+          selectedIds={selectedIds}
+          allCategories={allKnownCategories}
+          onRemove={handleRemove}
+        />
+      )}
 
-      {/* display cats from api */}
-      <UnSelectedCats
-        categories={apiCategories}
-        isPending={isPending || isFetchingNextPage}
-        infinityObserver={
-          <InfinityObserver lastElementRef={lastElementRef}>
-            {(isPending || isFetchingNextPage) && <Loader />}
-          </InfinityObserver>
-        }
-      />
+      {/* display cats from api only when expanded */}
+      {isExpanded && (
+        <>
+          <CategoriesOption />
+          <UnSelectedCats
+            categories={apiCategories}
+            isPending={isPending || isFetchingNextPage}
+            infinityObserver={
+              <InfinityObserver lastElementRef={lastElementRef}>
+                {(isPending || isFetchingNextPage) && <Loader />}
+              </InfinityObserver>
+            }
+          />
+        </>
+      )}
     </div>
   );
 }

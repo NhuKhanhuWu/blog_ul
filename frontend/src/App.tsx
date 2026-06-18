@@ -3,16 +3,18 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import {
   MutationCache,
+  QueryCache,
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Provider } from "react-redux";
-import { lazy } from "react";
+import { lazy, Suspense } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { store } from "./redux/store.ts";
 import axios from "axios";
 import { StyledEngineProvider } from "@mui/material/styles";
+import Loader from "./component/ui/Loader/Loader.tsx";
 
 // lazy load
 const AppLayout = lazy(() => import("./layout/AppLayout.tsx"));
@@ -36,10 +38,32 @@ const router = createBrowserRouter([
 ]);
 
 const queryClient = new QueryClient({
-  // cache for 60s
-  defaultOptions: { queries: { staleTime: 60 * 1000 } },
+  // cache for 60s, increase for less frequent updates
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000,
+      // Cancel requests after 30s to prevent slow network from blocking other requests
+      networkMode: "always",
+      retry: 1, // Only retry once on failure
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    },
+    mutations: {
+      networkMode: "always",
+    },
+  },
 
   // show error message on toast
+  queryCache: new QueryCache({
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        const serverMessage = error.response?.data?.message || error.message;
+        toast.error(serverMessage);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    },
+  }),
+
   mutationCache: new MutationCache({
     onError: (error) => {
       if (axios.isAxiosError(error)) {
@@ -75,7 +99,9 @@ function App() {
             }}
           />
 
-          <RouterProvider router={router}></RouterProvider>
+          <Suspense fallback={<Loader />}>
+            <RouterProvider router={router}></RouterProvider>
+          </Suspense>
         </StyledEngineProvider>
       </QueryClientProvider>
     </Provider>
