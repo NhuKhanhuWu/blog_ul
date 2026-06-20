@@ -58,13 +58,12 @@ const BlogSchema = new Schema<BlogDocument>(
     },
     slug: {
       type: String,
-      // index: true,
       unique: true,
     },
     authors: {
       type: [String],
       default: [],
-      index: true, // for filtering
+      // index: true,
     },
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     categories: {
@@ -83,7 +82,6 @@ const BlogSchema = new Schema<BlogDocument>(
     },
     pub_date: {
       type: Date,
-      index: true, // for sorting/filtering by date
     },
     content: [contentBlockSchema],
     images: {
@@ -111,6 +109,14 @@ const BlogSchema = new Schema<BlogDocument>(
     totalParentCmts: {
       type: Number,
       default: 0,
+    },
+    createdAt: {
+      type: Date,
+      index: true,
+    },
+    updatedAt: {
+      type: Date,
+      index: true,
     },
   },
   {

@@ -13,7 +13,7 @@ import { MdPassword } from "react-icons/md";
 import { GoXCircleFill } from "react-icons/go";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
-import styles from "../../styles/component/Auth.module.scss";
+import styles from "./Auth.module.scss";
 import { Path } from "react-hook-form";
 import { useState } from "react";
 
@@ -22,6 +22,7 @@ interface Props<T extends FieldValues> {
   control: Control<T>;
   resetField: UseFormResetField<T>;
   errors: FieldErrors<T>;
+  isLoading?: boolean;
 }
 
 export function Email<T extends FieldValues>({
@@ -29,12 +30,13 @@ export function Email<T extends FieldValues>({
   resetField,
   control,
   errors,
+  isLoading,
 }: Props<T>) {
   const emailValue = useWatch({ control, name: "email" as Path<T> });
 
   return (
     <div className={styles.inputContainer}>
-      <div className="input">
+      <div className={`input ${isLoading && styles.disabled}`}>
         <IoMailOutline className={styles.icon} />
 
         <input {...register("email" as Path<T>)} placeholder="*Email" />
@@ -59,13 +61,14 @@ export function Password<T extends FieldValues>({
   control,
   resetField,
   errors,
+  isLoading,
 }: Props<T>) {
   const passwordValue = useWatch({ control, name: "password" as Path<T> });
   const [isShowPass, setIsShowPass] = useState(false);
 
   return (
     <div className={styles.inputContainer}>
-      <div className="input">
+      <div className={`input ${isLoading && styles.disabled}`}>
         <MdPassword className={styles.icon} />
 
         <input
@@ -107,6 +110,7 @@ export function PasswordConfirm<T extends FieldValues>({
   control,
   resetField,
   errors,
+  isLoading,
 }: Props<T>) {
   const passwordValue = useWatch({
     control,
@@ -115,7 +119,7 @@ export function PasswordConfirm<T extends FieldValues>({
 
   return (
     <div className={styles.inputContainer}>
-      <div className="input">
+      <div className={`input ${isLoading && styles.disabled}`}>
         <MdPassword className={styles.icon} />
 
         <input

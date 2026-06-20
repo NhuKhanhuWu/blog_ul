@@ -22,6 +22,8 @@ export interface BlogDocument extends BlogInput {
   downVotes: Number;
   totalCmts: number;
   totalParentCmts: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface BlogWithVote extends FlattenMaps<BlogDocument> {

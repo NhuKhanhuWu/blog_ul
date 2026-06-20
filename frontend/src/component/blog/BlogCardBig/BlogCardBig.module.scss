@@ -1,0 +1,149 @@
+/** @format */
+@use "../../../styles/_mixins.scss" as *;
+
+.blogCard {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  padding: 1.6rem 0;
+  border-bottom: 1.5px solid var(--border-color);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  // ==========================================================================
+  // The Horizontal "Medium Style" Row Override
+  // ==========================================================================
+  &.listMode {
+    flex-direction: row-reverse; // Pushes image wrapper to the right side
+    justify-content: space-between;
+    align-items: center;
+    gap: 3.2rem;
+    border: 1.5px solid var(--border-color); // Resets frame back to a line divider
+    min-height: 20rem; // Ensures enough vertical space for the row layout
+    padding: 1.2rem;
+    border-radius: 2rem;
+
+    .imgWrapper {
+      width: 22rem;
+      aspect-ratio: 16 / 9; // Maintains consistent thumbnail proportions
+      margin-bottom: 0; // Clear the vertical layout spacing
+      flex-shrink: 0; // Keep image from squishing
+    }
+
+    .blogTxt {
+      flex: 1;
+    }
+
+    .preview {
+      -webkit-line-clamp: 2; // Keep snippet tight
+      margin-bottom: 1.2rem;
+    }
+  }
+}
+
+.imgWrapper {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 1.2rem;
+  margin-bottom: 1.2rem;
+  aspect-ratio: 16 / 9;
+}
+
+.blogImg {
+  @include blogImg;
+}
+
+.blogTxt {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+  color: var(--text-muted); // $light-800 or $dark-400
+
+  .author {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+
+.dateTxt {
+  font-size: 1.3rem;
+}
+
+.separator {
+  font-size: 1.2rem;
+}
+
+.title {
+  @include blogTitle;
+}
+
+.preview {
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin-bottom: 1.6rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.engagementRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--accent-color); // Muted by default
+
+  .upVote {
+    svg {
+      margin-right: 0.2rem;
+    }
+  }
+}
+
+/* ==========================================================================
+   Desktop Query Modifications (md Breakpoint & Above)
+   ========================================================================== */
+@include respond(sm-xl) {
+  .blogCard {
+    // border-bottom: 1.5px solid var(--border-color); // Subtle wrapper frame ($light-500)
+    padding: 1.2rem;
+    border-radius: 2rem;
+    height: 100%; // Lets grid columns stretch evenly
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px var(--shadow-light);
+    }
+  }
+
+  .imgWrapper {
+    margin-bottom: 1.6rem;
+  }
+
+  .blogTxt {
+    flex: 1; // Allows body footer content to snap down
+  }
+
+  // pin the engagement row to the bottom edge of the desktop card card frame
+  .engagementRow {
+    margin-top: auto;
+  }
+}

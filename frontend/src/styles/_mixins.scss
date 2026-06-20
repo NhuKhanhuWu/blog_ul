@@ -1,0 +1,206 @@
+/** @format */
+@use "./_breakpoints.scss" as *;
+
+// general
+@mixin icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+@mixin icon-gray-bg {
+  @include icon;
+
+  border-radius: 50%;
+  height: 5rem;
+  background-color: var(--bg-gray);
+  padding: 1rem 1.5rem;
+
+  @include respond(md) {
+    padding: 1rem 1.2rem;
+    height: 4.5rem;
+  }
+}
+
+// ==== SEARCH BAR: START ====
+@mixin formField {
+  label {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+
+    @include respond(lg) {
+      font-size: 1.2rem;
+    }
+  }
+}
+// ==== SEARCH BAR: END ====
+
+// ==== BLOGS: START ====
+@mixin responsiveBlogLayout(
+  $flex-gap: 1rem,
+  $sm-xl-gap: 1rem,
+  $md-xl-gap: 1rem,
+  $lg-gap: 1rem,
+  $md-list-cols: 2,
+  $lg-list-cols: 2
+) {
+  display: flex;
+  flex-direction: column;
+  gap: $flex-gap;
+  align-items: center;
+
+  @include respond(sm-xl) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $sm-xl-gap;
+    align-items: self-start;
+
+    &.listMode {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @include respond(md-xl) {
+    gap: $md-xl-gap;
+
+    &.listMode {
+      grid-template-columns: repeat(#{$md-list-cols}, 1fr);
+    }
+  }
+
+  // ===== DESKTOP (>=1024px) ====
+  @include respond(lg) {
+    gap: $lg-gap;
+    grid-template-columns: repeat(3, 1fr);
+
+    &.listMode {
+      grid-template-columns: repeat(#{$lg-list-cols}, 1fr);
+    }
+  }
+}
+
+@mixin blogImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; // Prevents squishing or distortion
+  display: block;
+}
+
+@mixin blogTitle {
+  font-family: "Forum", serif;
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+// ==== BLOGS: START ====
+
+// ==== MODAL: START ====
+@mixin modalHeader {
+  font-size: 2.6rem;
+  font-weight: 700;
+  text-align: center;
+
+  @include respond(md) {
+    font-size: 2rem;
+  }
+}
+// ==== MODAL: END ====
+
+// ==== INPUT: START ====
+@mixin disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+  background-color: var(--bg-gray);
+}
+// ==== INPUT: END ====
+
+// ==== PROFILE: START ====
+@mixin profileActions {
+  display: flex;
+  gap: 1.2rem; // 1.5 in MUI is usually 1.5 * 8rem = 12rem
+  justify-content: center;
+
+  a,
+  button {
+    padding: 1rem;
+
+    @include respond(md) {
+      padding: 0.8rem;
+    }
+  }
+}
+
+@mixin tabBtns {
+  // tab btns container
+  &:global(.MuiTabs-root) {
+    border-bottom: 1.5px solid var(--border-color);
+    position: sticky;
+    top: 8%;
+    // transform: translateY(90%);
+    background-color: var(--bg-body);
+    z-index: 888;
+
+    @include respond(sm-xl) {
+      margin: 0 2rem;
+    }
+  }
+
+  :global {
+    //  Targets the underline bar
+    .MuiTabs-indicator {
+      height: 2px;
+    }
+
+    // Targets individual tab buttons
+    .MuiTab-root {
+      text-transform: capitalize;
+      font-weight: bold;
+      font-size: 1.6rem;
+      min-width: auto;
+      transition: color 0.2s ease;
+      padding: 1rem 1.6rem;
+
+      &.Mui-selected {
+        color: var(--accent-color);
+      }
+    }
+  }
+}
+// ==== PROFILE: END ====
+
+// ==== POPOVER: START ====
+@mixin popBtn {
+  padding: 0.8rem;
+  border-radius: 999px;
+  width: 3rem;
+  height: 3rem;
+  transition: all 0.3s;
+
+  &:hover {
+    background-color: var(--bg-gray);
+  }
+}
+
+@mixin popContent {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+@mixin popItem {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  cursor: pointer;
+  font-family: "Parkinsans", sans-serif;
+}
+// ==== POPOVER: END ====

@@ -1,0 +1,23 @@
+/** @format */
+@use "../../../styles/_mixins.scss" as mixin;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  width: min(34rem, 86vw);
+  padding: 1rem;
+  background-color: var(--bg-card);
+  border-radius: 1.2rem;
+  text-align: center;
+
+  .modalHeader {
+    @include mixin.modalHeader;
+  }
+
+  a {
+    margin-top: 0.8rem;
+    padding: 0.7rem 1.4rem;
+  }
+}

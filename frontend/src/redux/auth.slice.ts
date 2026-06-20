@@ -1,17 +1,17 @@
 /** @format */
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IAuthResponse, IAuthState, ILogin, IUser } from "../types/auth.type";
+import { AuthResponse, AuthState, Login, User } from "../types/auth.type";
 import { login, logout as logoutService, refreshToken } from "../api/auth.api";
 import { getMe } from "../api/user.api";
 import axios from "axios";
 import { IApiError } from "../types/api.type";
 
 interface ISetCredentialsPayload {
-  user: IUser;
+  user: User;
   accessToken: string;
 }
 
-const initialState: IAuthState = {
+const initialState: AuthState = {
   user: null,
   accessToken: null,
   isAuthenticated: false,
@@ -20,8 +20,8 @@ const initialState: IAuthState = {
 };
 
 export const loginThunk = createAsyncThunk<
-  IAuthResponse,
-  ILogin,
+  AuthResponse,
+  Login,
   { rejectValue: string }
 >("auth/login", async (data, { rejectWithValue }) => {
   try {
@@ -93,6 +93,11 @@ const authSlide = createSlice({
       .addCase(refreshThunk.fulfilled, (state, action) => {
         state.accessToken = action.payload.accessToken;
         state.isAuthenticated = true;
+      })
+      .addCase(refreshThunk.rejected, (state) => {
+        state.user = null;
+        state.accessToken = null;
+        state.isAuthenticated = false;
       })
 
       // get me
