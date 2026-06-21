@@ -1,7 +1,7 @@
 /** @format */
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createBlogList } from "../../api/blog-list.api";
+import { createList } from "../../api/blog-list.api";
 import { CreateListProps } from "../../types/blog-list.type";
 
 function useCreateList(blogId?: string) {
@@ -9,7 +9,7 @@ function useCreateList(blogId?: string) {
 
   return useMutation({
     mutationFn: async (listData: CreateListProps) => {
-      return await createBlogList(listData);
+      return await createList(listData);
     },
     onSuccess: () => {
       const queryKey = ["blog-list"];

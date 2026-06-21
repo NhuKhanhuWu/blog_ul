@@ -1,0 +1,22 @@
+/** @format */
+
+@use "../../../styles/_mixins.scss" as *;
+
+.deleteModal {
+  h4 {
+    @include modalHeader;
+    font-weight: 500;
+    font-size: 2rem;
+  }
+
+  .deleteConfirmBtns {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: center;
+
+    button {
+      padding: 0.8rem 1.2rem;
+    }
+  }
+}

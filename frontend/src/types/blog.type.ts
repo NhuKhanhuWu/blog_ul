@@ -1,5 +1,6 @@
 /** @format */
 
+import { ReactNode } from "react";
 import { ICategory } from "./category.type";
 
 export interface BlogSimplify {
@@ -18,6 +19,7 @@ export interface BlogSimplify {
 
 export interface BlogCardProps {
   blog: BlogSimplify;
+  popItems?: ReactNode;
 }
 
 export type ContentBlock =

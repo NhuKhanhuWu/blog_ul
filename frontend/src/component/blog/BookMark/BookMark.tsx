@@ -8,7 +8,7 @@ import { useAppSelector } from "../../../hook/reduxHooks";
 import { ReactNode, useEffect, useState } from "react";
 import ModalOverlay from "../../ui/Modal/Modal";
 import useAddBlog from "../../../hook/blog-list/useAddBlog";
-import { getMultBlogList } from "../../../api/blog-list.api";
+import { getMultList } from "../../../api/blog-list.api";
 import useRemoveBlog from "../../../hook/blog-list/useRemoveBlog";
 import Loader from "../../ui/Loader/Loader";
 import LoginMessage from "../../ui/LoginMessageModal/LoginMessage";
@@ -58,7 +58,7 @@ function BookMark({ blogId, openBtn }: BookMarkProps) {
     isError: isGetListErr,
   } = useQuery({
     queryKey: ["blog-list", blogId],
-    queryFn: () => getMultBlogList(user?._id, blogId),
+    queryFn: () => getMultList(user?._id, blogId),
     enabled: isOpenModal,
   });
 
@@ -67,11 +67,10 @@ function BookMark({ blogId, openBtn }: BookMarkProps) {
 
   // ---------mark blog handling---------
   // add blog to list
-  const { mutate: addBlogFn, isSuccess: isAddSuccess } = useAddBlog(blogId);
+  const { mutate: addBlogFn, isSuccess: isAddSuccess } = useAddBlog();
 
   // remove blog from list
-  const { mutate: removeBlogFn, isSuccess: isRemoveSuccess } =
-    useRemoveBlog(blogId);
+  const { mutate: removeBlogFn, isSuccess: isRemoveSuccess } = useRemoveBlog();
 
   function handleMarkBlog(listId: string, containsCurrentBlog: boolean) {
     // add blog if the current blog is not in the list

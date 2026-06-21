@@ -2,15 +2,15 @@
 @use "./_breakpoints.scss" as *;
 
 // general
-@mixin icon {
+@mixin icon($size: 2rem) {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 2rem;
+  font-size: $size;
   cursor: pointer;
 }
 
-@mixin icon-gray-bg {
+@mixin iconGrayBg {
   @include icon;
 
   border-radius: 50%;
@@ -74,7 +74,7 @@
   // ===== DESKTOP (>=1024px) ====
   @include respond(lg) {
     gap: $lg-gap;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
 
     &.listMode {
       grid-template-columns: repeat(#{$lg-list-cols}, 1fr);
@@ -202,5 +202,6 @@
   gap: 0.8rem;
   cursor: pointer;
   font-family: "Parkinsans", sans-serif;
+  font-size: 1.2rem;
 }
 // ==== POPOVER: END ====

@@ -1,18 +1,16 @@
 /** @format */
 
-import { Dispatch, SetStateAction } from "react";
 import { Cmt } from "../../../types/comment.type";
 import styles from "./CmtContent.module.scss";
 import { Link } from "react-router-dom";
 import { getDateDistance } from "../../../utils/date";
+import { ShowMoreText } from "../../ui/ShowMoreText/ShowMoreText";
 
 interface ICmtTxt {
   cmt: Cmt;
-  isExpand: boolean;
-  setIsExpand: Dispatch<SetStateAction<boolean>>;
 }
 
-function CmtContent({ cmt, isExpand, setIsExpand }: ICmtTxt) {
+function CmtContent({ cmt }: ICmtTxt) {
   return (
     <>
       {/* user name & timestapm => cmtItemHeader*/}
@@ -22,18 +20,9 @@ function CmtContent({ cmt, isExpand, setIsExpand }: ICmtTxt) {
       </div>
 
       {/* content */}
-      <p
-        key={cmt._id}
-        className={`${styles.cmtContent} ${isExpand && styles.expand}`}>
-        {cmt.content}
-      </p>
-
-      {/* expand cmt btn (when the cmt is too long) */}
-      {!isExpand && cmt.content.length > 200 && (
-        <span onClick={() => setIsExpand(true)} className={styles.seeMoreBtn}>
-          See more
-        </span>
-      )}
+      <div className={styles.cmtContent}>
+        <ShowMoreText text={cmt.content} lines={4} />
+      </div>
     </>
   );
 }

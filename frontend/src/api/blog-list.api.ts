@@ -9,7 +9,7 @@ import {
 } from "../types/blog-list.type";
 import axiosInstance from "../utils/axios-instance";
 
-export async function getMultBlogList(
+export async function getMultList(
   userId?: string,
   blogId?: string,
 ): Promise<BlogListSimplify[]> {
@@ -22,7 +22,7 @@ export async function getMultBlogList(
   return res.data.data;
 }
 
-export async function getBlogListById(
+export async function getListMetaData(
   blogListId: string,
 ): Promise<BlogListData> {
   const res = await axiosInstance.get(`/blog-list/${blogListId}`);
@@ -30,7 +30,13 @@ export async function getBlogListById(
   return res.data.data;
 }
 
-export async function createBlogList(
+export async function getBlogFromList(listId: string) {
+  const res = await axiosInstance.get(`/blog-list/${listId}/blogs`);
+
+  return res.data;
+}
+
+export async function createList(
   listData: CreateListProps,
 ): Promise<CreateListRes> {
   const res = await axiosInstance.post("/blog-list", { ...listData });
@@ -38,7 +44,7 @@ export async function createBlogList(
   return res.data;
 }
 
-export async function updateBlogList({
+export async function updateList({
   blogListId,
   data,
 }: UpdateBlogListArgs): Promise<BlogListData> {

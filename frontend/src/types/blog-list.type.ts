@@ -1,5 +1,6 @@
 /** @format */
 import * as yup from "yup";
+import { BlogSimplify } from "./blog.type";
 
 export interface BlogListSimplify {
   _id: string;
@@ -73,4 +74,15 @@ export interface UpdateBlogListProps {
 export interface UpdateBlogListArgs {
   blogListId: string;
   data: UpdateBlogListProps;
+}
+
+export interface GetBlogFromListArgs {
+  nextPage: number | null;
+  amount: number;
+  data: {
+    blogs: BlogSimplify[];
+  };
+}
+export interface BlogListPopOverProps {
+  blogList: BlogListSimplify;
 }
