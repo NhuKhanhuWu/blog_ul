@@ -1,18 +1,25 @@
 /** @format */
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateBlogList } from "../../api/blog-list.api";
-import { BlogListData } from "../../types/blog-list.type";
+import { updateList } from "../../api/blog-list.api";
 
-function useUpdateList(blogList: BlogListData | undefined) {
+function useUpdateList() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: updateBlogList,
+    mutationFn: updateList,
 
-    onSuccess: () => {
+    onSuccess: (response) => {
+      // update in the multiple lists query
       queryClient.invalidateQueries({
-        queryKey: ["user-blog-list", blogList?.userId],
+        queryKey: ["blog-list", response.userId],
+        exact: true,
+      });
+
+      // update in the list detail page
+      queryClient.invalidateQueries({
+        queryKey: ["blog-list-infor", response._id],
+        exact: true,
       });
     },
   });

@@ -3,24 +3,29 @@
 import styles from "./BlogPopOver.module.scss";
 
 import { SlOptionsVertical } from "react-icons/sl";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { useAppSelector } from "../../../hook/reduxHooks";
-import { BlogCardProps } from "../../../types/blog.type";
+import { BlogSimplify } from "../../../types/blog.type";
 import Popover from "@mui/material/Popover";
 import BookMark from "../BookMark/BookMark";
 import { Link } from "react-router-dom";
 import { MdEdit, MdOutlineBookmarkBorder } from "react-icons/md";
 
-function BlogPopOver({ blog }: BlogCardProps) {
+interface BlogPopOverProps {
+  blog: BlogSimplify;
+  popItems?: ReactNode;
+}
+
+function BlogPopOver({ blog, popItems }: BlogPopOverProps) {
   const user = useAppSelector((state) => state.auth.user);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const isOpen = Boolean(anchorEl);
 
   // blog list
   const blogListBtn = (
-    <div className={styles.popItem}>
+    <button className={styles.popItem}>
       <MdOutlineBookmarkBorder className={styles.icon} /> Save to blog list
-    </div>
+    </button>
   );
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
@@ -59,6 +64,8 @@ function BlogPopOver({ blog }: BlogCardProps) {
               <MdEdit className={styles.icon} /> Edit blog
             </Link>
           )}
+
+          {popItems && <>{popItems}</>}
         </div>
       </Popover>
     </>

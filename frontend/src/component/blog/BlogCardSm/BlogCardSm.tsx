@@ -6,9 +6,8 @@ import { Link } from "react-router-dom";
 import { getDateDistance } from "../../../utils/date";
 import BlogPopOver from "../BlogPopOver/BlogPopOver";
 
-function BlogCardSm({ blog }: BlogCardProps) {
-  const placehoderImg =
-    "https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU";
+function BlogCardSm({ blog, popItems }: BlogCardProps) {
+  const placehoderImg = blog.img || "/placeholder-img.jpg";
   // placeholder-img.jpg
 
   return (
@@ -40,7 +39,7 @@ function BlogCardSm({ blog }: BlogCardProps) {
           </div>
 
           <div style={{ marginLeft: "auto" }}>
-            <BlogPopOver blog={blog} />
+            <BlogPopOver blog={blog} popItems={popItems} />
           </div>
         </div>
       </div>

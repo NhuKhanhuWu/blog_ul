@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useAppSelector } from "../../../hook/reduxHooks";
-import { getMultBlogList } from "../../../api/blog-list.api";
+import { getMultList } from "../../../api/blog-list.api";
 import Loader from "../../ui/Loader/Loader";
 import { Link } from "react-router-dom";
 import styles from "./BlogListTab.module.scss";
@@ -37,7 +37,7 @@ function BlogLists() {
 
   const { data, isPending } = useQuery({
     queryKey: ["blog-list", user?._id],
-    queryFn: () => getMultBlogList(user?._id),
+    queryFn: () => getMultList(user?._id),
   });
 
   return (

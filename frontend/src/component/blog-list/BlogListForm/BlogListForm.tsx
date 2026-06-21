@@ -59,8 +59,7 @@ function BlogListForm({
   const { mutate: mutateCreate, isPending: isPendingCreate } =
     useCreateList(blogId);
 
-  const { mutate: mutateUpdate, isPending: isPendingUpdate } =
-    useUpdateList(blogList);
+  const { mutate: mutateUpdate, isPending: isPendingUpdate } = useUpdateList();
 
   function handleCreateList(data: BlogListFormFields) {
     // create new list

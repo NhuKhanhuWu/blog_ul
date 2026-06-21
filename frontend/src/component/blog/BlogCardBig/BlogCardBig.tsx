@@ -21,10 +21,8 @@ function Authors({ blog }: BlogCard) {
   );
 }
 
-function BlogCardBig({ blog, isList }: BlogCard) {
-  const placeholderImg =
-    "https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU";
-  // placeholder-img.jpg
+function BlogCardBig({ blog, isList, popItems }: BlogCard) {
+  const placeholderImg = blog.img || "/placeholder-img.jpg";
 
   return (
     <div className={`${isList && styles.listMode} ${styles.blogCard}`}>
@@ -55,7 +53,7 @@ function BlogCardBig({ blog, isList }: BlogCard) {
           </div>
 
           <div className={styles.popOver}>
-            <BlogPopOver blog={blog} />
+            <BlogPopOver blog={blog} popItems={popItems} />
           </div>
         </div>
       </div>

@@ -23,6 +23,9 @@ const BlogDetail = lazy(() => import("./page/BlogDetail/BlogDetail.tsx"));
 const Login = lazy(() => import("./page/Login/Login.tsx"));
 const Logout = lazy(() => import("./page/Logout/Logout.tsx"));
 const Me = lazy(() => import("./page/Me/Me.tsx"));
+const BlogListDetail = lazy(
+  () => import("./page/BlogListDetail/BlogListDetail.tsx"),
+);
 
 const router = createBrowserRouter([
   {
@@ -33,6 +36,7 @@ const router = createBrowserRouter([
       { element: <Login />, path: "/auth/login" },
       { element: <Logout />, path: "/user/logout" },
       { element: <Me />, path: "/user/me" },
+      { element: <BlogListDetail />, path: "/list/:id" },
     ],
   },
 ]);
@@ -45,6 +49,7 @@ const queryClient = new QueryClient({
       // Cancel requests after 30s to prevent slow network from blocking other requests
       networkMode: "always",
       retry: 1, // Only retry once on failure
+      refetchOnWindowFocus: false,
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     },
     mutations: {
