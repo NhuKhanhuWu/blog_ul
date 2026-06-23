@@ -1,7 +1,7 @@
 /** @format */
 
 import RefreshToken from "../../models/refresh-token.model";
-import UserModel from "../../models/user.model";
+import UserModel, { checkUserPassword } from "../../models/user.model";
 import AppError from "../../utils/error/app-error";
 import catchAsync from "../../utils/error/catch-async";
 import {
@@ -12,30 +12,26 @@ import {
 export const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
-  // check if email and password is sended
-  if (!email || !password)
-    throw new AppError("Please provide email and password", 400);
-
   //check user and password
-  const user = await UserModel.findOne({ email }).select("+password");
+  // Fetch plain object via .lean() for maximum query speed and low memory usage
+  const user = await UserModel.findOne({ email }).select("+password").lean();
 
-  if (!user || !(await user.checkPassword(password)))
+  if (!user || !(await checkUserPassword(password, user.password)))
     throw new AppError("Incorrect email or password", 401);
 
   // if ok, send token (access and refresh)
-  req.user = user;
+  req.user = { id: user._id.toString(), _id: user._id };
 
   // ------TOKEN---------
-  // ------refresh token:start
-  // create
   const refreshToken = createRefreshToken(user._id.toString());
+  const accessToken = createAccessToken(user._id.toString());
 
-  // save to db
-  await RefreshToken.create({
+  // Let the DB create the session in the background while the user receives their response.
+  RefreshToken.create({
     token: refreshToken,
     userId: user._id,
     sessionExpiresAt: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000), // 20 days
-  });
+  }).catch((err) => console.error("Background Session creation failed:", err));
 
   // save to cookies
   res.cookie("refreshToken", refreshToken, {
@@ -45,14 +41,11 @@ export const login = catchAsync(async (req, res, next) => {
     maxAge: 20 * 24 * 60 * 60 * 1000,
     path: "/",
   });
-  // ------refresh token:end
 
-  // ------access token:start
-  const accessToken = createAccessToken(user._id.toString());
-  // ------access token:end
   // ------TOKEN---------
 
   // response
+  delete user.password;
   user.password = undefined; // remove password from res
   res.status(200).json({
     status: "success",

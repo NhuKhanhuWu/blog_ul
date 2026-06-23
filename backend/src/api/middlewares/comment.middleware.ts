@@ -29,15 +29,19 @@ export const validateCmtConstraints = catchAsync(async (req, res, next) => {
   const blogId = req.params.id;
   const { parentId } = req.body;
 
-  // 1. Blog phải tồn tại
-  const post = await BlogModel.findById(blogId);
+  // query
+  const [post, parentCmt] = await Promise.all([
+    BlogModel.findById(blogId),
+    CommentModel.findById(parentId),
+  ]);
+
+  // Validate Blog Existence
   if (!post) {
     throw new AppError("Blog not found", 404);
   }
 
-  // 2. Nếu có parentId: parent comment phải tồn tại và thuộc cùng blog
+  // Validate Parent Comment Context if applicable
   if (parentId) {
-    const parentCmt = await CommentModel.findById(parentId);
     if (!parentCmt) {
       throw new AppError("Parent comment not found", 404);
     }
@@ -62,7 +66,7 @@ export const authorizedCmt = catchAsync(async (req, res, next) => {
     throw new AppError("Invalid comment ID", 400);
 
   // get cmt from db
-  const cmt = await CommentModel.findById(new Types.ObjectId(cmtId));
+  const cmt = await CommentModel.findById(new Types.ObjectId(cmtId)).lean();
 
   // check if cmt exsits
   if (!cmt) throw new AppError("Comment not found", 404);

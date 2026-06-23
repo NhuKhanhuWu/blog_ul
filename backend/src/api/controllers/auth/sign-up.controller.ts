@@ -43,15 +43,16 @@ export const sendSignUpOtp = catchAsync(
     const emailMessage = otpEmail(otp);
 
     // 5. send email & response
-    await sendTokenEmail(
-      {
-        email,
-        subject: "Your sign up OTP in Blogie",
-        htmlMessage: emailMessage,
-      },
-      res,
-      next,
-    );
+    await sendTokenEmail({
+      email,
+      subject: "Your sign up OTP in Blogie",
+      htmlMessage: emailMessage,
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "OTP sended to email",
+    });
   },
 );
 

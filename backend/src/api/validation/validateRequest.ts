@@ -14,10 +14,21 @@ export const validateRequest =
         params: req.params,
       });
 
-      // re-attach validated data to req
+      // req.body can be overwritten completely
       if (validated.body) req.body = validated.body;
-      if (validated.query) req.query = validated.query as any;
-      if (validated.params) req.params = validated.params as any;
+
+      // For query and params, mutate internal parameters instead of replacing the object shell
+      if (validated.query) {
+        // Clear old raw string properties
+        for (const key in req.query) delete req.query[key];
+        // Merge fresh typed, coerced values (e.g. actual numbers)
+        Object.assign(req.query, validated.query);
+      }
+
+      if (validated.params) {
+        for (const key in req.params) delete req.params[key];
+        Object.assign(req.params, validated.params);
+      }
 
       return next();
     } catch (error) {

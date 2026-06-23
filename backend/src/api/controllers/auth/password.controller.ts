@@ -16,8 +16,7 @@ import { JwtPayload } from "../../types/jwt-payload.type";
 export const forgotPassword = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     // get email
-    const { email } = req.body as { email?: string };
-    if (!email) return next(new Error("Email required"));
+    const { email } = req.body;
 
     // 1. get user by email
     const user = (await UserModel.findOne({ email })) as UserDocument | null;
@@ -35,20 +34,16 @@ export const forgotPassword = catchAsync(
 
     // 3. send email
     const message = resetPasswordEmail(token);
-    await sendTokenEmail(
-      {
-        email,
-        subject: "Your password reset link in Blogie",
-        htmlMessage: message,
-      },
-      res,
-      next,
-    );
+    await sendTokenEmail({
+      email,
+      subject: "Your password reset link in Blogie",
+      htmlMessage: message,
+    });
 
     // send response
     res.status(200).json({
       status: "success",
-      message: "Reset link sent to email!",
+      message: "Token sended to email",
     });
   },
 );
@@ -77,7 +72,7 @@ export const checkResetPasswordToken = catchAsync(
     }
 
     // attach user to request object
-    req.user = user;
+    req.user = { id: user._id.toString(), _id: user._id };
     req.body.email = user.email; // attach email to body for resetPassword controller (so user doesn't have to provide it again)
     next();
   },
