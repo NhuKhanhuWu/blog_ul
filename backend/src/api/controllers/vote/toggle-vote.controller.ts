@@ -35,6 +35,32 @@ const SCORE_UPDATES: Record<
   },
 };
 
+function getScoreUpdate(
+  action: "create" | "delete" | "update",
+  currentVoteType: 1 | -1,
+) {
+  let update;
+
+  if (action === "create") {
+    if (currentVoteType === VOTE_TYPES.UPVOTE) update = { upVotes: 1 };
+    if (currentVoteType === VOTE_TYPES.DOWNVOTE) update = { downVotes: 1 };
+  } else if (action === "delete") {
+    if (currentVoteType === VOTE_TYPES.UPVOTE) update = { upVotes: -1 };
+    if (currentVoteType === VOTE_TYPES.DOWNVOTE) update = { downVotes: -1 };
+  } else if (action === "update") {
+    // from Downvote to Upvote: upVotes +1, downVotes -1
+    if (currentVoteType === VOTE_TYPES.UPVOTE) {
+      update = { upVotes: 1, downVotes: -1 };
+    }
+    // from Upvote to Downvote: upVotes -1, downVotes +1
+    if (currentVoteType === VOTE_TYPES.DOWNVOTE) {
+      update = { upVotes: -1, downVotes: 1 };
+    }
+  }
+
+  return update;
+}
+
 const updateVoteScore = async ({
   targetType,
   targetId,
@@ -44,7 +70,7 @@ const updateVoteScore = async ({
   const TargetModel: Model<any> =
     targetType === "blog" ? BlogModel : CommentModel;
 
-  const update = SCORE_UPDATES[action][voteType] as Record<string, number>;
+  let update = getScoreUpdate(action, voteType) as Record<string, number>;
 
   const target = await TargetModel.findOneAndUpdate(
     { _id: targetId },

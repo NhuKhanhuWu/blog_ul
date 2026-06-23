@@ -19,23 +19,6 @@ export const refreshToken = catchAsync(async (req, res, next) => {
     throw new AppError("Refresh token required", 401);
   }
 
-  // get token from db
-  const curRefreshToken = await RefreshToken.findOne({ token: refreshToken });
-
-  if (!curRefreshToken) throw new AppError("Invalid token!", 401);
-
-  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: START -------------
-  // // check if token has been used (revoked)
-  // if (curRefreshToken.revoked)
-  //   throw new AppError("Token has already been used", 401);
-  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: END -------------
-
-  // check if session expired
-  const sessionExpireDate = new Date(curRefreshToken.sessionExpiresAt);
-  if (sessionExpireDate < new Date(Date.now())) {
-    throw new AppError("Session expired! Please login again.", 401);
-  }
-
   // verify token
   let decode: JwtPayload;
   try {
@@ -47,6 +30,19 @@ export const refreshToken = catchAsync(async (req, res, next) => {
   } catch (err) {
     throw new AppError("Invalid or expired token", 401);
   }
+
+  // get token from db
+  const curRefreshToken = await RefreshToken.findOne({
+    token: refreshToken,
+  }).lean();
+
+  if (!curRefreshToken) throw new AppError("Session revoked or invalid!", 401);
+
+  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: START -------------
+  // // check if token has been used (revoked)
+  // if (curRefreshToken.revoked)
+  //   throw new AppError("Token has already been used", 401);
+  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: END -------------
 
   // create new  token
   const { userId } = curRefreshToken;

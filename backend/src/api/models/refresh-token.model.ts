@@ -6,16 +6,17 @@ import mongoose, { Schema } from "mongoose";
 const RefreshTokenSchema = new Schema<Token>({
   token: {
     type: String,
-    require: [true, "Token required"],
+    required: [true, "Token required"],
+    unique: true,
   },
 
   userId: {
     type: mongoose.Schema.ObjectId,
     ref: "Users",
-    require: [true, "User id required"],
+    required: [true, "User id required"],
   },
 
-  sessionExpiresAt: { type: Date, require: true },
+  sessionExpiresAt: { type: Date, required: true, index: true },
 
   revoked: { type: Boolean, default: false }, // check if token is used
   revokedAt: { type: Date }, // when the token was used
@@ -31,10 +32,6 @@ RefreshTokenSchema.index(
 
 // delete after expired
 RefreshTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-
-// index for fast query
-RefreshTokenSchema.index({ token: 1 }, { unique: true });
-RefreshTokenSchema.index({ sessionExpiresAt: 1 });
 
 // add expires date before save
 RefreshTokenSchema.pre("save", function (next) {

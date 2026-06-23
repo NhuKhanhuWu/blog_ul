@@ -6,7 +6,7 @@ import {
   sendSignUpOtp,
   createUser,
 } from "../controllers/auth/sign-up.controller";
-import { signupIpLimiter } from "../middlewares/auth.middleware";
+import { loginLimiter, signupIpLimiter } from "../middlewares/auth.middleware";
 import { signupEmailLimiter } from "../middlewares/auth.middleware";
 import { login } from "../controllers/auth/login.controller";
 import {
@@ -36,6 +36,12 @@ import {
 } from "../controllers/vote/get-vote.controller";
 import { updateMe } from "../controllers/user/update-account.controller";
 import { protect } from "../middlewares/auth.middleware";
+import { validateRequest } from "../validation/validateRequest";
+import {
+  forgotPasswordSchema,
+  loginSchema,
+} from "../validation/auth.validation";
+import { updateMeSchema } from "../validation/user.validation";
 const userRouter = express.Router();
 
 // -------------------- Auth Routes -------------------- //
@@ -45,7 +51,7 @@ userRouter.post("/signup/verify", checkOtp);
 userRouter.post("/signup/create-user", createUser);
 
 // login route
-userRouter.post("/login", login);
+userRouter.post("/login", loginLimiter, validateRequest(loginSchema), login);
 
 // logout route
 userRouter.post("/logout", logout);
@@ -55,6 +61,7 @@ userRouter.post(
   "/forgot-password",
   forgotPasswordOtpLimiterEmail,
   forgotPasswordOtpLimiterIP,
+  validateRequest(forgotPasswordSchema),
   forgotPassword,
 );
 userRouter.patch(
@@ -71,7 +78,7 @@ userRouter.post("/refresh-token", refreshToken);
 userRouter
   .route("/me")
   .get(protect, getMe)
-  .post(updateUserLimiter, protect, updateMe);
+  .patch(updateUserLimiter, validateRequest(updateMeSchema), protect, updateMe);
 
 userRouter.route("/:slug").get(getUserBySlug);
 

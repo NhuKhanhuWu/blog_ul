@@ -11,8 +11,9 @@ const GET_BY_SLUG_FIELDS = {
 
 export const getMe = catchAsync(async (req, res) => {
   // get user from req object
-  // const userId = req.user?._id;
-  const user = req.user;
+  const user = await UserModel.findById(req.user?._id).select(
+    "_id name email slug",
+  );
 
   // send response
   res.status(200).json({
