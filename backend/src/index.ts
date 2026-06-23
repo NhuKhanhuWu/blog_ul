@@ -1,9 +1,9 @@
 /** @format */
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import app from "./app";
-
 dotenv.config({ path: "./config.env" });
+
+import app from "./app";
 
 // connect to db
 // const isDev = false;

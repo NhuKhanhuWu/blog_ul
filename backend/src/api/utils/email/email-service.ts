@@ -1,13 +1,12 @@
 /** @format */
 import nodemailer, { Transporter } from "nodemailer";
 import { SendEmailOptions } from "./email-template";
-import { Response, NextFunction } from "express";
 import AppError from "../error/app-error";
 
 // This prevents expensive TCP handshake cycles on every single email request.
 const transporter: Transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: Number(process.env.EMAIL_PORT),
+  host: process.env.EMAIL_HOST || "sandbox.smtp.mailtrap.io",
+  port: Number(process.env.EMAIL_PORT) || 2525,
   secure: Number(process.env.EMAIL_PORT) === 465, // Use true for port 465, false for other ports
   auth: {
     user: process.env.EMAIL_USER,
@@ -62,4 +61,4 @@ export const sendTokenEmail = async ({
       500,
     );
   }
-}; // 2. sendTokenEmail helper
+};

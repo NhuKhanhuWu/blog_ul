@@ -13,3 +13,9 @@ export const forgotPasswordSchema = z.object({
     email: z.email("Invalid email"),
   }),
 });
+
+export const sendSignUpOtpSchema = z.object({
+  body: z.object({
+    email: z.email("Invalid email"),
+  }),
+});
