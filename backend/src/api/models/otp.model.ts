@@ -3,8 +3,8 @@ import mongoose, { Document, Schema, Model } from "mongoose";
 import validator from "validator";
 
 // 1. Define TS interface for the document
-export interface IPendingEmail extends Document {
-  email: string;
+export interface Otp extends Document {
+  email?: string;
   otp?: string;
   otpExpires: Date;
   createdAt?: Date;
@@ -12,7 +12,7 @@ export interface IPendingEmail extends Document {
 }
 
 // 2. Define schema
-const pendingEmailSchema: Schema<IPendingEmail> = new Schema(
+const otpSchema: Schema<Otp> = new Schema(
   {
     email: {
       type: String,
@@ -33,13 +33,10 @@ const pendingEmailSchema: Schema<IPendingEmail> = new Schema(
       index: { expires: 0 }, // auto delete when expired
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // 3. Export model
-const PendingEmailsModel: Model<IPendingEmail> = mongoose.model<IPendingEmail>(
-  "PendingEmails",
-  pendingEmailSchema
-);
+const OtpModel: Model<Otp> = mongoose.model<Otp>("otp", otpSchema);
 
-export default PendingEmailsModel;
+export default OtpModel;

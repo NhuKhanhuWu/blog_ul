@@ -40,13 +40,15 @@ import { validateRequest } from "../validation/validateRequest";
 import {
   forgotPasswordSchema,
   loginSchema,
+  sendSignUpOtpSchema,
 } from "../validation/auth.validation";
 import { updateMeSchema } from "../validation/user.validation";
 const userRouter = express.Router();
 
 // -------------------- Auth Routes -------------------- //
 // sign up route
-userRouter.post("/signup", signupEmailLimiter, signupIpLimiter, sendSignUpOtp);
+// userRouter.post("/signup", signupEmailLimiter, signupIpLimiter, sendSignUpOtp);
+userRouter.post("/signup", validateRequest(sendSignUpOtpSchema), sendSignUpOtp);
 userRouter.post("/signup/verify", checkOtp);
 userRouter.post("/signup/create-user", createUser);
 
