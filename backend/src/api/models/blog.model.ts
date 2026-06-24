@@ -73,6 +73,7 @@ const BlogSchema = new Schema<BlogDocument>(
           ref: "Category",
         },
       ],
+      index: true,
       validate: {
         validator: function (value: Types.ObjectId[]) {
           return value.length <= 50;
@@ -127,6 +128,7 @@ const BlogSchema = new Schema<BlogDocument>(
 BlogSchema.index({ slug: "text" }); // text index for searching in slug
 
 BlogSchema.index({ title: "text" }); // text index for searching in title
+BlogSchema.index({ categories: 1, updatedAt: -1 });
 
 // add & pub_date slug before saving
 BlogSchema.pre("save", async function (next) {

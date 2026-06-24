@@ -2,17 +2,15 @@
 
 import { BlogList } from "./types/blog-list.type";
 import { Comment } from "./types/comment.type";
-import { UserDocument } from "./types/user.type";
+import { ReqUser } from "./types/user.type";
 import { HydratedDocument, Types } from "mongoose";
-
-export type CommentDocument = HydratedDocument<Comment>;
 
 declare global {
   namespace Express {
     interface Request {
-      user?: UserDocument;
+      user?: ReqUser;
       accessToken?: String;
-      cmt?: CommentDocument;
+      cmt?: Comment;
       blogList?: HydratedDocument<BlogList>;
       _commentFilter?: {
         parentId?: Types.ObjectId | null;

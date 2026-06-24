@@ -8,7 +8,7 @@ export async function getCategories(
   signal?: AbortSignal,
   categoryName?: string,
 ): Promise<ICategoriesResponse> {
-  const checkedQuery = `?page=${page}&name=${categoryName}`;
+  const checkedQuery = `?page=${page || 0}&name=${categoryName || ""}`;
 
   const response = await axiosInstance.get(`/categories${checkedQuery}`, {
     signal,

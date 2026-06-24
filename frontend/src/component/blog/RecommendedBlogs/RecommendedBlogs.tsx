@@ -41,7 +41,6 @@ function RecommendedBlogs({ curBlog }: { curBlog: BlogDetailProps }) {
 
   // responsive
   const isTablet = useMediaQuery({ query: "(min-width: 768px)" });
-  console.log(isTablet);
 
   useEffect(() => {
     if (isError) toast.error("Failed to load recommended blogs");

@@ -26,6 +26,19 @@ export const updateBlogListSchema = z.object({
     }),
 });
 
+export const getBlogFromListSchema = z.object({
+  // 1. Path variables (e.g., /api/blog-lists/:id/blogs)
+  params: z.object({
+    id: objectIdSchema,
+  }),
+
+  // 2. Query variables (e.g., ?page=0&limit=10)
+  query: z.object({
+    page: z.coerce.number().int().nonnegative().default(0),
+    limit: z.coerce.number().int().positive().default(10),
+  }),
+});
+
 export const addBlogToListSchema = z.object({
   params: z.object({
     id: objectIdSchema,

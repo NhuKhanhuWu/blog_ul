@@ -3,9 +3,8 @@ import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import catchAsync from "../../utils/error/catch-async";
 import AppError from "../../utils/error/app-error";
-import validator from "validator";
 import UserModel from "../../models/user.model";
-import PendingEmailsModel from "../../models/pending-email.model";
+import OtpModel from "../../models/otp.model";
 import { otpEmail } from "../../utils/email/email-template";
 import { sendTokenEmail } from "../../utils/email/email-service";
 import signToken from "../../utils/token/sign-token";
@@ -22,18 +21,16 @@ export const sendSignUpOtp = catchAsync(
     const { email } = req.body as { email?: string };
     if (!email) throw new AppError("Email required", 400);
 
-    if (!validator.isEmail(email)) throw new AppError("Invalid email", 400);
-
     // 1.1 check if already in use
     const userExists = await UserModel.findOne({ email });
     if (userExists) throw new AppError("Email already in use", 409);
 
     // 2. create otp
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = Date.now() + 10 * 60 * 1000; // 5 mins
+    const otpExpires = Date.now() + 5 * 60 * 1000; // 5 mins
 
     // 3. save request to db
-    await PendingEmailsModel.findOneAndUpdate(
+    await OtpModel.findOneAndUpdate(
       { email },
       { otp, otpExpires },
       { upsert: true, new: true },
@@ -42,16 +39,23 @@ export const sendSignUpOtp = catchAsync(
     // 4. send email
     const emailMessage = otpEmail(otp);
 
-    // 5. send email & response
-    await sendTokenEmail(
-      {
-        email,
-        subject: "Your sign up OTP in Blogie",
-        htmlMessage: emailMessage,
-      },
-      res,
-      next,
-    );
+    // 5. send email & response (Fire off email tracking in the background)
+    sendTokenEmail({
+      email,
+      subject: "Your sign up OTP in Blogie",
+      htmlMessage: emailMessage,
+    }).catch((err) => {
+      // Catches errors without crashing the active client request cycle
+      console.error(
+        `Failed to dispatch background OTP email to ${email}:`,
+        err,
+      );
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "OTP sended to email",
+    });
   },
 );
 
@@ -62,7 +66,7 @@ export const checkOtp = catchAsync(async (req, res) => {
   if (!otp || !email) throw new AppError("Otp and email required", 400);
 
   // 2. check if otp, email is valid
-  const pendingEmail = await PendingEmailsModel.findOne({ email });
+  const pendingEmail = await OtpModel.findOne({ email });
 
   if (!pendingEmail || pendingEmail.otpExpires.getTime() < Date.now())
     throw new AppError("Invalid email/otp", 400);
@@ -98,7 +102,7 @@ export const createUser = catchAsync(async (req, res) => {
   ) as DecodedToken;
   const { email } = decoded;
 
-  const existsUser = await UserModel.findOne({ email });
+  const existsUser = await UserModel.exists({ email });
   if (existsUser) throw new AppError("Email already in used", 401);
 
   // create user
@@ -111,12 +115,12 @@ export const createUser = catchAsync(async (req, res) => {
   });
 
   // delete request in PendingUser
-  await PendingEmailsModel.findOneAndDelete({ email });
+  // TODO: update to store otp in redis
+  await OtpModel.findOneAndDelete({ email });
 
   res.status(201).json({
     status: "success",
     data: { user: newUser },
   });
-  // createAccessToken(newUser, 200, res);
 });
 // SIGN UP CONTROLLERS: END

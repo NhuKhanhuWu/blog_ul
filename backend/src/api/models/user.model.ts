@@ -89,6 +89,16 @@ userSchema.methods.checkPassword = async function (candidatePassword: string) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
+// for .lean() document
+export async function checkUserPassword(
+  candidatePassword: string,
+  actualPassword?: string,
+) {
+  if (!actualPassword) return false;
+
+  return await bcrypt.compare(candidatePassword, actualPassword);
+}
+
 // check if password changed after token is issued
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
   if (this.passwordChangedAt) {
@@ -99,6 +109,18 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
   }
 
   // this means NOT changed
+  return false;
+};
+
+// for .lean() document
+export const hasChangedPasswordAfter = (
+  passwordChangeAt?: Date,
+  JWTTimestamp?: number,
+): boolean => {
+  if (passwordChangeAt && JWTTimestamp) {
+    const changedTimestamp = Math.floor(passwordChangeAt.getTime() / 1000);
+    return JWTTimestamp < changedTimestamp;
+  }
   return false;
 };
 
