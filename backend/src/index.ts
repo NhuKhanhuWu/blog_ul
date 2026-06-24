@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 dotenv.config({ path: "./config.env" });
 
 import app from "./app";
+import { connectRedis } from "./api/utils/redis";
 
 // connect to db
 // const isDev = false;
@@ -13,10 +14,7 @@ const DATABASE = isDev
   : process.env.DATABASE_CLOUD;
 
 if (!DATABASE) throw new Error("DATABASE env variable is not set");
-// if (!process.env.DATABASE_PASSWORD)
-//   throw new Error("DATABASE_PASSWORD env variable is not set");
 
-// const DB = DATABASE.replace("<PASSWORD>", process.env.DATABASE_PASSWORD);
 let DB = DATABASE;
 if (!isDev) {
   if (!process.env.DATABASE_PASSWORD) {
@@ -27,10 +25,24 @@ if (!isDev) {
   DB = DATABASE.replace("<PASSWORD>", process.env.DATABASE_PASSWORD);
 }
 
-mongoose.connect(DB);
+// run server
+const startServer = async () => {
+  try {
+    // connect db
+    mongoose.connect(DB);
 
-const port = process.env.PORT || 3000;
+    // connect redis
+    await connectRedis();
 
-app.listen(port, () => {
-  console.log(`App running on port ${port}...`);
-});
+    // start server
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => {
+      console.log(`✅ App running on port ${port}...`);
+    });
+  } catch (error) {
+    console.error("❌ server error:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
