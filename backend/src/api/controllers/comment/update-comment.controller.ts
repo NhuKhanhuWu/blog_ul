@@ -2,6 +2,7 @@
 
 import catchAsync from "../../utils/error/catch-async";
 import AppError from "../../utils/error/app-error";
+import CommentModel from "../../models/comment.model";
 
 export const updateCmt = catchAsync(async (req, res) => {
   // check update content
@@ -13,12 +14,20 @@ export const updateCmt = catchAsync(async (req, res) => {
   if (!cmt) throw new AppError("Comment not found", 404);
 
   // update cmt
-  cmt.content = content;
-  await cmt.save();
+  // cmt.content = content;
+  // await cmt.save();
+  const updatedCmt = await CommentModel.findByIdAndUpdate(
+    cmt._id,
+    { content },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
 
   // response
   res.status(200).json({
     status: "success",
-    data: cmt,
+    data: updatedCmt,
   });
 });

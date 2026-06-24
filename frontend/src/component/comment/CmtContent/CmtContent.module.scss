@@ -20,17 +20,6 @@
 .cmtContent {
   font-size: 1.6rem;
   margin: 0.8rem 0 1.4rem;
-  // max-height: 10rem;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-
-  &.expand {
-    overflow: auto;
-    display: contents;
-  }
 }
 
 .seeMoreBtn {

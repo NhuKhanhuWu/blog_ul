@@ -7,7 +7,7 @@ export const changeEmailByUserLimiter = createLimiter({
   windowMs: 60 * 1000,
   message:
     "You can only request change email every 1 minute with your account.",
-  keyGenerator: (req) => req.user?.id,
+  keyGenerator: (req) => req.user?.id || "",
 });
 
 export const changeEmailByIPLimiter = createLimiter({

@@ -49,4 +49,10 @@
     padding-left: 1rem;
     padding-top: 2rem;
   }
+
+  .blogsContainer {
+    &.listMode {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
 }

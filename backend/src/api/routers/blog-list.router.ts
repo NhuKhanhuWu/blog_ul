@@ -7,7 +7,8 @@ import {
   updateBlogList,
 } from "../controllers/blog-list/update-blog-list.controller";
 import {
-  getBlogListById,
+  getBlogFromList,
+  getBlogListMeta,
   getMultBlogList,
 } from "../controllers/blog-list/get-blog-list.controller";
 import { loadUser, protect } from "../middlewares/auth.middleware";
@@ -19,6 +20,7 @@ import {
 import { validateRequest } from "../validation/validateRequest";
 import {
   addBlogToListSchema,
+  getBlogFromListSchema,
   removeBlogFromListSchema,
   updateBlogListSchema,
 } from "../validation/blog-list.validation";
@@ -34,7 +36,7 @@ blogListRouter
 // update blog list
 blogListRouter
   .route("/:id")
-  .get(loadUser, getBlogListById) // get list detail by id
+  .get(loadUser, getBlogListMeta) // get list detail by id
   .patch(
     updateBlogListLimiter,
     validateRequest(updateBlogListSchema),
@@ -43,9 +45,11 @@ blogListRouter
   )
   .delete(protect, deleteBlogListLimiter, deleteBlogList);
 
-// add blog to list
 blogListRouter
   .route("/:id/blogs")
+  // get blog from list
+  .get(loadUser, validateRequest(getBlogFromListSchema), getBlogFromList)
+  // add blog to list
   .patch(
     updateBlogListLimiter,
     validateRequest(addBlogToListSchema),

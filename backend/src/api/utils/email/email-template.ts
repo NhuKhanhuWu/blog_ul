@@ -64,7 +64,7 @@ export const otpEmail = function (otp: string) {
     <p>We received a request to sign up for an Blogie account using this email address.</p>
     <p>Your verification code is:</p>
     <p><strong style="font-size: 24px;">🔐 ${otp}</strong></p>
-    <p>This code is valid for the next 10 minutes.</p>
+    <p>This code is valid for the next 05 minutes.</p>
     <p>If you did not request this, please ignore this message.</p>
     <p>Thanks,<br />Blogie Team</p>
   `;

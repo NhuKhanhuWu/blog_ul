@@ -26,7 +26,6 @@ const CmtLayout = ({ cmt, children }: { cmt: Cmt; children: ReactNode }) => (
 );
 
 const CmtItem = memo(({ cmt, depth = 0 }: { cmt: Cmt; depth?: number }) => {
-  const [isExpand, setIsExpand] = useState(false);
   const [isShowReply, setIsShowReply] = useState(false);
 
   // Logic fetch dữ liệu lồng vào đúng nơi cần thiết
@@ -55,7 +54,7 @@ const CmtItem = memo(({ cmt, depth = 0 }: { cmt: Cmt; depth?: number }) => {
     <CmtLayout cmt={cmt}>
       {/* main content */}
       <div className={styles.cmtTxt}>
-        <CmtContent cmt={cmt} isExpand={isExpand} setIsExpand={setIsExpand} />
+        <CmtContent cmt={cmt} />
         <CmtActions cmt={cmt} />
       </div>
 

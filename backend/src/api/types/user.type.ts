@@ -10,6 +10,11 @@ export interface UserInput {
   avatar?: string;
 }
 
+export interface ReqUser {
+  _id: Types.ObjectId;
+  id: string;
+}
+
 export interface UserDocument extends Document {
   _id: Types.ObjectId;
   name: string;

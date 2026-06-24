@@ -1,0 +1,44 @@
+# @format
+
+version: "3.8"
+
+services:
+  # --- DATABASE / CACHE ---
+  redis:
+    image: redis:7-alpine
+    container_name: blogie-redis-prod
+    ports:
+      - "6379:6379"
+    restart: always
+
+  # --- BACKEND API ---
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: blogie-backend-prod
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=${REDIS_URL}
+      - DATABASE_CLOUD=${DATABASE_CLOUD}
+      - DATABASE_LOCAL=${DATABASE_LOCAL}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+    depends_on:
+      - redis
+    restart: always
+
+  # --- FRONTEND NGINX ---
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_SERVER_URL=http://localhost:3000
+    container_name: blogie-frontend-prod
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+    restart: always
