@@ -63,6 +63,10 @@
     }
   }
 
+  @include respond(md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
   @include respond(md-xl) {
     gap: $md-xl-gap;
 
