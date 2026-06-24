@@ -185,8 +185,11 @@ function getPipeline(
       voteType: 1, // Added voteType field output
       createdAt: 1,
       updatedAt: 1,
+      authors: 1,
+      totalCmts: 1,
       "categories.name": 1,
       "categories.slug": 1,
+      "categories._id": 1,
       "userId.name": 1,
       "userId.slug": 1,
       "userId.avatar": 1,
