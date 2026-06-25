@@ -12,7 +12,7 @@ import CmtItem from "../CmtItem/CmtItem.tsx";
 import toast from "react-hot-toast";
 import { useMediaQuery } from "react-responsive";
 import styles from "./BlogCmt.module.scss";
-import CmtForm from "../CmtForm/CmtForm.tsx";
+import CmtCreateForm from "../CmtCreateForm/CmtCreateForm.tsx";
 
 interface IBlogInfor {
   blogId: string;
@@ -105,7 +105,7 @@ function BlogCmtDesktop({ blogId, totalCmts }: IBlogInfor) {
 
       {/* new cmt form */}
       <div className={styles.cmtFormCotainer}>
-        <CmtForm
+        <CmtCreateForm
           blogId={blogId}
           isUsing={isCommenting}
           setIsUsing={setIsCommenting}

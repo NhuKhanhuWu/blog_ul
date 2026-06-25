@@ -9,7 +9,7 @@ export function useIntersectionObserver(
 ) {
   const observer = useRef<IntersectionObserver>();
 
-  // Ref này sẽ được gắn vào phần tử cuối danh sách
+  // this Ref will be attached to the last element of the list
   const lastElementRef = useCallback(
     (node: HTMLDivElement) => {
       if (isLoading) return;
