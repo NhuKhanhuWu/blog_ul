@@ -1,6 +1,12 @@
 /** @format */
 
-import { Cmt, CreateCmt, GetCmtByBlog, GetCmtRes } from "../types/comment.type";
+import {
+  Cmt,
+  CreateCmt,
+  EditCmt,
+  GetCmtByBlog,
+  GetCmtRes,
+} from "../types/comment.type";
 import axiosInstance from "../utils/axios-instance";
 
 export async function getCmtByBlog({
@@ -27,4 +33,16 @@ export async function createCmt({
   });
 
   return res.data.data;
+}
+
+export async function editCmt({ cmtId, content }: EditCmt): Promise<Cmt> {
+  const res = await axiosInstance.patch(`/cmt/${cmtId}`, {
+    content: content,
+  });
+
+  return res.data;
+}
+
+export async function deleteCmt(cmtId: string): Promise<void> {
+  await axiosInstance.delete(`/cmt/${cmtId}`);
 }

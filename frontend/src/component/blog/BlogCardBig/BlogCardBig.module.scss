@@ -118,9 +118,6 @@
   }
 }
 
-/* ==========================================================================
-   Desktop Query Modifications (md Breakpoint & Above)
-   ========================================================================== */
 @include respond(sm-xl) {
   .blogCard {
     // border-bottom: 1.5px solid var(--border-color); // Subtle wrapper frame ($light-500)
