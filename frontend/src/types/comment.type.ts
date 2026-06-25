@@ -1,6 +1,7 @@
 /** @format */
 
 import { InfiniteData } from "@tanstack/react-query";
+import { Dispatch, SetStateAction } from "react";
 
 export interface Cmt {
   _id: string;
@@ -40,5 +41,17 @@ export interface GetCmtByBlog {
   sort: string;
   page: number;
   limit?: number;
+  parentId?: string;
+}
+
+export interface EditCmt {
+  cmtId: string;
+  content: string;
+}
+
+export interface CmtFormProps {
+  isUsing: boolean;
+  setIsUsing: Dispatch<SetStateAction<boolean>>;
+  blogId: string;
   parentId?: string;
 }

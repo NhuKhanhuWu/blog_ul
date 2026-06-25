@@ -5,7 +5,7 @@ import { Sheet } from "react-modal-sheet";
 
 import styles from "./CmtModal.module.scss";
 import { ICmtMinimize } from "../CmtMinimize/CmtMinimize";
-import CmtForm from "../CmtForm/CmtForm";
+import CmtCreateForm from "../CmtCreateForm/CmtCreateForm";
 import CmtItem from "../CmtItem/CmtItem";
 
 export interface ICmtModal extends ICmtMinimize {
@@ -45,7 +45,7 @@ function CmtModal({
 
         <Sheet.Content className={styles.modalContent}>
           <div className={styles.cmtFormCotainer}>
-            <CmtForm
+            <CmtCreateForm
               blogId={blogId}
               isUsing={isUsingCmtForm}
               setIsUsing={setUsingCmtForm}

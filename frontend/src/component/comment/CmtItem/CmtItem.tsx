@@ -9,21 +9,37 @@ import { getCmtByBlog } from "../../../api/comment.api";
 import CmtContent from "../CmtContent/CmtContent";
 import CmtActions from "../CmtActions/CmtActions";
 import ReplyBtns from "../ReplyBtns/ReplyBtns";
+import {
+  CommentItemProvider,
+  useCmtItem,
+} from "../../../context/CmtItemContext";
+import CmtEditForm from "../CmtEditForm/CmtEditForm";
 
-// Component bọc ngoài để quản lý style chung
-const CmtLayout = ({ cmt, children }: { cmt: Cmt; children: ReactNode }) => (
-  <div className={styles.cmtItemContainer}>
-    <Link to={`/profile/${cmt.userId.slug}`}>
-      <img
-        className={cmt.parentId ? "avatar-sm" : "avatar-md"}
-        src={cmt.userId.avatar ?? defaultAvatar(cmt.userId.slug)}
-        loading="lazy"
-        alt="avatar"
-      />
-    </Link>
-    <div className={styles.cmt}>{children}</div>
-  </div>
-);
+// layout Component to manage style
+function CmtLayout({ children }: { children: ReactNode }) {
+  const { isEdit } = useCmtItem().state;
+  const { cmt } = useCmtItem().state;
+
+  // if cmt is deleted => cmt===null
+  if (!cmt) return;
+
+  // if is editing cmt
+  if (isEdit) return <CmtEditForm />;
+
+  return (
+    <div className={styles.cmtItemContainer}>
+      <Link to={`/profile/${cmt.userId.slug}`}>
+        <img
+          className={cmt.parentId ? "avatar-sm" : "avatar-md"}
+          src={cmt.userId.avatar ?? defaultAvatar(cmt.userId.slug)}
+          loading="lazy"
+          alt="avatar"
+        />
+      </Link>
+      <div className={styles.cmt}>{children}</div>
+    </div>
+  );
+}
 
 const CmtItem = memo(({ cmt, depth = 0 }: { cmt: Cmt; depth?: number }) => {
   const [isShowReply, setIsShowReply] = useState(false);
@@ -51,32 +67,36 @@ const CmtItem = memo(({ cmt, depth = 0 }: { cmt: Cmt; depth?: number }) => {
   );
 
   return (
-    <CmtLayout cmt={cmt}>
-      {/* main content */}
-      <div className={styles.cmtTxt}>
-        <CmtContent cmt={cmt} />
-        <CmtActions cmt={cmt} />
-      </div>
-
-      {/* replies: only render when open */}
-      {isShowReply && (
-        <div className={styles.repliesList}>
-          {isError && <span className="error-mgs">Error loading replies</span>}
-          {replies.map((reply) => (
-            <CmtItem key={reply._id} cmt={reply} depth={depth + 1} />
-          ))}
+    <CommentItemProvider initCmt={cmt}>
+      <CmtLayout>
+        {/* main content */}
+        <div className={styles.cmtTxt}>
+          <CmtContent />
+          <CmtActions cmt={cmt} />
         </div>
-      )}
 
-      <ReplyBtns
-        cmt={cmt}
-        isOpen={isShowReply}
-        onToggle={() => setIsShowReply(!isShowReply)}
-        hasNextPage={hasNextPage}
-        onFetchNext={fetchNextPage}
-        isFetching={isFetchingNextPage}
-      />
-    </CmtLayout>
+        {/* replies: only render when open */}
+        {isShowReply && (
+          <div className={styles.repliesList}>
+            {isError && (
+              <span className="error-mgs">Error loading replies</span>
+            )}
+            {replies.map((reply) => (
+              <CmtItem key={reply._id} cmt={reply} depth={depth + 1} />
+            ))}
+          </div>
+        )}
+
+        <ReplyBtns
+          cmt={cmt}
+          isOpen={isShowReply}
+          onToggle={() => setIsShowReply(!isShowReply)}
+          hasNextPage={hasNextPage}
+          onFetchNext={fetchNextPage}
+          isFetching={isFetchingNextPage}
+        />
+      </CmtLayout>
+    </CommentItemProvider>
   );
 });
 

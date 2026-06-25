@@ -7,10 +7,10 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import { useAppSelector } from "../../../hook/reduxHooks";
-import styles from "./CmtForm.module.scss";
+import styles from "./CmtCreateForm.module.scss";
 import defaultAvatar from "../../../utils/default-avatar";
-import { Dispatch, SetStateAction } from "react";
 import { useCreateCmt } from "../../../hook/cmt/useCreateCmt";
+import { CmtFormProps } from "../../../types/comment.type";
 
 const formSchema = yup.object().shape({
   content: yup
@@ -21,17 +21,14 @@ const formSchema = yup.object().shape({
 
 type TFormSchema = yup.InferType<typeof formSchema>;
 
-interface ICmtForm {
-  isUsing: boolean;
-  setIsUsing: Dispatch<SetStateAction<boolean>>;
-  blogId: string;
-  parentId?: string;
-}
-
-function CmtForm({ isUsing, setIsUsing, blogId, parentId }: ICmtForm) {
+function CmtCreateForm({
+  isUsing,
+  setIsUsing,
+  blogId,
+  parentId,
+}: CmtFormProps) {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
-  // handling form
   const {
     register,
     handleSubmit,
@@ -115,4 +112,4 @@ function CmtForm({ isUsing, setIsUsing, blogId, parentId }: ICmtForm) {
   );
 }
 
-export default CmtForm;
+export default CmtCreateForm;
