@@ -71,6 +71,8 @@ const userSchema = new Schema<UserDocument>(
   },
 );
 
+userSchema.index({ name: "text", email: "text" });
+
 // Middleware to hash password before saving
 userSchema.pre<UserDocument>("save", async function (next) {
   if (!this.isModified("password") || !this.password) return next();
@@ -124,10 +126,6 @@ export const hasChangedPasswordAfter = (
   return false;
 };
 
-// Indexes for quick lookups
-// userSchema.index({ email: 1 });
-userSchema.index({ name: "text", email: "text" });
-
 // create slug & default blog list when user create acc
 userSchema.pre("save", async function (next) {
   if (!this.isModified("name")) return next();
@@ -140,21 +138,23 @@ userSchema.pre("save", async function (next) {
     this._id.toString(),
   );
 
-  // create blog list
-  const defaultList = BlogListModel.findOne({
-    userId: this._id,
-    name: "Read later",
-    isDefault: true,
-  });
-
-  if (!defaultList) {
-    await BlogListModel.create({
-      name: "Read later",
+  if (this.isNew) {
+    // create blog list
+    const defaultList = await BlogListModel.exists({
       userId: this._id,
+      name: "Read later",
       isDefault: true,
-      isPrivate: true,
-      blogs: [],
     });
+
+    if (!defaultList) {
+      await BlogListModel.create({
+        name: "Read later",
+        userId: this._id,
+        isDefault: true,
+        isPrivate: true,
+        blogs: [],
+      });
+    }
   }
 
   next();
