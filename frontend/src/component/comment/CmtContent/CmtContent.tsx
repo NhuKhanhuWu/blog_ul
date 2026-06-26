@@ -1,22 +1,28 @@
 /** @format */
 
-import { Cmt } from "../../../types/comment.type";
 import styles from "./CmtContent.module.scss";
 import { Link } from "react-router-dom";
 import { getDateDistance } from "../../../utils/date";
 import { ShowMoreText } from "../../ui/ShowMoreText/ShowMoreText";
+import CmtPopover from "../CmtPopover/CmtPopover";
+import { useAppSelector } from "../../../hook/reduxHooks";
+import { useCmtItem } from "../../../context/CmtItemContext";
 
-interface ICmtTxt {
-  cmt: Cmt;
-}
+function CmtContent() {
+  const userId = useAppSelector((state) => state.auth.user?._id);
+  const cmt = useCmtItem().state.cmt;
 
-function CmtContent({ cmt }: ICmtTxt) {
   return (
     <>
       {/* user name & timestapm => cmtItemHeader*/}
       <div className={styles.cmtItemHeader}>
-        <Link to={`/profile/${cmt.userId?.slug}`}>{cmt.userId?.name}</Link>
-        <span>{getDateDistance(cmt.createdAt)}</span>
+        <div>
+          <Link to={`/profile/${cmt.userId?.slug}`}>{cmt.userId?.name}</Link>{" "}
+          <span>{getDateDistance(cmt.createdAt)}</span>
+        </div>
+
+        {/* popover */}
+        {userId === cmt.userId._id && <CmtPopover cmt={cmt} />}
       </div>
 
       {/* content */}

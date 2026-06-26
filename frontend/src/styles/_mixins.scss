@@ -63,6 +63,10 @@
     }
   }
 
+  @include respond(md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
   @include respond(md-xl) {
     gap: $md-xl-gap;
 
@@ -205,3 +209,34 @@
   font-size: 1.2rem;
 }
 // ==== POPOVER: END ====
+
+// ==== CMT FORM: START ====
+@mixin commentFormLayout(
+  $avatar-size: 3rem,
+  $form-margin-bottom: 3rem,
+  $font-size: 1.6rem
+) {
+  font-size: $font-size;
+  margin-bottom: $form-margin-bottom;
+
+  // Style for container wrap Input và Avatar
+  .formInput {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  // Style for Avatar inside form
+  .avatar {
+    width: $avatar-size;
+    height: $avatar-size;
+    border-radius: 999px;
+    object-fit: cover;
+  }
+
+  // action btn
+  .sendCmtBtn {
+    padding: 0.5rem 1rem;
+  }
+}
+// ==== CMT FORM: END ====

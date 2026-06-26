@@ -72,6 +72,8 @@ userRouter.patch(
   resetPassword,
 );
 
+// TODO: create change password here (only require current password)
+
 // refresh token route
 userRouter.post("/refresh-token", refreshToken);
 // -------------------- Auth Routes -------------------- //

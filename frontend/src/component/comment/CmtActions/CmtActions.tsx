@@ -11,7 +11,7 @@ import styles from "./CmtActions.module.scss";
 import { MdOutlineMessage } from "react-icons/md";
 import { useToggleCmtVote } from "../../../hook/vote/useToggleVote";
 import { useState } from "react";
-import CmtForm from "../CmtForm/CmtForm";
+import CmtCreateForm from "../CmtCreateForm/CmtCreateForm";
 
 function CmtActions({ cmt }: { cmt: Cmt }) {
   const { mutate, isPending } = useToggleCmtVote();
@@ -48,7 +48,7 @@ function CmtActions({ cmt }: { cmt: Cmt }) {
 
       {/* reply cmt's form */}
       {isRepling && (
-        <CmtForm
+        <CmtCreateForm
           blogId={cmt.blogId}
           parentId={cmt._id}
           isUsing={isRepling}
