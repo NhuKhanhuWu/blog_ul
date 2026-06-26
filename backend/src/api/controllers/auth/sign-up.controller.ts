@@ -1,14 +1,14 @@
 /** @format */
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import catchAsync from "../../utils/error/catch-async";
 import AppError from "../../utils/error/app-error";
 import UserModel from "../../models/user.model";
-import OtpModel from "../../models/otp.model";
 import { otpEmail } from "../../utils/email/email-template";
 import { sendTokenEmail } from "../../utils/email/email-service";
 import signToken from "../../utils/token/sign-token";
 import getToken from "../../utils/token/get-token";
+import { redisClient } from "../../utils/redis";
 
 interface DecodedToken extends JwtPayload {
   email: string;
@@ -16,41 +16,43 @@ interface DecodedToken extends JwtPayload {
 
 // 1. send verification email (otp)
 export const sendSignUpOtp = catchAsync(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  async (req: Request, res: Response): Promise<void> => {
     // 1. get & check email
     const { email } = req.body as { email?: string };
     if (!email) throw new AppError("Email required", 400);
 
     // 1.1 check if already in use
-    const userExists = await UserModel.findOne({ email });
+    const userExists = await UserModel.exists({ email });
     if (userExists) throw new AppError("Email already in use", 409);
 
     // 2. create otp
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = Date.now() + 5 * 60 * 1000; // 5 mins
+    const TTL_IN_SECONDS = 5 * 60; // 5 mins
 
-    // 3. save request to db
-    await OtpModel.findOneAndUpdate(
-      { email },
-      { otp, otpExpires },
-      { upsert: true, new: true },
-    );
+    // 3. save request to redis với key dạng otp:register:[email]
+    const redisKey = `otp:register:${email}`;
+
+    try {
+      await redisClient.set(redisKey, otp, {
+        EX: TTL_IN_SECONDS,
+      });
+    } catch (err) {
+      throw new AppError("Unable to create OTP, please try again later!", 500);
+    }
 
     // 4. send email
     const emailMessage = otpEmail(otp);
 
     // 5. send email & response (Fire off email tracking in the background)
-    sendTokenEmail({
-      email,
-      subject: "Your sign up OTP in Blogie",
-      htmlMessage: emailMessage,
-    }).catch((err) => {
-      // Catches errors without crashing the active client request cycle
-      console.error(
-        `Failed to dispatch background OTP email to ${email}:`,
-        err,
-      );
-    });
+    try {
+      await sendTokenEmail({
+        email,
+        subject: "Your sign up OTP in Blogie",
+        htmlMessage: emailMessage,
+      });
+    } catch (err) {
+      throw new AppError(`Failed to dispatch OTP email to ${email}`, 500);
+    }
 
     res.status(200).json({
       status: "success",
@@ -66,17 +68,17 @@ export const checkOtp = catchAsync(async (req, res) => {
   if (!otp || !email) throw new AppError("Otp and email required", 400);
 
   // 2. check if otp, email is valid
-  const pendingEmail = await OtpModel.findOne({ email });
+  const redisKey = `otp:register:${email}`;
+  const pendingOtp = await redisClient.get(redisKey);
+  if (!pendingOtp || pendingOtp !== otp) throw new AppError("Invalid otp", 400);
 
-  if (!pendingEmail || pendingEmail.otpExpires.getTime() < Date.now())
-    throw new AppError("Invalid email/otp", 400);
-
-  if (pendingEmail.otp !== otp) throw new AppError("Invalid otp", 400);
-
-  // 3. create jwt
+  // 4. create jwt
   const token = signToken({ email }, "30m");
 
-  // 4. send result
+  // 3. delete token
+  await redisClient.del(redisKey);
+
+  // 5. send result
   res.status(200).json({
     status: "success",
     token,
@@ -113,10 +115,6 @@ export const createUser = catchAsync(async (req, res) => {
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });
-
-  // delete request in PendingUser
-  // TODO: update to store otp in redis
-  await OtpModel.findOneAndDelete({ email });
 
   res.status(201).json({
     status: "success",
