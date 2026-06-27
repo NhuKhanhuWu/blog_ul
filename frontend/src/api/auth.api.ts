@@ -4,7 +4,7 @@ import axiosInstance from "../utils/axios-instance";
 import { AuthResponse, Login } from "../types/auth.type";
 
 export async function login({ email, password }: Login): Promise<AuthResponse> {
-  const response = await axiosInstance.post("/user/login", {
+  const response = await axiosInstance.post("/auth/login", {
     email,
     password,
   });
@@ -13,12 +13,12 @@ export async function login({ email, password }: Login): Promise<AuthResponse> {
 }
 
 export async function logout() {
-  await axiosInstance.post("/user/logout");
+  await axiosInstance.post("/auth/logout");
 }
 
 export async function refreshToken(): Promise<AuthResponse> {
   const response = await axiosInstance.post(
-    "/user/refresh-token",
+    "/auth/refresh-token",
     {},
     { withCredentials: true },
   );
