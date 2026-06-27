@@ -14,6 +14,7 @@ import cmtRouter from "./api/routers/comment.router";
 import voteRouter from "./api/routers/vote.router";
 import categoryRouter from "./api/routers/category.router";
 import { globalLimiter } from "./api/middlewares/global.middleware";
+import authRouter from "./api/routers/auth.router";
 
 const app = express();
 app.use(express.json());
@@ -42,6 +43,7 @@ app.use(globalLimiter);
 
 // ROUTER
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/blogs", blogRouter);
 app.use("/api/v1/blog-list", blogListRouter);
 app.use("/api/v1/cmt", cmtRouter);
