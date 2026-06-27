@@ -47,8 +47,13 @@ const userRouter = express.Router();
 
 // -------------------- Auth Routes -------------------- //
 // sign up route
-// userRouter.post("/signup", signupEmailLimiter, signupIpLimiter, sendSignUpOtp);
-userRouter.post("/signup", validateRequest(sendSignUpOtpSchema), sendSignUpOtp);
+userRouter.post(
+  "/signup",
+  signupEmailLimiter,
+  signupIpLimiter,
+  validateRequest(sendSignUpOtpSchema),
+  sendSignUpOtp,
+);
 userRouter.post("/signup/verify", checkOtp);
 userRouter.post("/signup/create-user", createUser);
 

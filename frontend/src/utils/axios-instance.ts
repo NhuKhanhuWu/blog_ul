@@ -9,6 +9,16 @@ interface IRetryAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
+// request that DOES NOT trigger refresh token
+const AUTH_WHITE_LIST = [
+  /^\/login/,
+  /^\/signup/,
+  /^\/refresh-token/,
+  /^\/forgot-password/,
+  /^\/categories/,
+  /^\/blogs$/,
+];
+
 const BASE_URL: string = import.meta.env.VITE_SERVER_URL || "";
 const axiosInstance = axios.create({
   baseURL: `${BASE_URL}/api/v1`,
@@ -42,16 +52,19 @@ function proccessQueue(error: unknown, token: string | null = null) {
   failQueue = [];
 }
 
+// ====== REFRESH TOKEN ======
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const ogRequest = error.config as IRetryAxiosRequestConfig;
 
-    // login and refresh-token requests does not trigger the refresh interceptor
-    if (
-      ogRequest.url?.includes("/user/login") ||
-      ogRequest.url?.includes("/user/refresh-token")
-    ) {
+    // requests that does not trigger the refresh interceptor
+    const requestUrl = ogRequest.url || "";
+    const isWhiteListed = AUTH_WHITE_LIST.some((regex) =>
+      regex.test(requestUrl),
+    );
+
+    if (isWhiteListed) {
       return Promise.reject(error);
     }
 
@@ -98,6 +111,18 @@ axiosInstance.interceptors.response.use(
     }
 
     return Promise.reject(error);
+  },
+);
+
+// ====== GET ERROR MESSAGE FROM SERVER ======
+axiosInstance.interceptors.response.use(
+  (response) => response, // Thành công thì cho qua
+  (error) => {
+    // get message from server
+    const serverMessage = error.response?.data?.message || error.message;
+
+    // throw new Error object contain this message
+    return Promise.reject(new Error(serverMessage));
   },
 );
 
