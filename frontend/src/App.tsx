@@ -15,17 +15,22 @@ import { store } from "./redux/store.ts";
 import axios from "axios";
 import { StyledEngineProvider } from "@mui/material/styles";
 import Loader from "./component/ui/Loader/Loader.tsx";
+import { SignUpLayout } from "./layout/SignUpLayout.tsx";
 
 // lazy load
 const AppLayout = lazy(() => import("./layout/AppLayout.tsx"));
 const Homepage = lazy(() => import("./page/Homepage/Homepage.tsx"));
-const BlogDetail = lazy(() => import("./page/BlogDetail/BlogDetail.tsx"));
-const Login = lazy(() => import("./page/Login/Login.tsx"));
-const Logout = lazy(() => import("./page/Logout/Logout.tsx"));
 const Me = lazy(() => import("./page/Me/Me.tsx"));
+
+const BlogDetail = lazy(() => import("./page/BlogDetail/BlogDetail.tsx"));
 const BlogListDetail = lazy(
   () => import("./page/BlogListDetail/BlogListDetail.tsx"),
 );
+
+const Login = lazy(() => import("./page/Login/Login.tsx"));
+const Logout = lazy(() => import("./page/Logout/Logout.tsx"));
+const SignUpEmail = lazy(() => import("./page/SignUpEmail/SignUpEmai.tsx"));
+const SignUpOtp = lazy(() => import("./page/SignUpOtp/SignUpOtp.tsx"));
 
 const router = createBrowserRouter([
   {
@@ -35,6 +40,15 @@ const router = createBrowserRouter([
       { element: <BlogDetail />, path: "/blog/:slug" },
       { element: <Login />, path: "/auth/login" },
       { element: <Logout />, path: "/user/logout" },
+      {
+        path: "/auth/signup",
+        element: <SignUpLayout />,
+        children: [
+          { index: true, element: <SignUpEmail /> }, // URL: /auth/signup
+          { path: "verify-otp", element: <SignUpOtp /> }, // URL: /auth/signup/verify-otp
+          // { path: "/setup-password", element: <PasswordStep /> }, // URL: /auth/signup/setup-password
+        ],
+      },
       { element: <Me />, path: "/user/me" },
       { element: <BlogListDetail />, path: "/list/:id" },
     ],
@@ -70,7 +84,12 @@ const queryClient = new QueryClient({
   }),
 
   mutationCache: new MutationCache({
-    onError: (error) => {
+    onError: (error, _variables, _context, mutation) => {
+      // check if this mutation required toast turn off
+      if (mutation.meta?.disableToast) {
+        return;
+      }
+
       if (axios.isAxiosError(error)) {
         const serverMessage = error.response?.data?.message || error.message;
         toast.error(serverMessage);

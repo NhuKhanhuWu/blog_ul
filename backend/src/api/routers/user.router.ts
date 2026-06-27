@@ -21,7 +21,7 @@ import { updateMe } from "../controllers/user/update-account.controller";
 import { protect } from "../middlewares/auth.middleware";
 import { validateRequest } from "../validation/validateRequest";
 import { updateMeSchema } from "../validation/user.validation";
-export const userRouter = express.Router();
+const userRouter = express.Router();
 
 // TODO: create change password here (only require current password)
 // user routes

@@ -25,3 +25,10 @@ export async function refreshToken(): Promise<AuthResponse> {
 
   return response.data;
 }
+
+// sign up
+export async function signUpEmailStep(email: string) {
+  const response = await axiosInstance.post("/user/signup", { email });
+
+  return response.data;
+}
