@@ -11,10 +11,10 @@ interface IRetryAxiosRequestConfig extends InternalAxiosRequestConfig {
 
 // request that DOES NOT trigger refresh token
 const AUTH_WHITE_LIST = [
-  /^\/login/,
-  /^\/signup/,
-  /^\/refresh-token/,
-  /^\/forgot-password/,
+  /^\/auth\/login/,
+  /^\/auth\/signup/,
+  /^\/auth\/refresh-token/,
+  /^\/auth\/forgot-password/,
   /^\/categories/,
   /^\/blogs$/,
 ];

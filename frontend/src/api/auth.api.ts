@@ -1,7 +1,12 @@
 /** @format */
 
 import axiosInstance from "../utils/axios-instance";
-import { AuthResponse, Login } from "../types/auth.type";
+import {
+  AuthResponse,
+  Login,
+  SignUpOtpArgs,
+  SignUpOtpResponse,
+} from "../types/auth.type";
 
 export async function login({ email, password }: Login): Promise<AuthResponse> {
   const response = await axiosInstance.post("/auth/login", {
@@ -28,7 +33,19 @@ export async function refreshToken(): Promise<AuthResponse> {
 
 // sign up
 export async function signUpEmailStep(email: string) {
-  const response = await axiosInstance.post("/user/signup", { email });
+  const response = await axiosInstance.post("/auth/signup", { email });
+
+  return response.data;
+}
+
+export async function signUpOtpStep({
+  email,
+  otp,
+}: SignUpOtpArgs): Promise<SignUpOtpResponse> {
+  const response = await axiosInstance.post("/auth/signup/verify", {
+    email,
+    otp,
+  });
 
   return response.data;
 }

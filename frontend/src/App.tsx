@@ -15,10 +15,12 @@ import { store } from "./redux/store.ts";
 import axios from "axios";
 import { StyledEngineProvider } from "@mui/material/styles";
 import Loader from "./component/ui/Loader/Loader.tsx";
-import { SignUpLayout } from "./layout/SignUpLayout.tsx";
 
 // lazy load
 const AppLayout = lazy(() => import("./layout/AppLayout.tsx"));
+const AuthFormLayout = lazy(
+  () => import("./layout/AuthFormLayout/AuthFormLayout.tsx"),
+);
 const Homepage = lazy(() => import("./page/Homepage/Homepage.tsx"));
 const Me = lazy(() => import("./page/Me/Me.tsx"));
 
@@ -38,15 +40,23 @@ const router = createBrowserRouter([
     children: [
       { element: <Homepage />, path: "/" },
       { element: <BlogDetail />, path: "/blog/:slug" },
-      { element: <Login />, path: "/auth/login" },
-      { element: <Logout />, path: "/user/logout" },
+
       {
-        path: "/auth/signup",
-        element: <SignUpLayout />,
+        path: "/auth",
+        element: <AuthFormLayout />,
         children: [
-          { index: true, element: <SignUpEmail /> }, // URL: /auth/signup
-          { path: "verify-otp", element: <SignUpOtp /> }, // URL: /auth/signup/verify-otp
-          // { path: "/setup-password", element: <PasswordStep /> }, // URL: /auth/signup/setup-password
+          // sign up
+          {
+            path: "signup",
+            children: [
+              { index: true, element: <SignUpEmail /> }, // URL: /auth/signup
+              { path: "verify-otp", element: <SignUpOtp /> }, // URL: /auth/signup/verify-otp
+              // { path: "/setup-password", element: <PasswordStep /> }, // URL: /auth/signup/setup-password
+            ],
+          },
+
+          { element: <Login />, path: "login" },
+          { element: <Logout />, path: "logout" },
         ],
       },
       { element: <Me />, path: "/user/me" },
