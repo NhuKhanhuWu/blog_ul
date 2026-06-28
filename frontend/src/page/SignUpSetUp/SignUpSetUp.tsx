@@ -23,7 +23,7 @@ const formSchema = yup.object().shape({
 
 type FormSchemaProps = yup.InferType<typeof formSchema>;
 
-function SignUpPassword() {
+function SignUpSetUp() {
   // sign up token
   const { token } = useSignUp();
 
@@ -84,4 +84,4 @@ function SignUpPassword() {
   );
 }
 
-export default SignUpPassword;
+export default SignUpSetUp;
