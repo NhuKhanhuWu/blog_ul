@@ -6,7 +6,7 @@ import { MdPassword } from "react-icons/md";
 import { GoXCircleFill } from "react-icons/go";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
-import styles from "./AuthInput.module.scss";
+import styles from "./Input.module.scss";
 import { Path } from "react-hook-form";
 import { useState } from "react";
 import { Props } from "../../types/auth.type";
@@ -32,6 +32,7 @@ export function PasswordField<T extends FieldValues>({
           type={isShowPass ? "text" : "password"}
         />
 
+        {/* show/hide pass btn */}
         {passwordValue &&
           (isShowPass ? (
             <FaRegEyeSlash
@@ -45,6 +46,7 @@ export function PasswordField<T extends FieldValues>({
             />
           ))}
 
+        {/* clear field */}
         {passwordValue && (
           <GoXCircleFill
             className="btn-reset--input"

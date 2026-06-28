@@ -6,6 +6,8 @@ import {
   Login,
   SignUpOtpArgs,
   SignUpOtpResponse,
+  SignUpPasswordArgs,
+  User,
 } from "../types/auth.type";
 
 export async function login({ email, password }: Login): Promise<AuthResponse> {
@@ -46,6 +48,21 @@ export async function signUpOtpStep({
     email,
     otp,
   });
+
+  return response.data;
+}
+
+export async function signUpPasswordStep({
+  username,
+  token,
+  password,
+  passwordConfirm,
+}: SignUpPasswordArgs): Promise<User> {
+  const response = await axiosInstance.post(
+    "/auth/signup/create-user",
+    { name: username, password, passwordConfirm },
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
 
   return response.data;
 }

@@ -36,6 +36,8 @@ export interface Login {
   password: string;
 }
 
+// ---- sign up -----
+// otp
 export interface SignUpOtpArgs {
   otp: string;
   email: string;
@@ -43,6 +45,14 @@ export interface SignUpOtpArgs {
 
 export interface SignUpOtpResponse {
   token: string;
+}
+
+// password
+export interface SignUpPasswordArgs {
+  username: string;
+  token: string;
+  password: string;
+  passwordConfirm: string;
 }
 
 // auth form fields interface

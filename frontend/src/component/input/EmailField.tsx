@@ -4,7 +4,7 @@ import { FieldValues, Path, useWatch } from "react-hook-form";
 import { Props } from "../../types/auth.type";
 import { IoMailOutline } from "react-icons/io5";
 import { GoXCircleFill } from "react-icons/go";
-import styles from "./AuthInput.module.scss";
+import styles from "./Input.module.scss";
 
 function EmailField<T extends FieldValues>({
   register,

@@ -8,7 +8,7 @@ import { emaiSchema } from "../../utils/form-schema";
 import AuthHeader from "../../component/auth/AuthHeader/AuthHeader";
 import AuthFooter from "../../component/auth/AuthFooter/AuthFooter";
 import useSignUpEmailStep from "../../hook/auth/useSignUpEmailStep";
-import EmailField from "../../component/auth/EmailField";
+import EmailField from "../../component/input/EmailField.tsx";
 
 const formSchema = yup.object().shape({
   email: emaiSchema,

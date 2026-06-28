@@ -9,7 +9,7 @@ import {
   PathValue,
   Path,
 } from "react-hook-form";
-import styles from "./AuthInput.module.scss";
+import styles from "./Input.module.scss";
 
 interface OtpInputFieldProps<T extends FieldValues> {
   name: Path<T>;

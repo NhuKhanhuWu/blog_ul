@@ -10,8 +10,8 @@ import AuthHeader from "../../component/auth/AuthHeader/AuthHeader";
 import AuthFooter from "../../component/auth/AuthFooter/AuthFooter";
 import { useAppDispatch, useAppSelector } from "../../hook/reduxHooks";
 import { loginThunk } from "../../redux/auth.slice";
-import EmailField from "../../component/auth/EmailField";
-import { PasswordField } from "../../component/auth/PasswordField";
+import EmailField from "../../component/input/EmailField";
+import { PasswordField } from "../../component/input/PasswordField";
 
 const formSchema = yup.object().shape({
   email: emaiSchema,

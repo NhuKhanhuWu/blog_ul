@@ -20,7 +20,7 @@ function useSignUpOtpStep() {
       setFields({ token: response.token });
 
       // navigate to password page
-      navigate("password");
+      navigate("/auth/signup/setup-password");
     },
   });
 }

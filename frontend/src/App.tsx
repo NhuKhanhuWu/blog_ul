@@ -31,8 +31,13 @@ const BlogListDetail = lazy(
 
 const Login = lazy(() => import("./page/Login/Login.tsx"));
 const Logout = lazy(() => import("./page/Logout/Logout.tsx"));
+
+const SignUpGuardLayout = lazy(() => import("./layout/SignUpGuardLayout.tsx"));
 const SignUpEmail = lazy(() => import("./page/SignUpEmail/SignUpEmai.tsx"));
 const SignUpOtp = lazy(() => import("./page/SignUpOtp/SignUpOtp.tsx"));
+const SignUpPassword = lazy(
+  () => import("./page/SignUpPassword/SignUpPassword.tsx"),
+);
 
 const router = createBrowserRouter([
   {
@@ -48,10 +53,11 @@ const router = createBrowserRouter([
           // sign up
           {
             path: "signup",
+            element: <SignUpGuardLayout />,
             children: [
               { index: true, element: <SignUpEmail /> }, // URL: /auth/signup
               { path: "verify-otp", element: <SignUpOtp /> }, // URL: /auth/signup/verify-otp
-              // { path: "/setup-password", element: <PasswordStep /> }, // URL: /auth/signup/setup-password
+              { path: "setup-password", element: <SignUpPassword /> }, // URL: /auth/signup/setup-password
             ],
           },
 
