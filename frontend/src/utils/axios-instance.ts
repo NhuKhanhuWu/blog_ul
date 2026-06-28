@@ -11,10 +11,10 @@ interface IRetryAxiosRequestConfig extends InternalAxiosRequestConfig {
 
 // request that DOES NOT trigger refresh token
 const AUTH_WHITE_LIST = [
-  /^\/login/,
-  /^\/signup/,
-  /^\/refresh-token/,
-  /^\/forgot-password/,
+  /^\/auth\/login/,
+  /^\/auth\/signup/,
+  /^\/auth\/refresh-token/,
+  /^\/auth\/forgot-password/,
   /^\/categories/,
   /^\/blogs$/,
 ];
@@ -31,7 +31,9 @@ axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const state = store.getState();
   const token = state.auth.accessToken;
 
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  // only attach token when not set yet
+  if (token && !config.headers.Authorization)
+    config.headers.Authorization = `Bearer ${token}`;
 
   return config;
 });

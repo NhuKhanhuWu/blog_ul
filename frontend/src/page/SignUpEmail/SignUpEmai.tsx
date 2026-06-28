@@ -4,12 +4,11 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import styles from "../../component/auth/Auth.module.scss";
 import { emaiSchema } from "../../utils/form-schema";
-import AuthHeader from "../../component/auth/AuthHeader";
-import { Email } from "../../component/auth/AuthInputs";
-import AuthFooter from "../../component/auth/AuthFooter";
+import AuthHeader from "../../component/auth/AuthHeader/AuthHeader";
+import AuthFooter from "../../component/auth/AuthFooter/AuthFooter";
 import useSignUpEmailStep from "../../hook/auth/useSignUpEmailStep";
+import EmailField from "../../component/input/EmailField.tsx";
 
 const formSchema = yup.object().shape({
   email: emaiSchema,
@@ -37,29 +36,27 @@ function SignUpEmail() {
   }
 
   return (
-    <div className={styles.wrapper}>
-      <form className={styles.form} onSubmit={handleSubmit(submitHandler)}>
-        <AuthHeader subtitle="Create a blogie account" title="Join us now" />
+    <form onSubmit={handleSubmit(submitHandler)}>
+      <AuthHeader subtitle="Create a blogie account" title="Join us now" />
 
-        {isError && <p className="error-mgs">{error.message}</p>}
+      {isError && <p className="error-mgs">{error.message}</p>}
 
-        <Email
-          isLoading={isPending}
-          control={control}
-          errors={formErrors}
-          register={register}
-          resetField={resetField}
-        />
+      <EmailField
+        isLoading={isPending}
+        control={control}
+        errors={formErrors}
+        register={register}
+        resetField={resetField}
+      />
 
-        <button
-          type="submit"
-          className={`btn-primary ${styles.submitBtn} ${isPending && ".disabled"}`}>
-          Sign up
-        </button>
+      <button
+        type="submit"
+        className={`btn-primary ${isPending && "disabled"}`}>
+        Sign up
+      </button>
 
-        <AuthFooter type="signup" />
-      </form>
-    </div>
+      <AuthFooter type="signup" />
+    </form>
   );
 }
 

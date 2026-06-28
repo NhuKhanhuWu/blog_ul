@@ -233,6 +233,7 @@ select {
   color: var(--text-muted);
   pointer-events: none;
   cursor: not-allowed;
+  background-color: var(--border-color);
 }
 
 .hidden {

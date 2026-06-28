@@ -13,7 +13,7 @@ const navItemsGeneral = [
 
 const navItemsLogin = [
   { text: "Account", link: "user/me" },
-  { text: "Log out", link: "user/logout" },
+  { text: "Log out", link: "auth/logout" },
 ];
 
 const navItemsGuest = [

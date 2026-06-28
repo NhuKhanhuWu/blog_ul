@@ -6,7 +6,7 @@ import { useSignUp } from "../../context/SignUpContext";
 import { useNavigate } from "react-router-dom";
 
 function useSignUpEmailStep() {
-  const { setEmail } = useSignUp();
+  const { setFields } = useSignUp();
   const navigate = useNavigate();
 
   return useMutation({
@@ -18,7 +18,7 @@ function useSignUpEmailStep() {
 
     onSuccess: (_response, data) => {
       // set email on sign context
-      setEmail(data);
+      setFields({ email: data });
 
       // move to otp page
       navigate("verify-otp");
