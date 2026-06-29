@@ -4,6 +4,7 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { store } from "../redux/store";
 import { setAccessToken } from "../redux/auth.slice";
 import { refreshToken } from "../api/auth.api";
+import { deviceId as getUserDeviceId } from "./deviceId";
 
 interface IRetryAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -34,6 +35,16 @@ axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   // only attach token when not set yet
   if (token && !config.headers.Authorization)
     config.headers.Authorization = `Bearer ${token}`;
+
+  return config;
+});
+
+// ------------attach device id------------
+axiosInstance.interceptors.request.use(async (config) => {
+  const deviceId = await getUserDeviceId();
+
+  // attach id to header: 'x-device-id'
+  config.headers["x-device-id"] = deviceId;
 
   return config;
 });

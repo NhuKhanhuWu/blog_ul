@@ -68,7 +68,7 @@ export const forgotPasswordOtpLimiterEmail = createLimiter({
   keyGenerator: (req) => req.body.email,
 }); // For forgot-password OTP: limit 10 request per 1 hour by IP
 
-export const forgotPasswordOtpLimiterIP = createLimiter({
+export const forgotPasswordOtpLimiterDevice = createLimiter({
   max: 15,
   windowMs: 60 * 60 * 1000,
   message:
@@ -87,15 +87,12 @@ export const loginLimiter = createLimiter({
 export const logoutLimiter = createLimiter({
   max: 10,
   windowMs: 60 * 1000, //1 min
-  message: "Too many request. Please try again later.",
 });
 
 // ----------- refresh token -----------
 export const refreshLimiter = createLimiter({
   max: 20,
   windowMs: 5 * 60 * 1000,
-  message: "Too many requests. Please try again later.",
-  skipSuccessfulRequests: true,
 });
 
 // ----------- signup -----------
