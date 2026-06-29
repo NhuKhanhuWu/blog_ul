@@ -8,7 +8,7 @@ interface RateLimitOptions {
   max: number; // max number of requests allowed per window
 
   // response message when limit is exceeded
-  message: string;
+  message?: string;
 
   // function to generate a unique key per request (default: req.ip)
   keyGenerator?: (req: Request) => string;
@@ -17,10 +17,11 @@ interface RateLimitOptions {
   skipSuccessfulRequests?: boolean;
 }
 
+// TODO: update limiter, see https://gemini.google.com/app/937344a0f4794f6a
 export function createLimiter({
   max,
   windowMs,
-  message,
+  message = "Too many request. Please try again later",
   keyGenerator,
   skipSuccessfulRequests = false,
 }: RateLimitOptions) {
@@ -29,7 +30,29 @@ export function createLimiter({
     max, // e.g., 1 request in the window
     message:
       typeof message === "function" ? message : { status: "fail", message },
-    keyGenerator: keyGenerator || ((req) => req.ip || "unknown"), // default to IP if not provided,
     skipSuccessfulRequests,
+
+    keyGenerator:
+      keyGenerator ||
+      ((req) => {
+        const clientIp = req.ip || "unknown";
+
+        // if user LOGIN: use User ID
+        const userId = req.user?.id;
+        if (userId) {
+          return `user:${userId}`;
+        }
+
+        // get Device ID from header
+        const deviceId = req.headers["x-device-id"];
+
+        if (deviceId) {
+          // combine IP and Device ID
+          return `device:${clientIp}:${deviceId}`;
+        }
+
+        // fallback: if request does not have device-id (use tool like postman) => use ip
+        return `ip:${clientIp}`;
+      }),
   });
 }

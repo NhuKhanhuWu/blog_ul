@@ -17,7 +17,7 @@ cmtRouter.route("/my-cmt").get(protect, getCmtByUser);
 
 cmtRouter
   .route("/:id")
-  .patch(updateCmtLimiter, protect, authorizedCmt, updateCmt) // update cmt
-  .delete(deleteCmtLimiter, protect, authorizedCmt, softDeleteCmt); // soft delete cmt
+  .patch(protect, updateCmtLimiter, authorizedCmt, updateCmt) // update cmt
+  .delete(protect, deleteCmtLimiter, authorizedCmt, softDeleteCmt); // soft delete cmt
 
 export default cmtRouter;

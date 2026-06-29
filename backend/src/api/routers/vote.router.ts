@@ -16,9 +16,9 @@ const voteRouter = express.Router();
 voteRouter
   .route("/")
   .post(
+    protect,
     burstToggleVoteLimiter,
     toggleVoteLimiter,
-    protect,
     validateRequest(toggleVoteSchema),
     toggleVote,
   );

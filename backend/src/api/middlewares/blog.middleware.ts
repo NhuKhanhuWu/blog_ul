@@ -17,5 +17,4 @@ export const updateBlogLimiter = createLimiter({
 export const deleteBlogLimiter = createLimiter({
   max: 15,
   windowMs: 60 * 1000, // 1 min
-  message: "Too many request. Please try again later",
 });
