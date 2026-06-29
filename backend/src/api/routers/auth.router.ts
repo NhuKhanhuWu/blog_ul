@@ -16,7 +16,7 @@ import {
 } from "../controllers/auth/sign-up.controller";
 import {
   forgotPasswordOtpLimiterEmail,
-  forgotPasswordOtpLimiterIP,
+  forgotPasswordOtpLimiterDevice,
   loginLimiter,
   signupEmailLimiter,
   signupIpLimiter,
@@ -51,7 +51,7 @@ authRouter.post("/logout", logout);
 authRouter.post(
   "/forgot-password",
   forgotPasswordOtpLimiterEmail,
-  forgotPasswordOtpLimiterIP,
+  forgotPasswordOtpLimiterDevice,
   validateRequest(forgotPasswordSchema),
   forgotPassword,
 );

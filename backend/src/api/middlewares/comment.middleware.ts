@@ -16,13 +16,11 @@ export const createCmtLimiter = createLimiter({
 export const updateCmtLimiter = createLimiter({
   max: 15,
   windowMs: 60 * 100, // 1 min
-  message: "Too many request. Please try again later",
 });
 
 export const deleteCmtLimiter = createLimiter({
   max: 15,
   windowMs: 60 * 100, // 1 min
-  message: "Too many request. Please try again later",
 });
 
 export const validateCmtConstraints = catchAsync(async (req, res, next) => {

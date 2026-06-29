@@ -28,17 +28,17 @@ const userRouter = express.Router();
 userRouter
   .route("/me")
   .get(protect, getMe)
-  .patch(updateUserLimiter, validateRequest(updateMeSchema), protect, updateMe);
+  .patch(protect, updateUserLimiter, validateRequest(updateMeSchema), updateMe);
 
 userRouter.route("/:slug").get(getUserBySlug);
 
-userRouter.patch("/change-password", changePassLimiter, protect, changePass);
+userRouter.patch("/change-password", protect, changePassLimiter, changePass);
 
 userRouter.post(
   "/change-email",
+  protect,
   changeEmailByUserLimiter,
   changeEmailByIPLimiter,
-  protect,
   changeEmail,
 );
 
