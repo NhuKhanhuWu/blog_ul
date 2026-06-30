@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { getDateDistance } from "../../../utils/date";
 import { ShowMoreText } from "../../ui/ShowMoreText/ShowMoreText";
 import CmtPopover from "../CmtPopover/CmtPopover";
-import { useAppSelector } from "../../../hook/reduxHooks";
+import { useAppSelector } from "../../../hook/shared/reduxHooks";
 import { useCmtItem } from "../../../context/CmtItemContext";
 
 function CmtContent() {

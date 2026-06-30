@@ -9,7 +9,7 @@ import Loader from "../../ui/Loader/Loader.tsx";
 import Error from "../../ui/Error/Error.tsx";
 import styles from "./Blogs.module.scss";
 import InfinityObserver from "../../ui/InfinityObserver/InfinityObserver.tsx";
-import { useIntersectionObserver } from "../../../hook/useIntersectionObserver.ts";
+import { useIntersectionObserver } from "../../../hook/shared/useIntersectionObserver.ts";
 import NotFound from "../../ui/NotFound/NotFound.tsx";
 import { useMemo, useState } from "react";
 import { FaList } from "react-icons/fa";

@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import { useAppSelector } from "../../../hook/reduxHooks";
+import { useAppSelector } from "../../../hook/shared/reduxHooks";
 import styles from "./CmtCreateForm.module.scss";
 import defaultAvatar from "../../../utils/default-avatar";
 import { useCreateCmt } from "../../../hook/cmt/useCreateCmt";

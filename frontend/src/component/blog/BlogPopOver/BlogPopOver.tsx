@@ -4,7 +4,7 @@ import styles from "./BlogPopOver.module.scss";
 
 import { SlOptionsVertical } from "react-icons/sl";
 import { ReactNode, useState } from "react";
-import { useAppSelector } from "../../../hook/reduxHooks";
+import { useAppSelector } from "../../../hook/shared/reduxHooks";
 import { BlogSimplify } from "../../../types/blog.type";
 import Popover from "@mui/material/Popover";
 import BookMark from "../BookMark/BookMark";
