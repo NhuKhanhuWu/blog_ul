@@ -1,7 +1,7 @@
 /** @format */
 
 import { useQuery } from "@tanstack/react-query";
-import { useAppSelector } from "../../../hook/reduxHooks";
+import { useAppSelector } from "../../../hook/shared/reduxHooks";
 import { getMultList } from "../../../api/blog-list.api";
 import Loader from "../../ui/Loader/Loader";
 import { Link } from "react-router-dom";

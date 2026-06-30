@@ -9,6 +9,7 @@ import AuthHeader from "../../component/auth/AuthHeader/AuthHeader";
 import AuthFooter from "../../component/auth/AuthFooter/AuthFooter";
 import useSignUpEmailStep from "../../hook/auth/useSignUpEmailStep";
 import EmailField from "../../component/input/EmailField.tsx";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = yup.object().shape({
   email: emaiSchema,
@@ -31,8 +32,16 @@ function SignUpEmail() {
   // request
   const { mutate, isPending, isError, error } = useSignUpEmailStep();
 
+  // redirect
+  const navigate = useNavigate();
+
   function submitHandler(data: FormSchemaProps) {
-    mutate(data.email);
+    mutate(data.email, {
+      onSuccess: () => {
+        // move to otp page
+        navigate("verify-otp");
+      },
+    });
   }
 
   return (

@@ -98,14 +98,14 @@ export const refreshLimiter = createLimiter({
 // ----------- signup -----------
 export const signupEmailLimiter = createLimiter({
   max: 1, // 1 request
-  windowMs: 60 * 1000, // 3 mins,
+  windowMs: 60 * 1000, // 1 min,
   message:
     "You can only request signup OTP once every 1 minute with this email.",
   keyGenerator: (req) => req.body.email,
 });
 
 export const signupIpLimiter = createLimiter({
-  max: 15, // 15 request
+  max: 30, // 15 request
   windowMs: 60 * 60 * 1000, // 1 hour,
   message:
     "You can only request signup OTP 15 times every 1 hour with this IP.",

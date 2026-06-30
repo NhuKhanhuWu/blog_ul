@@ -194,9 +194,9 @@ select {
   }
 }
 
-// .btn {
-//   cursor: pointer;
-// }
+.btn {
+  cursor: pointer;
+}
 
 .btn-primary {
   border: 1.5px solid var(--border-color);
@@ -244,6 +244,7 @@ select {
   font-weight: 600;
   font-style: italic;
   text-decoration: underline;
+  color: var(--accent-color);
 }
 
 .link {

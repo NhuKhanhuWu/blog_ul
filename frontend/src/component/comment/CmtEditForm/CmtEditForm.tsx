@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import { useAppSelector } from "../../../hook/reduxHooks";
+import { useAppSelector } from "../../../hook/shared/reduxHooks";
 import styles from "./CmtEditForm.module.scss";
 import defaultAvatar from "../../../utils/default-avatar";
 import { useCmtItem } from "../../../context/CmtItemContext";

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Loader from "../../ui/Loader/Loader.tsx";
 import Error from "../../ui/Error/Error.tsx";
-import { useIntersectionObserver } from "../../../hook/useIntersectionObserver.ts";
+import { useIntersectionObserver } from "../../../hook/shared/useIntersectionObserver.ts";
 import InfinityObserver from "../../ui/InfinityObserver/InfinityObserver.tsx";
 import CmtMinimize from "../CmtMinimize/CmtMinimize.tsx";
 import CmtModal from "../CmtModal/CmtModal.tsx";

@@ -8,7 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { emaiSchema, passwordSchema } from "../../utils/form-schema";
 import AuthHeader from "../../component/auth/AuthHeader/AuthHeader";
 import AuthFooter from "../../component/auth/AuthFooter/AuthFooter";
-import { useAppDispatch, useAppSelector } from "../../hook/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../../hook/shared/reduxHooks";
 import { loginThunk } from "../../redux/auth.slice";
 import EmailField from "../../component/input/EmailField";
 import { PasswordField } from "../../component/input/PasswordField";
