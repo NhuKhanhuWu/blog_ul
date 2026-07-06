@@ -1,0 +1,20 @@
+/** @format */
+
+.logo {
+  width: 10rem;
+}
+
+.welcomeTxt {
+  h1 {
+    font-size: 2rem;
+    font-weight: 500;
+
+    @include respond(lg) {
+      font-size: 1.7rem;
+    }
+  }
+
+  p {
+    color: $dark-400;
+  }
+}

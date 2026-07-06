@@ -3,8 +3,6 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AuthResponse, AuthState, Login, User } from "../types/auth.type";
 import { login, logout as logoutService, refreshToken } from "../api/auth.api";
 import { getMe } from "../api/user.api";
-import axios from "axios";
-import { IApiError } from "../types/api.type";
 
 interface ISetCredentialsPayload {
   user: User;
@@ -27,10 +25,13 @@ export const loginThunk = createAsyncThunk<
   try {
     return await login(data);
   } catch (error) {
-    if (axios.isAxiosError<IApiError>(error)) {
-      return rejectWithValue(error.response?.data.message ?? "Login failed");
+    // Check if it's a native JS Error instance instead of an AxiosError
+    if (error instanceof Error) {
+      // error.message here
+      return rejectWithValue(error.message);
     }
 
+    // Fallback for extreme edge cases
     return rejectWithValue("Something went wrong");
   }
 });

@@ -2,7 +2,7 @@
 
 import { Outlet } from "react-router";
 import NavBar from "../component/ui/NavBar/NavBar.tsx";
-import { useAppDispatch } from "../hook/reduxHooks";
+import { useAppDispatch } from "../hook/shared/reduxHooks.ts";
 import { useEffect, useState } from "react";
 import { getMeThunk, refreshThunk } from "../redux/auth.slice";
 import "../styles/general.scss";
@@ -31,7 +31,9 @@ function AppLayout() {
   if (!authReady) return <Loader />;
 
   return (
-    <div className="light">
+    <div
+      className="light"
+      style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <NavBar></NavBar>
 
       <main>

@@ -27,6 +27,7 @@ export interface UserDocument extends Document {
   passwordChangedAt?: Date | undefined;
   createdAt: Date;
   updatedAt: Date;
+  tokenVersion: number; // for refresh token invalidation
 
   // methobs
   checkPassword(candidatePassword: string): Promise<boolean>;

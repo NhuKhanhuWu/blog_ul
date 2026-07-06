@@ -11,7 +11,7 @@ function AuthFooter({ type }: Props) {
     return (
       <p>
         Don't have an account?{" "}
-        <Link className="link" to="/auth-signup">
+        <Link className="link" to="/auth/signup">
           Sign up
         </Link>
       </p>
@@ -21,7 +21,7 @@ function AuthFooter({ type }: Props) {
   return (
     <p>
       Already have an account?{" "}
-      <Link className="link" to="/auth-login">
+      <Link className="link" to="/auth/login">
         Log in
       </Link>
     </p>

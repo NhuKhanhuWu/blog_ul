@@ -7,7 +7,7 @@ import BlogsTab from "../../component/profile/BlogsTab/BlogsTab";
 import { useState } from "react";
 import a11yProps from "../../utils/a11yProps";
 import CustomTabPanel from "../../component/ui/CustomTabPanel/CustomTabPanel";
-import { useAppSelector } from "../../hook/reduxHooks";
+import { useAppSelector } from "../../hook/shared/reduxHooks";
 import ProfileHeader from "../../component/profile/ProfileHeader/ProfileHeader";
 import styles from "./Me.module.scss";
 import { Link } from "react-router-dom";
@@ -15,11 +15,8 @@ import { Link } from "react-router-dom";
 function ActionBtns() {
   return (
     <div className={styles.profileActions}>
-      {/* account setting */}
-      <button className="btn-secondary">Edit profile</button>
-
-      <Link to="/account/setting" className="btn-secondary">
-        Account setting
+      <Link to="/account/setting/email" className="btn-secondary">
+        Account centre
       </Link>
     </div>
   );

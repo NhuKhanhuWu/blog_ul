@@ -1,7 +1,7 @@
 /** @format */
 
 import { useState } from "react";
-import { useAppSelector } from "../../../hook/reduxHooks";
+import { useAppSelector } from "../../../hook/shared/reduxHooks";
 import { useToggleBlogVote } from "../../../hook/vote/useToggleVote";
 import { NormalizedBlog } from "../../../types/blog.type";
 import ModalOverlay from "../../ui/Modal/Modal";

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../hook/reduxHooks";
+import { useAppDispatch } from "../../hook/shared/reduxHooks";
 import { logoutThunk } from "../../redux/auth.slice";
 
 function Logout() {

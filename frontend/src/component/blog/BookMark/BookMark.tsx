@@ -4,7 +4,7 @@ import { MdBookmark, MdOutlineBookmarkBorder } from "react-icons/md";
 import toast from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
 import { FaPlus } from "react-icons/fa6";
-import { useAppSelector } from "../../../hook/reduxHooks";
+import { useAppSelector } from "../../../hook/shared/reduxHooks";
 import { ReactNode, useEffect, useState } from "react";
 import ModalOverlay from "../../ui/Modal/Modal";
 import useAddBlog from "../../../hook/blog-list/useAddBlog";

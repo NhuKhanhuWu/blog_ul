@@ -1,12 +1,60 @@
 /** @format */
 
+import { Request, Response } from "express";
 import UserModel from "../../models/user.model";
+import { UserDocument } from "../../types/user.type";
 import AppError from "../../utils/error/app-error";
 import catchAsync from "../../utils/error/catch-async";
+import {
+  createAccessToken,
+  createRefreshToken,
+} from "../../utils/token/create-token";
+import RefreshToken from "../../models/refresh-token.model";
 
-export const changePass = catchAsync(async (req, res, next) => {
-  const { password, passwordConfirm, currentPassword } = req.body;
-  const { accessToken } = req;
+const handleUserSessions = async (
+  user: UserDocument,
+  req: Request,
+  res: Response,
+) => {
+  const { isLogoutOthers = true } = req.body; //log out by default
+
+  user.passwordChangedAt = new Date(Date.now());
+
+  // if logout in others device
+  if (isLogoutOthers) {
+    // increase token version
+    user.tokenVersion += 1;
+
+    // create new refresh token
+    const refreshToken = createRefreshToken(user.id, user.tokenVersion);
+
+    // save token to db
+    RefreshToken.create({
+      userId: user._id,
+      token: refreshToken,
+      sessionExpiresAt: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000), // 20 days
+    });
+
+    // save token to cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 20 * 24 * 60 * 60 * 1000,
+      path: "/",
+    });
+  }
+
+  // create access token
+  const accessToken = createAccessToken(user.id, user.tokenVersion);
+
+  return accessToken;
+};
+
+export const changePass = catchAsync(async (req, res) => {
+  const { password, passwordConfirm, currentPassword, isLogoutOthers } =
+    req.body;
+  // const { accessToken } = req;
 
   // check if data is present
   if (!password || !passwordConfirm || !currentPassword) {
@@ -44,6 +92,10 @@ export const changePass = catchAsync(async (req, res, next) => {
   // update password
   user.password = password;
   user.passwordConfirm = passwordConfirm;
+
+  // update session
+  const accessToken = await handleUserSessions(user, req, res);
+
   await user.save();
 
   // send response

@@ -3,7 +3,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { Link, NavLink } from "react-router";
 import styles from "./Navbar.module.scss";
-import { useAppSelector } from "../../../hook/reduxHooks";
+import { useAppSelector } from "../../../hook/shared/reduxHooks";
 import getLogo from "../../../utils/get-logo";
 
 const navItemsGeneral = [
@@ -13,7 +13,7 @@ const navItemsGeneral = [
 
 const navItemsLogin = [
   { text: "Account", link: "user/me" },
-  { text: "Log out", link: "user/logout" },
+  { text: "Log out", link: "auth/logout" },
 ];
 
 const navItemsGuest = [

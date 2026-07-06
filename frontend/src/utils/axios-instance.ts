@@ -4,10 +4,21 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { store } from "../redux/store";
 import { setAccessToken } from "../redux/auth.slice";
 import { refreshToken } from "../api/auth.api";
+import { deviceId as getUserDeviceId } from "./deviceId";
 
 interface IRetryAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
+
+// request that DOES NOT trigger refresh token
+const AUTH_WHITE_LIST = [
+  /^\/auth\/login/,
+  /^\/auth\/signup/,
+  /^\/auth\/refresh-token/,
+  /^\/auth\/forgot-password/,
+  /^\/categories/,
+  /^\/blogs$/,
+];
 
 const BASE_URL: string = import.meta.env.VITE_SERVER_URL || "";
 const axiosInstance = axios.create({
@@ -21,7 +32,19 @@ axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const state = store.getState();
   const token = state.auth.accessToken;
 
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  // only attach token when not set yet
+  if (token && !config.headers.Authorization)
+    config.headers.Authorization = `Bearer ${token}`;
+
+  return config;
+});
+
+// ------------attach device id------------
+axiosInstance.interceptors.request.use(async (config) => {
+  const deviceId = await getUserDeviceId();
+
+  // attach id to header: 'x-device-id'
+  config.headers["x-device-id"] = deviceId;
 
   return config;
 });
@@ -42,16 +65,19 @@ function proccessQueue(error: unknown, token: string | null = null) {
   failQueue = [];
 }
 
+// ====== REFRESH TOKEN ======
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const ogRequest = error.config as IRetryAxiosRequestConfig;
 
-    // login and refresh-token requests does not trigger the refresh interceptor
-    if (
-      ogRequest.url?.includes("/user/login") ||
-      ogRequest.url?.includes("/user/refresh-token")
-    ) {
+    // requests that does not trigger the refresh interceptor
+    const requestUrl = ogRequest.url || "";
+    const isWhiteListed = AUTH_WHITE_LIST.some((regex) =>
+      regex.test(requestUrl),
+    );
+
+    if (isWhiteListed) {
       return Promise.reject(error);
     }
 
@@ -98,6 +124,18 @@ axiosInstance.interceptors.response.use(
     }
 
     return Promise.reject(error);
+  },
+);
+
+// ====== GET ERROR MESSAGE FROM SERVER ======
+axiosInstance.interceptors.response.use(
+  (response) => response, // Thành công thì cho qua
+  (error) => {
+    // get message from server
+    const serverMessage = error.response?.data?.message || error.message;
+
+    // throw new Error object contain this message
+    return Promise.reject(new Error(serverMessage));
   },
 );
 

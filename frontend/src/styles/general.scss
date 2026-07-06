@@ -91,6 +91,11 @@ input[type="checkbox"] {
   &:checked {
     background-color: var(--accent-color);
   }
+
+  &:disabled {
+    cursor: not-allowed;
+    color: var(--text-muted);
+  }
 }
 
 input[type="radio"] {
@@ -194,9 +199,9 @@ select {
   }
 }
 
-// .btn {
-//   cursor: pointer;
-// }
+.btn {
+  cursor: pointer;
+}
 
 .btn-primary {
   border: 1.5px solid var(--border-color);
@@ -233,6 +238,7 @@ select {
   color: var(--text-muted);
   pointer-events: none;
   cursor: not-allowed;
+  background-color: var(--border-color);
 }
 
 .hidden {
@@ -243,6 +249,7 @@ select {
   font-weight: 600;
   font-style: italic;
   text-decoration: underline;
+  color: var(--accent-color);
 }
 
 .link {

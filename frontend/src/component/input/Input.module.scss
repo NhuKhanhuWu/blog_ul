@@ -1,0 +1,43 @@
+/** @format */
+
+@use "../../styles/_mixins.scss" as *;
+
+.inputContainer {
+  width: 100%;
+  text-align: left;
+
+  > div {
+    height: 4rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .icon {
+    font-size: 2.8rem;
+    color: $dark-400;
+  }
+
+  input {
+    width: 100%;
+    border: none;
+  }
+
+  .disabled {
+    @include disabled;
+  }
+}
+
+.optContainer {
+  display: flex;
+  gap: 1rem;
+}
+
+.otpCell {
+  width: 3.6rem;
+  height: 4.6rem;
+  border: 2px solid var(--border-color);
+  border-radius: 5px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.6rem;
+}

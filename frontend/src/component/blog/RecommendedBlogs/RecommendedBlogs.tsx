@@ -4,7 +4,7 @@ import { useMediaQuery } from "react-responsive";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { BlogDetailProps } from "../../../types/blog.type";
 import { getBlogs } from "../../../api/blog.api";
-import { useIntersectionObserver } from "../../../hook/useIntersectionObserver";
+import { useIntersectionObserver } from "../../../hook/shared/useIntersectionObserver";
 import InfinityObserver from "../../ui/InfinityObserver/InfinityObserver";
 import { useEffect } from "react";
 import toast from "react-hot-toast";

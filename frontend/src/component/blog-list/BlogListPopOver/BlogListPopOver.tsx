@@ -1,7 +1,7 @@
 /** @format */
 
 import { useState } from "react";
-import { useAppSelector } from "../../../hook/reduxHooks";
+import { useAppSelector } from "../../../hook/shared/reduxHooks";
 import { BlogListPopOverProps } from "../../../types/blog-list.type";
 import { SlOptionsVertical } from "react-icons/sl";
 import Popover from "@mui/material/Popover";

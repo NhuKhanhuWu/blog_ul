@@ -31,16 +31,16 @@ const blogListRouter = express.Router();
 blogListRouter
   .route("/")
   .get(loadUser, getMultBlogList) // get my blog lists
-  .post(createBlogListLimiter, protect, createBlogList); // create blog list
+  .post(protect, createBlogListLimiter, createBlogList); // create blog list
 
 // update blog list
 blogListRouter
   .route("/:id")
   .get(loadUser, getBlogListMeta) // get list detail by id
   .patch(
+    protect,
     updateBlogListLimiter,
     validateRequest(updateBlogListSchema),
-    protect,
     updateBlogList,
   )
   .delete(protect, deleteBlogListLimiter, deleteBlogList);
@@ -51,9 +51,9 @@ blogListRouter
   .get(loadUser, validateRequest(getBlogFromListSchema), getBlogFromList)
   // add blog to list
   .patch(
+    protect,
     updateBlogListLimiter,
     validateRequest(addBlogToListSchema),
-    protect,
     addBlogToList,
   );
 
@@ -61,8 +61,8 @@ blogListRouter
 blogListRouter
   .route("/:id/blogs/:blogId")
   .delete(
-    updateBlogListLimiter,
     protect,
+    updateBlogListLimiter,
     validateRequest(removeBlogFromListSchema),
     removeBlogFromList,
   );
