@@ -12,8 +12,6 @@ export function useCreateCmt() {
     mutationFn: createCmt,
 
     onSuccess: (newCmt) => {
-      // TODO: update cmt's total replies
-
       const cmtQueryKey = newCmt.parentId
         ? ["cmt-replies", newCmt.parentId.toString()] // if this is child cmt
         : ["cmt"]; // if this is parent cmt

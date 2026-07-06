@@ -1,0 +1,20 @@
+/** @format */
+
+.modalContainer {
+  padding: 0 2rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.4rem;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.cmts {
+  display: flex;
+  flex-direction: column;
+  gap: 2.6rem;
+}

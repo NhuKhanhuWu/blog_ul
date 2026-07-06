@@ -1,0 +1,28 @@
+/** @format */
+@use "../../styles/_mixins.scss" as *;
+
+.wrapper {
+  width: 100vw;
+  height: 90vh;
+  background-image: url("/bg-1.jpg");
+  background-size: cover;
+  background-position: right;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form {
+  @include form;
+}
+
+.forgotPass {
+  text-align: right;
+  align-self: flex-start;
+}
+
+button {
+  width: 50%;
+  padding: 0.8rem 1rem;
+}

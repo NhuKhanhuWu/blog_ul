@@ -13,30 +13,6 @@ $error-red: rgb(188, 69, 69);
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-
-  // --- LIGHT MODE (Mặc định) ---
-  --bg-body: #{$light-200};
-  --text-main: #{$dark-900};
-  --text-muted: #{$dark-400};
-  --border-color: #{$dark-900};
-  --accent-color: #{$dark-900};
-  --btn-bg-primary: #{$dark-900};
-  --btn-text-primary: #{$light-200};
-  --error-color: #{$error-red};
-  --quote-border: #{$light-600};
-}
-
-// --- DARK MODE CONFIG ---
-[data-theme="dark"] {
-  --bg-body: #121212;
-  --text-main: #f5f5f5;
-  --text-muted: #a0a0a0;
-  --border-color: #f5f5f5;
-  --accent-color: #3b82f6; // Màu xanh nhẹ cho dark mode dễ nhìn hơn
-  --btn-bg-primary: #f5f5f5;
-  --btn-text-primary: #121212;
-  --error-color: #ff6b6b;
-  --quote-border: #444;
 }
 
 html {
@@ -49,7 +25,7 @@ html {
   }
 
   @include respond(xl) {
-    font-size: 70%;
+    font-size: 65%;
   }
 }
 
@@ -78,7 +54,7 @@ blockquote {
   font-size: 2.2rem;
   line-height: 1.2;
   padding: 1rem;
-  border-left: 6px solid var(--quote-border);
+  border-left: 6px solid var(--border-color);
   margin: 1rem 0;
   font-family: "Forum", serif;
 }
@@ -86,24 +62,39 @@ blockquote {
 button {
   border: none;
   background-color: transparent;
+  cursor: pointer;
 }
 
-input {
+input,
+textarea,
+.input {
+  border: solid 1px var(--border-color);
   outline: none;
-  border: none;
-  background-color: transparent; // Để không bị đè màu trắng mặc định
+  background-color: transparent;
   color: var(--text-main);
+}
+
+textarea {
+  font-family: "Parkinsans", sans-serif;
+  min-height: 15rem;
+  resize: none;
 }
 
 input[type="checkbox"] {
   appearance: none;
   width: 20px;
   height: 20px;
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
+  border-radius: 3px;
   cursor: pointer;
 
   &:checked {
     background-color: var(--accent-color);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    color: var(--text-muted);
   }
 }
 
@@ -114,9 +105,35 @@ input[type="radio"] {
 }
 
 select {
-  height: 3rem;
-  border: none;
-  padding: 0 1.6rem;
+  border: solid 1px var(--border-color);
+  outline: none;
+  padding: 0 3.6rem 0 1.6rem;
+  height: 4rem;
+  border-radius: 5px;
+  border-width: 1.5px;
+  min-width: 8rem;
+
+  /* Tell the browser to scale the width to the content */
+  field-sizing: content;
+
+  /* Hide the default browser arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /*  Insert a custom SVG down arrow */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23070605' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+  background-repeat: no-repeat;
+
+  /*  Position the arrow nicely from the right edge */
+  background-position: right 1.2rem center;
+  background-size: 1.6rem;
+
+  cursor: pointer;
+
+  @include respond(lg) {
+    height: 3.4rem;
+  }
 }
 
 :root {
@@ -126,10 +143,30 @@ select {
   font-style: normal;
 }
 
+.avatar-sm {
+  width: 3rem;
+  border-radius: 999px;
+}
+
+.avatar-md {
+  width: 4rem;
+  border-radius: 999px;
+
+  @include respond(lg) {
+    width: 3.5rem;
+  }
+}
+
 .checkbox {
   display: flex;
   gap: 1rem;
   align-items: center;
+}
+
+.error-mgs {
+  color: var(--error-color);
+  font-style: italic;
+  font-weight: 300;
 }
 
 .flex {
@@ -137,43 +174,37 @@ select {
 }
 
 .input {
-  border: none;
-  border-bottom: 1px var(--border-color) solid;
   padding: 0.4rem 1.4rem;
   width: 100%;
   display: flex;
   gap: 1rem;
   flex: 1;
-  height: 2.6rem;
+  height: 4rem;
+  border-radius: 5px;
+  border-width: 1.5px;
+  transition: all 0.3s;
+
+  @include respond(lg) {
+    height: 3.4rem;
+  }
 }
 
 .input:focus {
-  border-width: 2px;
+  background-color: var(--blue-bg);
 }
 
 .light {
-  input[type="checkbox"]:checked {
-    background-color: $dark-900;
-  }
-
   input[type="radio"] {
     accent-color: $dark-900;
   }
-
-  select {
-    border-bottom: 1px solid $dark-900;
-  }
-
-  .error-mgs {
-    color: rgb(188, 69, 69);
-    font-style: italic;
-    font-weight: 300;
-  }
 }
 
-// Button logic dùng CSS variables
+.btn {
+  cursor: pointer;
+}
+
 .btn-primary {
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
   background-color: var(--btn-bg-primary);
   color: var(--btn-text-primary);
   cursor: pointer;
@@ -182,22 +213,20 @@ select {
   align-items: center;
   font-family: "Parkinsans", sans-serif;
   transition: all 0.3s;
-
-  &:hover {
-    background-color: var(--bg-body);
-    color: var(--text-main);
-  }
+  border-radius: 5px;
+  color: var(--bg-body);
 }
 
-.btn-secondary {
-  @extend .btn-primary; // Kế thừa từ primary
+.btn-secondary,
+.btn-primary:hover {
+  @extend .btn-primary;
   background-color: var(--bg-body);
   color: var(--text-main);
+}
 
-  &:hover {
-    background-color: var(--btn-bg-primary);
-    color: var(--btn-text-primary);
-  }
+.btn-secondary:hover {
+  background-color: var(--btn-bg-primary);
+  color: var(--bg-body);
 }
 
 .btn-reset--input {
@@ -209,6 +238,7 @@ select {
   color: var(--text-muted);
   pointer-events: none;
   cursor: not-allowed;
+  background-color: var(--border-color);
 }
 
 .hidden {
@@ -219,6 +249,7 @@ select {
   font-weight: 600;
   font-style: italic;
   text-decoration: underline;
+  color: var(--accent-color);
 }
 
 .link {

@@ -1,0 +1,23 @@
+/** @format */
+@use "../../../styles/_mixins.scss" as *;
+
+.cmtForm {
+  margin: 2rem 0;
+
+  @include commentFormLayout();
+}
+
+.notLoginMgs {
+  font-size: 1.6rem;
+  margin-bottom: 3rem;
+
+  img {
+    width: 3rem;
+  }
+}
+
+@include respond(lg) {
+  .cmtFormCotainer {
+    margin: 1rem 0;
+  }
+}

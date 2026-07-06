@@ -15,7 +15,7 @@ import {
   createCmtLimiter,
   validateCmtConstraints,
 } from "../middlewares/comment.middleware";
-import { validateRequest } from "../validation/validate";
+import { validateRequest } from "../validation/validateRequest";
 import { loadUser, protect } from "../middlewares/auth.middleware";
 import {
   createBlogLimiter,
@@ -39,9 +39,9 @@ blogRouter
   .route("/")
   .get(getMultBlog)
   .post(
+    protect,
     createBlogLimiter,
     validateRequest(createBlogSchema),
-    protect,
     createBlog,
   );
 
@@ -49,9 +49,9 @@ blogRouter
   .route("/:id")
   .get(loadUser, getOneBlogById) //get one blog by id
   .patch(
+    protect,
     updateBlogLimiter,
     validateRequest(updateBlogSchema),
-    protect,
     updateBlog,
   ) // update blog
   .delete(deleteBlogLimiter, protect, deleteBlog);
@@ -61,8 +61,8 @@ blogRouter
   .route("/:id/cmt")
   .get(loadUser, getCmtByBlog)
   .post(
-    createCmtLimiter,
     protect,
+    createCmtLimiter,
     validateRequest(createCmtParamsSchema),
     validateCmtConstraints,
     createCmt,

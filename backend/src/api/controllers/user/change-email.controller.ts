@@ -9,6 +9,7 @@ import getToken from "../../utils/token/get-token";
 import signToken from "../../utils/token/sign-token";
 import verifyToken from "../../utils/token/verify-token";
 
+// update to use otp here & optimize controller
 export const changeEmail = catchAsync(async (req, res, next) => {
   // check if password and new email are provided
   const { password, newEmail } = req.body;
@@ -40,15 +41,11 @@ export const changeEmail = catchAsync(async (req, res, next) => {
   // send reset email
   const token = signToken({ userId: user.id, newEmail }, "10m");
   const message = changeEmailEmail(token);
-  await sendTokenEmail(
-    {
-      email: newEmail,
-      subject: "Your email validate link in Blogie",
-      htmlMessage: message,
-    },
-    res,
-    next,
-  );
+  await sendTokenEmail({
+    email: newEmail,
+    subject: "Your email validate link in Blogie",
+    htmlMessage: message,
+  });
 
   // respond
   res.status(200).json({

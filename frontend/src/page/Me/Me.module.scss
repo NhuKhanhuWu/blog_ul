@@ -1,0 +1,12 @@
+/** @format */
+@use "../../styles/_mixins.scss" as *;
+
+.container {
+  .profileActions {
+    @include profileActions;
+  }
+
+  .tabHeader {
+    @include tabBtns;
+  }
+}

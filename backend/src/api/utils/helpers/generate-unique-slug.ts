@@ -3,7 +3,7 @@
 import { Model } from "mongoose";
 import slugify from "slugify";
 
-const RESERVED_SLUGS = ["me", "admin", "login", "register"];
+const RESERVED_SLUGS = ["me", "admin", "login", "signup"];
 
 // create slug when user sign up/update account infor
 export async function generateUniqueSlug(

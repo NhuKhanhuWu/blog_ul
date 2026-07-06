@@ -9,6 +9,7 @@ import {
   createRefreshToken,
 } from "../../utils/token/create-token";
 import verifyToken from "../../utils/token/verify-token";
+import UserModel from "../../models/user.model";
 
 export const refreshToken = catchAsync(async (req, res, next) => {
   // get refresh token from cookie
@@ -17,23 +18,6 @@ export const refreshToken = catchAsync(async (req, res, next) => {
   // check if exsist
   if (!refreshToken) {
     throw new AppError("Refresh token required", 401);
-  }
-
-  // get token from db
-  const curRefreshToken = await RefreshToken.findOne({ token: refreshToken });
-
-  if (!curRefreshToken) throw new AppError("Invalid token!", 401);
-
-  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: START -------------
-  // // check if token has been used (revoked)
-  // if (curRefreshToken.revoked)
-  //   throw new AppError("Token has already been used", 401);
-  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: END -------------
-
-  // check if session expired
-  const sessionExpireDate = new Date(curRefreshToken.sessionExpiresAt);
-  if (sessionExpireDate < new Date(Date.now())) {
-    throw new AppError("Session expired! Please login again.", 401);
   }
 
   // verify token
@@ -48,9 +32,36 @@ export const refreshToken = catchAsync(async (req, res, next) => {
     throw new AppError("Invalid or expired token", 401);
   }
 
+  // check if token is valid
+  const curRefreshToken = await RefreshToken.findOne({
+    token: refreshToken,
+  }).lean();
+  if (!curRefreshToken) {
+    throw new AppError("Session revoked or invalid!", 401);
+  }
+
+  // check if user changed password after token was issued
+  const user = await UserModel.findById(decode.id)
+    .select("tokenVersion")
+    .lean();
+  if (!user || user.tokenVersion !== decode.tokenVersion) {
+    throw new AppError(
+      "User recently changed password! Please log in again.",
+      401,
+    );
+  }
+
+  // check if token has been used (revoked)
+  // if (curRefreshToken.revoked)
+  //   throw new AppError("Token has already been used", 401);
+  // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: END -------------
+
   // create new  token
   const { userId } = curRefreshToken;
-  const accessToken = createAccessToken(userId.toString());
+  const accessToken = createAccessToken(
+    userId.toString(),
+    user?.tokenVersion || 0,
+  );
 
   // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: START -------------
   // the web have problem where new refresh token is not setted in cookie when the old one revoked

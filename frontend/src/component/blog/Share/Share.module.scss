@@ -1,0 +1,42 @@
+/** @format */
+@use "../../../styles/_mixins.scss" as *;
+
+.modalHeader {
+  @include modalHeader;
+}
+
+.icon {
+  @include iconGrayBg;
+}
+
+.shareContainer {
+  padding: 1rem 0;
+  .shareIcons {
+    display: flex;
+    gap: 1.6rem;
+    margin: 2.6rem 0;
+  }
+
+  .shareCopy {
+    display: flex;
+    padding: 1rem 1.2rem;
+    border: solid 1.5px var(--border-color);
+    border-radius: 999px;
+    gap: 1rem;
+    font-size: 1.9rem;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: var(--bg-gray);
+    }
+
+    input {
+      width: 100%;
+      border: none;
+    }
+
+    svg {
+      font-size: 2.4rem;
+    }
+  }
+}

@@ -9,6 +9,9 @@ import VoteModel from "../../models/vote.model";
 import { Request } from "express";
 import { BlogWithVote } from "../../types/blog.type";
 
+// interface
+type BlogMatchCriteria = { _id: string | Types.ObjectId } | { slug: string };
+
 // -------------constants-------------
 // Fields to project (return to client)
 const SELECTED_FIELDS = {
@@ -18,20 +21,21 @@ const SELECTED_FIELDS = {
   pub_date: 1,
   slug: 1,
   upVotes: 1,
+  userId: 1,
   preview: { $arrayElemAt: ["$content", 0] },
   image: { $arrayElemAt: ["$images", 0] },
 };
 
 // Fields allowed for sorting
 const SORT_FIELDS = [
-  "pub_date", // newest/oldest
-  "-pub_date",
+  "-updatedAt", // newest/oldest
+  "updatedAt",
   "-upVotes", // alphabetical"title",
 ];
 
 // Fields allowed for filtering
 const FILTER_FIELDS = [
-  "pub_date", // filter by date range
+  "updatedAt", // filter by date range
   "userId", // filter by user
 ];
 // -------------constants-------------
@@ -76,6 +80,124 @@ function applyCategoryFilter(
   return baseQuery;
 }
 
+function getPipeline(
+  criteria: BlogMatchCriteria,
+  currentUserId?: string | Types.ObjectId,
+) {
+  const matchStage: Record<string, any> = {};
+
+  if ("_id" in criteria && criteria._id) {
+    matchStage._id =
+      typeof criteria._id === "string"
+        ? new Types.ObjectId(criteria._id)
+        : criteria._id;
+  } else if ("slug" in criteria) {
+    matchStage.slug = criteria.slug;
+  }
+
+  // Define our base pipeline
+  const pipeline: any[] = [
+    // 1. Target the exact blog document
+    { $match: matchStage },
+
+    // 2. Native Join for categories
+    {
+      $lookup: {
+        from: "categories",
+        localField: "categories",
+        foreignField: "_id",
+        as: "categories",
+      },
+    },
+
+    // 3. Native Join for user profile details
+    {
+      $lookup: {
+        from: "users",
+        localField: "userId",
+        foreignField: "_id",
+        as: "userId",
+      },
+    },
+
+    // 4. Flatten the userId array to an object
+    {
+      $unwind: {
+        path: "$userId",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+  ];
+
+  // ==========================================
+  //  Inject Dynamic Vote Lookup Stage
+  // ==========================================
+  if (currentUserId) {
+    const userObjectId =
+      typeof currentUserId === "string"
+        ? new Types.ObjectId(currentUserId)
+        : currentUserId;
+
+    pipeline.push(
+      {
+        $lookup: {
+          from: "votes", // matches your VoteModel collection name
+          let: { blogId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$targetId", "$$blogId"] },
+                    { $eq: ["$userId", userObjectId] },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "userVoteRecord",
+        },
+      },
+      {
+        $addFields: {
+          // Extract voteType property value from the array object or fall back to 0
+          voteType: {
+            $ifNull: [{ $arrayElemAt: ["$userVoteRecord.voteType", 0] }, 0],
+          },
+        },
+      },
+    );
+  } else {
+    // If user is not logged in, pass a default value of 0 right away
+    pipeline.push({
+      $addFields: { voteType: 0 },
+    });
+  }
+
+  // 5. Final payload projection (Include voteType here)
+  pipeline.push({
+    $project: {
+      title: 1,
+      slug: 1,
+      content: 1,
+      images: 1,
+      upVotes: 1,
+      voteType: 1, // Added voteType field output
+      createdAt: 1,
+      updatedAt: 1,
+      authors: 1,
+      totalCmts: 1,
+      "categories.name": 1,
+      "categories.slug": 1,
+      "categories._id": 1,
+      "userId.name": 1,
+      "userId.slug": 1,
+      "userId.avatar": 1,
+    },
+  });
+
+  return pipeline;
+}
 // -------------helpers-------------
 
 // -------------controllers-------------
@@ -103,13 +225,18 @@ export const getMultBlog = catchAsync(async (req, res) => {
     .findbyUser()
     .searchByTitle()
     .filter(FILTER_FIELDS)
-    .sort(SORT_FIELDS, "-pub_date")
+    .sort(SORT_FIELDS, "-updatedAt")
     .limitedFields(SELECTED_FIELDS);
 
-  await queryInstance.paginate();
+  // Capture the count promise
+  const countPromise = queryInstance.paginate();
 
   // 4. Execute query
-  const blogs = await queryInstance.query;
+  const [blogs, totalResults] = await Promise.all([
+    queryInstance.query,
+    countPromise,
+  ]);
+  queryInstance.totalResults = totalResults;
   const amount = blogs.length || 0;
 
   // 5. Get next page
@@ -151,19 +278,18 @@ const getVoteType = async (req: Request, blogId: Types.ObjectId) => {
 
 export const getOneBlogById = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const blog = (await BlogModel.findById(id)
-    .populate("categories", "name slug")
-    .populate("userId", "name slug avatar")
-    .lean()) as BlogWithVote | null;
+  const currentUserId = req.user?._id;
+
+  const blogRes = await BlogModel.aggregate(
+    getPipeline({ _id: id || "" }, currentUserId),
+  );
+  const blog = (blogRes[0] || null) as BlogWithVote | null;
 
   if (!blog) {
     throw new AppError("Blog not found", 404);
   }
 
-  // get voteType
-  const voteType = await getVoteType(req, blog._id);
   // add to response
-  blog.voteType = voteType;
 
   res.status(200).json({
     status: "success",
@@ -173,19 +299,16 @@ export const getOneBlogById = catchAsync(async (req, res) => {
 
 export const getOneBlogBySlug = catchAsync(async (req, res) => {
   const slug = req.params.slug;
-  const blog = (await BlogModel.findOne({ slug })
-    .populate("categories", "name slug")
-    .populate("userId", "name slug avatar")
-    .lean()) as BlogWithVote | null;
+  const currentUserId = req.user?._id;
+
+  const blogRes = await BlogModel.aggregate(
+    getPipeline({ slug: slug || "" }, currentUserId),
+  );
+  const blog = (blogRes[0] || null) as BlogWithVote | null;
 
   if (!blog) {
     throw new AppError("Blog not found", 404);
   }
-
-  // get voteType
-  const voteType = await getVoteType(req, blog._id);
-  // add to response
-  blog.voteType = voteType;
 
   res.status(200).json({
     status: "success",

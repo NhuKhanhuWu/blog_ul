@@ -1,0 +1,60 @@
+/** @format */
+
+@use "../../styles/_mixins.scss" as *;
+
+// page container
+.pageWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+// blogs container
+.blogsContainer {
+  @include responsiveBlogLayout;
+  padding: 2rem 1rem;
+}
+
+// header
+.headerBanner {
+  background: var(--accent-color);
+  padding: 3rem 2rem;
+
+  h1 {
+    color: var(--bg-body);
+    font-size: 2.6rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.5px;
+  }
+}
+
+.metaText {
+  font-size: 1.6rem;
+  font-weight: 400;
+  margin: 0;
+  color: var(--border-color);
+}
+
+.headerBtns {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+
+  span {
+    @include iconGrayBg;
+
+    padding: 0;
+    width: 4rem;
+    height: 4rem;
+    background-color: var(--bg-body);
+  }
+}
+
+// popover
+.popItem {
+  @include popItem;
+}
+
+.icon {
+  @include icon;
+}

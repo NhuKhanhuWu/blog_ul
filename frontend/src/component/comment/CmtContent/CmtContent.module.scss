@@ -1,0 +1,35 @@
+/** @format */
+
+.cmtItemHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  // username
+  a {
+    font-weight: 500;
+    font-size: 1.6rem;
+  }
+
+  // created date
+  span {
+    color: var(--text-muted);
+  }
+}
+
+.cmtContent {
+  font-size: 1.6rem;
+  margin: 0.8rem 0 1.4rem;
+}
+
+.seeMoreBtn {
+  font-weight: 500;
+  color: var(--accent-color);
+}
+
+@include respond(lg) {
+  .cmtContent {
+    font-size: 1.4rem;
+    font-weight: 400;
+  }
+}

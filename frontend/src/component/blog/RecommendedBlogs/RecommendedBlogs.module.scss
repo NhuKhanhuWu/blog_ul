@@ -1,0 +1,31 @@
+/** @format */
+.recommendedSection {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.header {
+  font-size: 1.6rem;
+  font-weight: 500;
+}
+
+@include respond(md) {
+  .recommendedSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    margin-top: 0;
+
+    & > * {
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1.4rem;
+    }
+
+    & > *:last-child {
+      border: none;
+    }
+  }
+}

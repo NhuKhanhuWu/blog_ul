@@ -5,6 +5,7 @@ import validator from "validator";
 import bcrypt from "bcrypt";
 import { UserDocument } from "../types/user.type";
 import { generateUniqueSlug } from "../utils/helpers/generate-unique-slug";
+import { BlogListModel } from "./blog-list.model";
 
 const { Schema } = mongoose;
 
@@ -63,12 +64,19 @@ const userSchema = new Schema<UserDocument>(
       },
     },
 
+    tokenVersion: {
+      type: Number,
+      default: 0,
+    },
+
     passwordChangedAt: Date,
   },
   {
     timestamps: true, // createdAt, updatedAt
   },
 );
+
+userSchema.index({ name: "text", email: "text" });
 
 // Middleware to hash password before saving
 userSchema.pre<UserDocument>("save", async function (next) {
@@ -88,7 +96,17 @@ userSchema.methods.checkPassword = async function (candidatePassword: string) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-// check if password changed after token issued
+// for .lean() document
+export async function checkUserPassword(
+  candidatePassword: string,
+  actualPassword?: string,
+) {
+  if (!actualPassword) return false;
+
+  return await bcrypt.compare(candidatePassword, actualPassword);
+}
+
+// check if password changed after token is issued
 userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
   if (this.passwordChangedAt) {
     const changedTimestamp = Math.floor(
@@ -101,20 +119,49 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
   return false;
 };
 
-// Indexes for quick lookups
-userSchema.index({ email: 1 });
-userSchema.index({ name: "text", email: "text" });
+// for .lean() document
+export const hasChangedPasswordAfter = (
+  passwordChangeAt?: Date,
+  JWTTimestamp?: number,
+): boolean => {
+  if (passwordChangeAt && JWTTimestamp) {
+    const changedTimestamp = Math.floor(passwordChangeAt.getTime() / 1000);
+    return JWTTimestamp < changedTimestamp;
+  }
+  return false;
+};
 
-// when user create acc
+// create slug & default blog list when user create acc
 userSchema.pre("save", async function (next) {
   if (!this.isModified("name")) return next();
 
+  // create slug
   const UserModel = this.constructor as mongoose.Model<any>;
   this.slug = await generateUniqueSlug(
     UserModel,
     this.name,
     this._id.toString(),
   );
+
+  if (this.isNew) {
+    // create blog list
+    const defaultList = await BlogListModel.exists({
+      userId: this._id,
+      name: "Read later",
+      isDefault: true,
+    });
+
+    if (!defaultList) {
+      await BlogListModel.create({
+        name: "Read later",
+        userId: this._id,
+        isDefault: true,
+        isPrivate: true,
+        blogs: [],
+      });
+    }
+  }
+
   next();
 });
 

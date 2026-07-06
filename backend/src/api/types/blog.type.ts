@@ -8,7 +8,7 @@ export interface BlogInput {
   title: string;
   content: IBlogContent;
   authors: string[];
-  categories: Types.ObjectId[];
+  categories: Types.Array<Types.ObjectId>;
 }
 
 // export interface IBlogDocument extends IBlogInput {}
@@ -22,6 +22,8 @@ export interface BlogDocument extends BlogInput {
   downVotes: Number;
   totalCmts: number;
   totalParentCmts: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface BlogWithVote extends FlattenMaps<BlogDocument> {

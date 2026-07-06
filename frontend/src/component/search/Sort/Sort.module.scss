@@ -1,0 +1,10 @@
+/** @format */
+@use "../../../styles/_mixins.scss" as mixin;
+
+.searchOption {
+  @include mixin.formField;
+
+  select {
+    width: 100%;
+  }
+}

@@ -2,10 +2,13 @@
 
 import express from "express";
 import { toggleVote } from "../controllers/vote/toggle-vote.controller";
-import { validateRequest } from "../validation/validate";
+import { validateRequest } from "../validation/validateRequest";
 import { toggleVoteSchema } from "../validation/vote.validation";
 import { protect } from "../middlewares/auth.middleware";
-import { toggleVoteLimiter } from "../middlewares/vote.middleware";
+import {
+  burstToggleVoteLimiter,
+  toggleVoteLimiter,
+} from "../middlewares/vote.middleware";
 
 const voteRouter = express.Router();
 
@@ -13,8 +16,9 @@ const voteRouter = express.Router();
 voteRouter
   .route("/")
   .post(
-    toggleVoteLimiter,
     protect,
+    burstToggleVoteLimiter,
+    toggleVoteLimiter,
     validateRequest(toggleVoteSchema),
     toggleVote,
   );

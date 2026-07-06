@@ -10,8 +10,13 @@ export interface UserInput {
   avatar?: string;
 }
 
+export interface ReqUser {
+  _id: Types.ObjectId;
+  id: string;
+}
+
 export interface UserDocument extends Document {
-  _id: Types.ObjectId; // MongoDB always uses ObjectId
+  _id: Types.ObjectId;
   name: string;
   slug: string;
   email: string;
@@ -22,6 +27,7 @@ export interface UserDocument extends Document {
   passwordChangedAt?: Date | undefined;
   createdAt: Date;
   updatedAt: Date;
+  tokenVersion: number; // for refresh token invalidation
 
   // methobs
   checkPassword(candidatePassword: string): Promise<boolean>;

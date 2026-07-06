@@ -58,13 +58,12 @@ const BlogSchema = new Schema<BlogDocument>(
     },
     slug: {
       type: String,
-      // index: true,
       unique: true,
     },
     authors: {
       type: [String],
       default: [],
-      index: true, // for filtering
+      // index: true,
     },
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     categories: {
@@ -74,6 +73,7 @@ const BlogSchema = new Schema<BlogDocument>(
           ref: "Category",
         },
       ],
+      index: true,
       validate: {
         validator: function (value: Types.ObjectId[]) {
           return value.length <= 50;
@@ -83,7 +83,6 @@ const BlogSchema = new Schema<BlogDocument>(
     },
     pub_date: {
       type: Date,
-      index: true, // for sorting/filtering by date
     },
     content: [contentBlockSchema],
     images: {
@@ -112,6 +111,14 @@ const BlogSchema = new Schema<BlogDocument>(
       type: Number,
       default: 0,
     },
+    createdAt: {
+      type: Date,
+      index: true,
+    },
+    updatedAt: {
+      type: Date,
+      index: true,
+    },
   },
   {
     timestamps: true, // adds createdAt, updatedAt
@@ -121,6 +128,7 @@ const BlogSchema = new Schema<BlogDocument>(
 BlogSchema.index({ slug: "text" }); // text index for searching in slug
 
 BlogSchema.index({ title: "text" }); // text index for searching in title
+BlogSchema.index({ categories: 1, updatedAt: -1 });
 
 // add & pub_date slug before saving
 BlogSchema.pre("save", async function (next) {
@@ -167,7 +175,7 @@ BlogSchema.post("findOneAndDelete", function (doc) {
   if (doc) {
     const blogId = doc._id;
 
-    // QUAN TRỌNG: Không dùng await ở đây => đẩy vào hàng chờ => giải phóng luồng chính
+    // IMPORTANT: Do not use await here => push to wait queue => free main thread
     CommentModel.deleteMany({ blogId: blogId })
       .then((result) => {
         console.log(`${result.deletedCount} comments deleted in background`);

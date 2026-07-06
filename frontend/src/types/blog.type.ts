@@ -1,5 +1,6 @@
 /** @format */
 
+import { ReactNode } from "react";
 import { ICategory } from "./category.type";
 
 export interface BlogSimplify {
@@ -7,8 +8,9 @@ export interface BlogSimplify {
   title: string;
   slug: string;
   upVotes?: number;
-  pub_date: string;
+  pub_date: Date;
   authors: string[];
+  userId: string;
   img?: string;
   preview: {
     text: string;
@@ -17,6 +19,7 @@ export interface BlogSimplify {
 
 export interface BlogCardProps {
   blog: BlogSimplify;
+  popItems?: ReactNode;
 }
 
 export type ContentBlock =
@@ -40,7 +43,11 @@ export interface BlogDetailProps {
   slug: string;
   authors: string[];
 
-  userId: string;
+  userId: {
+    name: string;
+    avatar: string;
+    slug: string;
+  };
 
   categories: ICategory[];
 
@@ -52,6 +59,8 @@ export interface BlogDetailProps {
 
   upVotes: number;
   downVotes: number;
+
+  voteType: number;
 
   totalCmts: number;
   totalParentCmt: number;
@@ -75,6 +84,7 @@ export type NormalizedBlog = Omit<BlogDetailProps, "content"> & {
 
 export interface GetBlogsResponse {
   data: BlogSimplify[];
+  totalResult: number;
   nextPage: number | undefined;
 }
 

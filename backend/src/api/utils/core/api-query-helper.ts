@@ -163,20 +163,18 @@ class ApiQueryHelper {
     return this;
   }
 
-  async paginate() {
+  paginate() {
     const page = Number(this.queryString.page) || 0;
     const limit = Math.min(Number(this.queryString.limit) || 20, 20);
     const skip = page * limit;
 
-    // Get total count before applying pagination
-    this.totalResults = await this.query.model.countDocuments(
-      this.query.getQuery(),
-    );
+    // Create the count promise without awaiting it yet
+    const countPromise = this.query.model.countDocuments(this.query.getQuery());
 
-    // Apply pagination
+    // Apply pagination modifications to the query chain
     this.query = this.query.skip(skip).limit(limit);
 
-    return this;
+    return countPromise;
   }
 }
 

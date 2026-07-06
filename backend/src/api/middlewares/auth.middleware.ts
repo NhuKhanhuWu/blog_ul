@@ -1,69 +1,76 @@
 /** @format */
 
 import { JwtPayload } from "../types/jwt-payload.type";
-import UserModel from "../models/user.model";
 import AppError from "../utils/error/app-error";
-import catchAsync from "../utils/error/catch-async";
 import { createLimiter } from "../utils/core/create-limiter";
 import getToken from "../utils/token/get-token";
 import verifyToken from "../utils/token/verify-token";
+import { Types } from "mongoose";
+import { NextFunction, Request, Response } from "express";
+import UserModel from "../models/user.model";
+import catchAsync from "../utils/error/catch-async";
 
 // ----------- VERIFY USER: START -----------
-export const loadUser = catchAsync(async (req, res, next) => {
+export const loadUser = (req: Request, _res: Response, next: NextFunction) => {
   const accessToken = getToken(req);
 
   if (!accessToken) return next();
 
   try {
     // try Access Token
-    const decoded = verifyToken(
+    const decode = verifyToken(
       accessToken,
       process.env.JWT_SECRET!,
     ) as JwtPayload;
-    const user = await UserModel.findById(decoded.id);
 
-    // if can get user and password not change after token was issued
-    if (user && !user.changedPasswordAfter(decoded.iat!)) {
-      req.user = user;
-      return next();
-    }
+    req.user = {
+      id: String(decode.id), // Supports controllers reading string format
+      _id: new Types.ObjectId(decode.id as string), // Supports controllers running Mongoose queries
+    };
   } catch (err: any) {
     return next();
   }
 
   next();
-});
+};
 
-export const protect = catchAsync(async (req, res, next) => {
-  //   get token and check it's there
-  const accessToken = getToken(req);
+export const protect = catchAsync(
+  async (req: Request, _res: Response, next: NextFunction) => {
+    // get token and check it's there
+    const accessToken = getToken(req);
 
-  if (!accessToken) {
-    return next(new AppError("Not authenticated!", 401));
-  }
+    if (!accessToken) {
+      return next(new AppError("Not authenticated!", 401));
+    }
 
-  // check if token expired
-  let decode: JwtPayload;
-  try {
-    decode = verifyToken(accessToken, process.env.JWT_SECRET!) as JwtPayload;
-  } catch (err) {
-    return next(new AppError("Invalid or expired token", 401));
-  }
+    // check if token expired
+    let decode: JwtPayload;
+    try {
+      decode = verifyToken(accessToken, process.env.JWT_SECRET!) as JwtPayload;
+    } catch (err) {
+      return next(new AppError("Invalid or expired token", 401));
+    }
 
-  // check if user still exsist
-  const user = await UserModel.findById(decode.id);
+    // check if user changed password after token was issued
+    const user = await UserModel.findById(decode.id)
+      .select("tokenVersion")
+      .lean();
+    if (!user || user.tokenVersion !== decode.tokenVersion) {
+      throw new AppError(
+        "User recently changed password! Please log in again.",
+        401,
+      );
+    }
 
-  if (!user) {
-    return next(new AppError("Not authenticated", 401));
-  }
+    // attach user to request object
+    req.user = {
+      id: String(decode.id), // Supports controllers reading string format
+      _id: new Types.ObjectId(decode.id as string), // Supports controllers running Mongoose queries
+    };
 
-  if (user.changedPasswordAfter(decode.iat)) {
-    return next(new AppError("Password changed. Please login again!", 401));
-  }
-
-  req.user = user;
-  next();
-});
+    next();
+  },
+);
 // ----------- VERIFY USER: END -----------
 
 // ----------- RATE LIMITER: START -----------
@@ -76,7 +83,7 @@ export const forgotPasswordOtpLimiterEmail = createLimiter({
   keyGenerator: (req) => req.body.email,
 }); // For forgot-password OTP: limit 10 request per 1 hour by IP
 
-export const forgotPasswordOtpLimiterIP = createLimiter({
+export const forgotPasswordOtpLimiterDevice = createLimiter({
   max: 15,
   windowMs: 60 * 60 * 1000,
   message:
@@ -87,36 +94,33 @@ export const forgotPasswordOtpLimiterIP = createLimiter({
 // ----------- login -----------
 export const loginLimiter = createLimiter({
   max: 5,
-  windowMs: 15 * 60 * 100, //15 min
+  windowMs: 15 * 60 * 1000, //15 min
   message: "You try to login too many times. Please try again after 15 minutes",
 });
 
 // ----------- logout -----------
 export const logoutLimiter = createLimiter({
   max: 10,
-  windowMs: 60 * 100, //1 min
-  message: "Too many request. Please try again later.",
+  windowMs: 60 * 1000, //1 min
 });
 
 // ----------- refresh token -----------
 export const refreshLimiter = createLimiter({
   max: 20,
   windowMs: 5 * 60 * 1000,
-  message: "Too many requests. Please try again later.",
-  skipSuccessfulRequests: true,
 });
 
 // ----------- signup -----------
 export const signupEmailLimiter = createLimiter({
   max: 1, // 1 request
-  windowMs: 60 * 1000, // 3 mins,
+  windowMs: 60 * 1000, // 1 min,
   message:
     "You can only request signup OTP once every 1 minute with this email.",
   keyGenerator: (req) => req.body.email,
 });
 
 export const signupIpLimiter = createLimiter({
-  max: 15, // 15 request
+  max: 30, // 15 request
   windowMs: 60 * 60 * 1000, // 1 hour,
   message:
     "You can only request signup OTP 15 times every 1 hour with this IP.",

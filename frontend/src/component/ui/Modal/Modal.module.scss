@@ -1,0 +1,29 @@
+/** @format */
+
+.overlayContainer {
+  // cover the screen
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  // center modal content
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  // put modal to the top
+  z-index: 9999;
+
+  background-color: rgba(59, 59, 59, 0.5);
+
+  .modalContent {
+    background-color: var(--bg-body);
+    padding: 2rem;
+    z-index: 10000;
+    height: fit-content;
+    width: fit-content;
+    border-radius: 5px;
+  }
+}

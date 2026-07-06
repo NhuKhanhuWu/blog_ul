@@ -1,0 +1,20 @@
+/** @format */
+.container {
+  padding: 2rem;
+}
+
+.blogSection {
+  flex: 2;
+}
+
+@include respond(md) {
+  .container {
+    display: flex;
+    gap: 3.4rem;
+    align-items: stretch;
+  }
+
+  .blogSection {
+    flex: 2;
+  }
+}
