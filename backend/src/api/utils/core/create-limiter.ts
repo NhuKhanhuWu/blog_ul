@@ -17,7 +17,6 @@ interface RateLimitOptions {
   skipSuccessfulRequests?: boolean;
 }
 
-// TODO: update limiter, see https://gemini.google.com/app/937344a0f4794f6a
 export function createLimiter({
   max,
   windowMs,

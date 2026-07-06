@@ -23,8 +23,14 @@ export const login = catchAsync(async (req, res, next) => {
   req.user = { id: user._id.toString(), _id: user._id };
 
   // ------TOKEN---------
-  const refreshToken = createRefreshToken(user._id.toString());
-  const accessToken = createAccessToken(user._id.toString());
+  const refreshToken = createRefreshToken(
+    user._id.toString(),
+    user.tokenVersion || 0,
+  );
+  const accessToken = createAccessToken(
+    user._id.toString(),
+    user.tokenVersion || 0,
+  );
 
   // Let the DB create the session in the background while the user receives their response.
   RefreshToken.create({

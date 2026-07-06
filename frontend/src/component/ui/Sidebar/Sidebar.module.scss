@@ -1,0 +1,165 @@
+/** @format */
+
+$navbar-height: 5rem;
+$drawer-width: 15rem; // ~240px
+$drawer-collapsed-width: 4.1rem; // ~65px
+$transition-speed: 0.2s;
+$header-height: 4rem; // ~64px standard toolbar height
+
+.layoutContainer {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+}
+
+// ==========================================
+// APP BAR STYLES
+// ==========================================
+.appBar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  // Crucial: AppBar always sits ABOVE the drawer's content layout but lets the main container shift
+  z-index: 1201 !important;
+  height: $header-height;
+
+  // Calculate dynamic width based on sidebar state using standard css transitions
+  width: calc(100% - #{$drawer-collapsed-width}) !important;
+  margin-left: $drawer-collapsed-width !important;
+  transition:
+    width $transition-speed ease,
+    margin-left $transition-speed ease !important;
+
+  background-color: var(--bg-card) !important;
+  color: var(--text-main) !important;
+  border-bottom: 0.0625rem solid var(--border-color);
+
+  // When sidebar expands, shrink topbar width and push it rightwards
+  &.appBarShift {
+    margin-left: $drawer-width !important;
+    width: calc(100% - #{$drawer-width}) !important;
+  }
+}
+
+.divider {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.menuButton {
+  margin-right: $spacing-lg;
+  color: var(--text-main) !important;
+
+  &.hide {
+    display: none;
+  }
+}
+
+// ==========================================
+// SIDEBAR (DRAWER) STYLES
+// ==========================================
+.drawer {
+  flex-shrink: 0;
+  white-space: nowrap;
+  box-sizing: border-box;
+
+  // Global override targeting inner MUI wrapper classes inside scss modules
+  :global {
+    .MuiDrawer-paper {
+      width: fit-content;
+      height: 100%;
+      position: relative !important;
+      top: 0 !important;
+      overflow-x: hidden;
+      border-right: 1.5px solid var(--border-color);
+      z-index: 1;
+    }
+  }
+
+  // Handle styles when sidebar is collapsed
+  &.drawerClose {
+    width: $drawer-collapsed-width;
+
+    :global(.MuiDrawer-paper) {
+      width: $drawer-collapsed-width;
+    }
+  }
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 0.4rem;
+  min-height: $header-height !important;
+  height: $header-height;
+
+  button {
+    color: var(--text-main) !important;
+    width: fit-content;
+  }
+}
+
+// ==========================================
+// LIST ITEMS STYLES
+// ==========================================
+.listItemButton {
+  min-height: 3rem;
+  padding: 0 $spacing-lg !important;
+  color: var(--text-main) !important;
+  gap: 1rem;
+
+  &:hover {
+    background-color: var(--blue-bg) !important;
+  }
+
+  &:global(.active) {
+    background-color: #e3f2fd !important;
+  }
+
+  &.centerJustify {
+    justify-content: center;
+  }
+  &.initialJustify {
+    justify-content: flex-start;
+  }
+}
+
+.listItemIcon {
+  min-width: 0;
+  justify-content: center;
+  color: var(--accent-color) !important;
+  font-size: 2.2rem;
+
+  &.marginAuto {
+    margin-right: auto;
+  }
+}
+
+.listItemText {
+  transition: opacity $transition-speed ease;
+
+  :global(.MuiTypography-root) {
+    font-size: inherit;
+    font-family: inherit;
+  }
+
+  &.visible {
+    opacity: 1;
+  }
+  &.hidden {
+    opacity: 0;
+    width: 0;
+  }
+}
+
+// ==========================================
+// MAIN CONTENT STYLES
+// ==========================================
+.mainContent {
+  flex-grow: 1;
+  padding: $spacing-lg;
+  // Push the viewport content exactly down beneath fixed navigation layouts
+  background-color: var(--bg-body);
+  min-height: calc(100vh - #{$header-height});
+}

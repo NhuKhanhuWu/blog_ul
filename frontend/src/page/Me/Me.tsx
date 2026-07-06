@@ -15,11 +15,8 @@ import { Link } from "react-router-dom";
 function ActionBtns() {
   return (
     <div className={styles.profileActions}>
-      {/* account setting */}
-      <button className="btn-secondary">Edit profile</button>
-
-      <Link to="/account/setting" className="btn-secondary">
-        Account setting
+      <Link to="/account/setting/email" className="btn-secondary">
+        Account centre
       </Link>
     </div>
   );

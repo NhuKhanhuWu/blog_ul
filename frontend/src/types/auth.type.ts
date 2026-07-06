@@ -62,4 +62,5 @@ export interface Props<T extends FieldValues> {
   resetField: UseFormResetField<T>;
   errors: FieldErrors<T>;
   isLoading?: boolean;
+  fieldName?: string;
 }

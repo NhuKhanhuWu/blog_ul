@@ -23,7 +23,6 @@ import { validateRequest } from "../validation/validateRequest";
 import { updateMeSchema } from "../validation/user.validation";
 const userRouter = express.Router();
 
-// TODO: create change password here (only require current password)
 // user routes
 userRouter
   .route("/me")

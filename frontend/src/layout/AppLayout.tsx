@@ -31,7 +31,9 @@ function AppLayout() {
   if (!authReady) return <Loader />;
 
   return (
-    <div className="light">
+    <div
+      className="light"
+      style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <NavBar></NavBar>
 
       <main>

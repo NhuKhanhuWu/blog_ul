@@ -64,6 +64,11 @@ const userSchema = new Schema<UserDocument>(
       },
     },
 
+    tokenVersion: {
+      type: Number,
+      default: 0,
+    },
+
     passwordChangedAt: Date,
   },
   {
