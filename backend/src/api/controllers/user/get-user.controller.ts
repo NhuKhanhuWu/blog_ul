@@ -12,7 +12,7 @@ const GET_BY_SLUG_FIELDS = {
 export const getMe = catchAsync(async (req, res) => {
   // get user from req object
   const user = await UserModel.findById(req.user?._id).select(
-    "_id name email slug",
+    "_id name email slug passwordChangedAt createdAt",
   );
 
   // send response

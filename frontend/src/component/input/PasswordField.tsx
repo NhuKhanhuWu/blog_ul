@@ -17,8 +17,9 @@ export function PasswordField<T extends FieldValues>({
   resetField,
   errors,
   isLoading,
+  fieldName = "password",
 }: Props<T>) {
-  const passwordValue = useWatch({ control, name: "password" as Path<T> });
+  const passwordValue = useWatch({ control, name: fieldName as Path<T> });
   const [isShowPass, setIsShowPass] = useState(false);
 
   return (
@@ -27,7 +28,7 @@ export function PasswordField<T extends FieldValues>({
         <MdPassword className={styles.icon} />
 
         <input
-          {...register("password" as Path<T>)}
+          {...register(fieldName as Path<T>)}
           placeholder="*Password"
           type={isShowPass ? "text" : "password"}
         />
@@ -50,13 +51,13 @@ export function PasswordField<T extends FieldValues>({
         {passwordValue && (
           <GoXCircleFill
             className="btn-reset--input"
-            onClick={() => resetField("password" as Path<T>)}
+            onClick={() => resetField(fieldName as Path<T>)}
           />
         )}
       </div>
 
-      {errors.password && (
-        <p className="error-mgs">*{String(errors.password.message)}</p>
+      {errors[fieldName] && (
+        <p className="error-mgs">*{String(errors[fieldName]?.message)}</p>
       )}
     </div>
   );

@@ -7,11 +7,12 @@ export const emaiSchema = yup
   .required("Email required")
   .email("Invalid email");
 
-export const passwordSchema = yup
+export const basePasswordSchema = yup
   .string()
-  .required("Password required")
   .min(8, "Password must be at least 8 characters")
   .max(128, "Password must be at most 128 characters");
+
+export const passwordSchema = basePasswordSchema.required("Password required");
 
 export const passwordConfirmSchema = yup
   .string()

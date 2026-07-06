@@ -7,6 +7,8 @@ import getToken from "../utils/token/get-token";
 import verifyToken from "../utils/token/verify-token";
 import { Types } from "mongoose";
 import { NextFunction, Request, Response } from "express";
+import UserModel from "../models/user.model";
+import catchAsync from "../utils/error/catch-async";
 
 // ----------- VERIFY USER: START -----------
 export const loadUser = (req: Request, _res: Response, next: NextFunction) => {
@@ -32,30 +34,43 @@ export const loadUser = (req: Request, _res: Response, next: NextFunction) => {
   next();
 };
 
-export const protect = (req: Request, _res: Response, next: NextFunction) => {
-  // get token and check it's there
-  const accessToken = getToken(req);
+export const protect = catchAsync(
+  async (req: Request, _res: Response, next: NextFunction) => {
+    // get token and check it's there
+    const accessToken = getToken(req);
 
-  if (!accessToken) {
-    return next(new AppError("Not authenticated!", 401));
-  }
+    if (!accessToken) {
+      return next(new AppError("Not authenticated!", 401));
+    }
 
-  // check if token expired
-  let decode: JwtPayload;
-  try {
-    decode = verifyToken(accessToken, process.env.JWT_SECRET!) as JwtPayload;
-  } catch (err) {
-    return next(new AppError("Invalid or expired token", 401));
-  }
+    // check if token expired
+    let decode: JwtPayload;
+    try {
+      decode = verifyToken(accessToken, process.env.JWT_SECRET!) as JwtPayload;
+    } catch (err) {
+      return next(new AppError("Invalid or expired token", 401));
+    }
 
-  // Trust the JWT: Construct req.user from the payload instead of hitting the DB
-  req.user = {
-    id: String(decode.id), // Supports controllers reading string format
-    _id: new Types.ObjectId(decode.id as string), // Supports controllers running Mongoose queries
-  };
+    // check if user changed password after token was issued
+    const user = await UserModel.findById(decode.id)
+      .select("tokenVersion")
+      .lean();
+    if (!user || user.tokenVersion !== decode.tokenVersion) {
+      throw new AppError(
+        "User recently changed password! Please log in again.",
+        401,
+      );
+    }
 
-  next();
-};
+    // attach user to request object
+    req.user = {
+      id: String(decode.id), // Supports controllers reading string format
+      _id: new Types.ObjectId(decode.id as string), // Supports controllers running Mongoose queries
+    };
+
+    next();
+  },
+);
 // ----------- VERIFY USER: END -----------
 
 // ----------- RATE LIMITER: START -----------

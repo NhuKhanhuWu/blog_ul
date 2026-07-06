@@ -37,6 +37,12 @@ const SignUpEmail = lazy(() => import("./page/SignUpEmail/SignUpEmai.tsx"));
 const SignUpOtp = lazy(() => import("./page/SignUpOtp/SignUpOtp.tsx"));
 const SignUpPassword = lazy(() => import("./page/SignUpSetUp/SignUpSetUp.tsx"));
 
+const AccountSetting = lazy(() => import("./layout/AccountLayout.tsx"));
+const ChangePassword = lazy(
+  () => import("./page/ChangePassword/ChangePassword.tsx"),
+);
+const ChangeEmail = lazy(() => import("./page/ChangeEmail/ChangeEmail.tsx"));
+
 const router = createBrowserRouter([
   {
     element: <AppLayout></AppLayout>,
@@ -63,6 +69,18 @@ const router = createBrowserRouter([
           { element: <Logout />, path: "logout" },
         ],
       },
+
+      {
+        path: "/account",
+        element: <AccountSetting />,
+        children: [
+          { path: "setting/email", element: <ChangeEmail /> },
+          { path: "setting/password", element: <ChangePassword /> },
+          // { path: "activity/vote", element: <MyVote /> },
+          // { path: "activity/comment", element: <MyComment /> },
+        ],
+      },
+
       { element: <Me />, path: "/user/me" },
       { element: <BlogListDetail />, path: "/list/:id" },
     ],
