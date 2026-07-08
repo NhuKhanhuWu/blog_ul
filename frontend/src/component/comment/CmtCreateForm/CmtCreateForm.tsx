@@ -11,6 +11,7 @@ import styles from "./CmtCreateForm.module.scss";
 import defaultAvatar from "../../../utils/default-avatar";
 import { useCreateCmt } from "../../../hook/cmt/useCreateCmt";
 import { CmtFormProps } from "../../../types/comment.type";
+import toast from "react-hot-toast";
 
 const formSchema = yup.object().shape({
   content: yup
@@ -67,9 +68,11 @@ function CmtCreateForm({
     mutate(
       { blogId, parentId, content: data.content },
       {
-        onSettled: () =>
-          // close form after send cmt
-          cancelCmt(),
+        // show toast message
+        onSuccess: () => toast.success("Comment created"),
+
+        // close form after send cmt
+        onSettled: () => cancelCmt(),
       },
     );
   }

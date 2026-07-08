@@ -10,6 +10,7 @@ import styles from "./CmtEditForm.module.scss";
 import defaultAvatar from "../../../utils/default-avatar";
 import { useCmtItem } from "../../../context/CmtItemContext";
 import useEditCmt from "../../../hook/cmt/useEditCmt";
+import toast from "react-hot-toast";
 
 const formSchema = yup.object().shape({
   content: yup
@@ -24,8 +25,9 @@ function CmtEditForm() {
   // get cmt context
   const { dispatch } = useCmtItem();
   const { cmt } = useCmtItem().state;
+
   const initValue: FormSchemaFields = {
-    content: cmt.content,
+    content: cmt?.content || "",
   };
 
   // get avatar
@@ -47,8 +49,11 @@ function CmtEditForm() {
   function submitHandler(data: FormSchemaFields) {
     // send request to server
     mutate(
-      { cmtId: cmt._id, content: data.content },
+      { cmtId: cmt?._id || "", content: data.content },
       {
+        // edit success message
+        onSuccess: () => toast.success("Comment edited"),
+
         // close the form
         onSettled: () => {
           dispatch({ type: "SET_IS_EDIT", payload: false });
