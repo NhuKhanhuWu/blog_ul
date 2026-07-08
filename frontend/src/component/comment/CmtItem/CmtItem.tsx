@@ -44,7 +44,7 @@ function CmtLayout({ children }: { children: ReactNode }) {
 const CmtItem = memo(({ cmt, depth = 0 }: { cmt: Cmt; depth?: number }) => {
   const [isShowReply, setIsShowReply] = useState(false);
 
-  // Logic fetch dữ liệu lồng vào đúng nơi cần thiết
+  // Logic fetch replies cmt
   const { data, isFetchingNextPage, isError, hasNextPage, fetchNextPage } =
     useInfiniteQuery({
       queryKey: ["cmt-replies", cmt._id.toString()],

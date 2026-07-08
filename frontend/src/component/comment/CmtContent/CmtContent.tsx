@@ -12,6 +12,8 @@ function CmtContent() {
   const userId = useAppSelector((state) => state.auth.user?._id);
   const cmt = useCmtItem().state.cmt;
 
+  if (!cmt) return;
+
   return (
     <>
       {/* user name & timestapm => cmtItemHeader*/}

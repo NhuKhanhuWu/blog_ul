@@ -87,7 +87,6 @@ function ChangePassForm() {
           register={register}
           resetField={resetField}
           errors={formErr}
-          // fieldName="password"
         />
       </div>
 

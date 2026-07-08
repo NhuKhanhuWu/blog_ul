@@ -5,6 +5,7 @@ import { useCmtItem } from "../../../context/CmtItemContext";
 import useDeleteCmt from "../../../hook/cmt/useDeleteCmt";
 import ModalOverlay from "../../ui/Modal/Modal";
 import styles from "./DeleteCmtBtn.module.scss";
+import toast from "react-hot-toast";
 
 interface DeleteCmtBtnProps {
   cmtId: string;
@@ -17,7 +18,9 @@ function DeleteCmtBtn({ children }: DeleteCmtBtnProps) {
   const [isDelete, setIsDelete] = useState(false);
 
   function handleDelete() {
-    mutate(cmt?._id || "");
+    mutate(cmt?._id || "", {
+      onSuccess: () => toast.success("Comment deleted"),
+    });
   }
 
   return (
