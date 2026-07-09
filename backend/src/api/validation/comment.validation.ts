@@ -14,7 +14,7 @@ export const createCmtParamsSchema = z.object({
     id: objectIdSchema,
   }),
   body: z.object({
-    parentId: objectIdSchema.optional(),
+    replyToId: objectIdSchema.optional(),
     content: z
       .string("Comment's content is required")
       .min(1, "Content cannot be empty")

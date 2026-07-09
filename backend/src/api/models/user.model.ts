@@ -76,8 +76,6 @@ export const userSchema = new Schema<UserDocument>(
   },
 );
 
-userSchema.index({ name: "text", email: "text" });
-
 // Middleware to hash password before saving
 userSchema.pre<UserDocument>("save", async function (next) {
   if (!this.isModified("password") || !this.password) return next();

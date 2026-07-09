@@ -8,11 +8,13 @@ export interface Comment {
   userId: Types.ObjectId;
   blogId: Types.ObjectId;
 
-  parentId?: Types.ObjectId | null;
+  parentId?: Types.ObjectId | null; // cmt use for display, avoid nested cmt
+  replyToId?: Types.ObjectId | null; // cmt that user reply to, for notification
+
+  depth: number;
 
   content: string;
 
-  voteScore: number;
   upVotes: number;
   downVotes: number;
 

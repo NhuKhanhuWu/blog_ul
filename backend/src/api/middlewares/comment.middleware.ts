@@ -8,7 +8,7 @@ import catchAsync from "../utils/error/catch-async";
 import { Types } from "mongoose";
 
 export const createCmtLimiter = createLimiter({
-  max: 5,
+  max: 15,
   message: "Too many comments. Please slow down.",
   windowMs: 60 * 1000,
 });
@@ -25,12 +25,12 @@ export const deleteCmtLimiter = createLimiter({
 
 export const validateCmtConstraints = catchAsync(async (req, res, next) => {
   const blogId = req.params.id;
-  const { parentId } = req.body;
+  const { replyToId } = req.body;
 
   // query
   const [post, parentCmt] = await Promise.all([
-    BlogModel.findById(blogId),
-    CommentModel.findById(parentId),
+    BlogModel.exists({ _id: blogId }),
+    CommentModel.findById(replyToId),
   ]);
 
   // Validate Blog Existence
@@ -39,14 +39,14 @@ export const validateCmtConstraints = catchAsync(async (req, res, next) => {
   }
 
   // Validate Parent Comment Context if applicable
-  if (parentId) {
+  if (replyToId) {
     if (!parentCmt) {
       throw new AppError("Parent comment not found", 404);
     }
 
-    if (parentCmt?.blogId.toString() !== blogId) {
+    if (parentCmt?.blogId?.toString() !== blogId) {
       throw new AppError(
-        "blogId must be the same as parent comment's blogId",
+        "blogId must be the same as the comment being replied to",
         400,
       );
     }

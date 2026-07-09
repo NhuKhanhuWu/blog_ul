@@ -16,13 +16,15 @@ const RefreshTokenSchema = new Schema<Token>({
     required: [true, "User id required"],
   },
 
-  sessionExpiresAt: { type: Date, required: true, index: true },
+  sessionExpiresAt: { type: Date, required: true },
 
   revoked: { type: Boolean, default: false }, // check if token is used
   revokedAt: { type: Date }, // when the token was used
   expiresAt: { type: Date }, // hard-expire
   createdAt: { type: Date, default: Date.now }, // create time
 });
+
+RefreshTokenSchema.index({ sessionExpiresAt: 1 });
 
 // delete token 3 days after revoked
 RefreshTokenSchema.index(

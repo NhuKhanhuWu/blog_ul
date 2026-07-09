@@ -14,14 +14,12 @@ const voteSchema = new Schema<Vote>(
     targetId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      index: true,
     },
 
     targetType: {
       type: String,
       required: true,
-      enum: ["blog", "comment"], // mở rộng sau
-      index: true,
+      enum: ["blog", "comment"],
     },
 
     voteType: {
@@ -46,9 +44,6 @@ voteSchema.index(
     unique: true,
   },
 );
-
-// get total votes of target
-voteSchema.index({ targetType: 1, targetId: 1 });
 
 // get vote of user
 voteSchema.index({ userId: 1 });

@@ -30,8 +30,6 @@ const CategorySchema = new Schema<CategoryDocument>(
   },
 );
 
-CategorySchema.index({ name: 1 });
-CategorySchema.index({ slug: 1 });
 CategorySchema.index({ name: "text" });
 
 // auto create slug
