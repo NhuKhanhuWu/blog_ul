@@ -10,6 +10,40 @@ import {
 } from "../../utils/token/create-token";
 import verifyToken from "../../utils/token/verify-token";
 import UserModel from "../../models/user.model";
+import { redisClient } from "../../utils/redis";
+
+// ------- HELPER --------
+const fetchCurrentTokenVersion = async (
+  userId: string,
+): Promise<number | null> => {
+  const cacheKey = `user:version:${userId}`;
+
+  try {
+    // get from Redis Cache
+    const cachedVersion = await redisClient.get(cacheKey);
+    if (cachedVersion !== null) {
+      return Number(cachedVersion);
+    }
+
+    // Cache Miss -> query MongoDB
+    const user = await UserModel.findById(userId).select("tokenVersion").lean();
+    if (!user) return null;
+
+    const currentVersion = user.tokenVersion || 0;
+
+    // set to Redis for next request
+    await redisClient.setEx(
+      cacheKey,
+      Number(process.env.USER_VERSION_TTL),
+      String(currentVersion),
+    );
+    return currentVersion;
+  } catch (err) {
+    // Fallback: if Redis has err, try to read from DB
+    const user = await UserModel.findById(userId).select("tokenVersion").lean();
+    return user ? user.tokenVersion || 0 : null;
+  }
+};
 
 export const refreshToken = catchAsync(async (req, res, next) => {
   // get refresh token from cookie
@@ -40,14 +74,15 @@ export const refreshToken = catchAsync(async (req, res, next) => {
     throw new AppError("Session revoked or invalid!", 401);
   }
 
-  // check if user changed password after token was issued
-  const user = await UserModel.findById(decode.id)
-    .select("tokenVersion")
-    .lean();
-  if (!user || user.tokenVersion !== decode.tokenVersion) {
-    throw new AppError(
-      "User recently changed password! Please log in again.",
-      401,
+  const currentTokenVersion = await fetchCurrentTokenVersion(decode.id);
+
+  if (currentTokenVersion === null) {
+    return next(new AppError("User no longer exists!", 401));
+  }
+
+  if (currentTokenVersion !== decode.tokenVersion) {
+    return next(
+      new AppError("User recently changed password! Please log in again.", 401),
     );
   }
 
@@ -60,13 +95,14 @@ export const refreshToken = catchAsync(async (req, res, next) => {
   const { userId } = curRefreshToken;
   const accessToken = createAccessToken(
     userId.toString(),
-    user?.tokenVersion || 0,
+    currentTokenVersion || 0,
   );
 
   // ------------ TURN OFF NEW REFRESH TOKEN WHEN REVOKE: START -------------
   // the web have problem where new refresh token is not setted in cookie when the old one revoked
   // now use one refresh token for the entire session
   //TODO: will fix this later
+
   // const newRefreshToken = createRefreshToken(userId.toString());
 
   // update in db

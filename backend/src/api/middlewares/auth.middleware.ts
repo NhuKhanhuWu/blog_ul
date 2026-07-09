@@ -9,6 +9,44 @@ import { Types } from "mongoose";
 import { NextFunction, Request, Response } from "express";
 import UserModel from "../models/user.model";
 import catchAsync from "../utils/error/catch-async";
+import { redisClient } from "../utils/redis";
+
+// ----------- HELPERS: START ----------
+// Helper: get current tokenVersion of User (Redis Cache first, then Fallback to DB)
+const fetchCurrentTokenVersion = async (
+  userId: string,
+): Promise<number | null> => {
+  const cacheKey = `user:version:${userId}`;
+
+  try {
+    // try get from Redis Cache
+    const cachedVersion = await redisClient.get(cacheKey);
+    if (cachedVersion !== null) {
+      return Number(cachedVersion);
+    }
+
+    // Cache Miss -> query MongoDB
+    const user = await UserModel.findById(userId).select("tokenVersion").lean();
+    if (!user) return null;
+
+    const currentVersion = user.tokenVersion || 0;
+
+    // cache to Redis for later
+    await redisClient.setEx(
+      cacheKey,
+      Number(process.env.USER_VERSION_TTL),
+      String(currentVersion),
+    );
+    return currentVersion;
+  } catch (err) {
+    // console.error("Redis/DB Error trong fetchCurrentTokenVersion:", err);
+
+    // Fallback: if Redis err, read from DB
+    const user = await UserModel.findById(userId).select("tokenVersion").lean();
+    return user ? user.tokenVersion || 0 : null;
+  }
+};
+// ----------- HELPERS: END ----------
 
 // ----------- VERIFY USER: START -----------
 export const loadUser = (req: Request, _res: Response, next: NextFunction) => {
@@ -44,18 +82,20 @@ export const protect = catchAsync(
     }
 
     // check if token expired
-    let decode: JwtPayload;
+    let decoded: JwtPayload;
     try {
-      decode = verifyToken(accessToken, process.env.JWT_SECRET!) as JwtPayload;
+      decoded = verifyToken(accessToken, process.env.JWT_SECRET!) as JwtPayload;
     } catch (err) {
       return next(new AppError("Invalid or expired token", 401));
     }
 
-    // check if user changed password after token was issued
-    const user = await UserModel.findById(decode.id)
-      .select("tokenVersion")
-      .lean();
-    if (!user || user.tokenVersion !== decode.tokenVersion) {
+    const currentVersion = await fetchCurrentTokenVersion(decoded.id);
+
+    if (currentVersion === null) {
+      throw new AppError("User no longer exists!", 401);
+    }
+
+    if (currentVersion !== decoded.tokenVersion) {
       throw new AppError(
         "User recently changed password! Please log in again.",
         401,
@@ -64,8 +104,8 @@ export const protect = catchAsync(
 
     // attach user to request object
     req.user = {
-      id: String(decode.id), // Supports controllers reading string format
-      _id: new Types.ObjectId(decode.id as string), // Supports controllers running Mongoose queries
+      id: String(decoded.id), // Supports controllers reading string format
+      _id: new Types.ObjectId(decoded.id as string), // Supports controllers running Mongoose queries
     };
 
     next();
