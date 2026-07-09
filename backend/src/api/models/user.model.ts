@@ -9,7 +9,7 @@ import { BlogListModel } from "./blog-list.model";
 
 const { Schema } = mongoose;
 
-const userSchema = new Schema<UserDocument>(
+export const userSchema = new Schema<UserDocument>(
   {
     name: {
       type: String,

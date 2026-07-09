@@ -1,7 +1,9 @@
 /** @format */
 
+import { Document, Types } from "mongoose";
 import RefreshToken from "../../models/refresh-token.model";
 import UserModel, { checkUserPassword } from "../../models/user.model";
+import { UserDocument } from "../../types/user.type";
 import AppError from "../../utils/error/app-error";
 import catchAsync from "../../utils/error/catch-async";
 import {
@@ -9,7 +11,33 @@ import {
   createRefreshToken,
 } from "../../utils/token/create-token";
 
-export const login = catchAsync(async (req, res, next) => {
+type PlainUser = Omit<
+  UserDocument,
+  keyof Document | "checkPassword" | "changedPasswordAfter"
+> & { _id: Types.ObjectId };
+
+const handleToken = async (user: PlainUser) => {
+  // ------TOKEN---------
+  const refreshToken = createRefreshToken(
+    user._id.toString(),
+    user.tokenVersion || 0,
+  );
+  const accessToken = createAccessToken(
+    user._id.toString(),
+    user.tokenVersion || 0,
+  );
+
+  // save token to db
+  await RefreshToken.create({
+    token: refreshToken,
+    userId: user._id,
+    sessionExpiresAt: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000), // 20 days
+  }).catch((err) => console.error("Background Session creation failed:", err));
+
+  return { refreshToken, accessToken };
+};
+
+export const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
 
   //check user and password
@@ -22,22 +50,8 @@ export const login = catchAsync(async (req, res, next) => {
   // if ok, send token (access and refresh)
   req.user = { id: user._id.toString(), _id: user._id };
 
-  // ------TOKEN---------
-  const refreshToken = createRefreshToken(
-    user._id.toString(),
-    user.tokenVersion || 0,
-  );
-  const accessToken = createAccessToken(
-    user._id.toString(),
-    user.tokenVersion || 0,
-  );
-
-  // Let the DB create the session in the background while the user receives their response.
-  RefreshToken.create({
-    token: refreshToken,
-    userId: user._id,
-    sessionExpiresAt: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000), // 20 days
-  }).catch((err) => console.error("Background Session creation failed:", err));
+  // token
+  const { refreshToken, accessToken } = await handleToken(user);
 
   // save to cookies
   res.cookie("refreshToken", refreshToken, {
@@ -48,14 +62,9 @@ export const login = catchAsync(async (req, res, next) => {
     path: "/",
   });
 
-  // ------TOKEN---------
-
   // response
-  delete user.password;
-  user.password = undefined; // remove password from res
   res.status(200).json({
     status: "success",
-    user,
     accessToken,
   });
 });
