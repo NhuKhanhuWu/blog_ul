@@ -12,11 +12,12 @@ import defaultAvatar from "../../../utils/default-avatar";
 import { useCreateCmt } from "../../../hook/cmt/useCreateCmt";
 import { CmtFormProps } from "../../../types/comment.type";
 import toast from "react-hot-toast";
+import MentionChip from "../../ui/MentionChip/MentionChip";
 
 const formSchema = yup.object().shape({
   content: yup
     .string()
-    .max(2000, "Comment must be at most 5000 characters")
+    .max(5000, "Comment must be at most 5000 characters")
     .required(),
 });
 
@@ -26,7 +27,8 @@ function CmtCreateForm({
   isUsing,
   setIsUsing,
   blogId,
-  parentId,
+  replyToId,
+  mentions,
 }: CmtFormProps) {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
@@ -35,7 +37,9 @@ function CmtCreateForm({
     handleSubmit,
     reset,
     formState: { errors: formError },
-  } = useForm({ resolver: yupResolver(formSchema) });
+  } = useForm({
+    resolver: yupResolver(formSchema),
+  });
 
   // handling send create cmt request
   const { mutate, isPending } = useCreateCmt();
@@ -66,7 +70,7 @@ function CmtCreateForm({
   function submitHandler(data: TFormSchema) {
     // send request to server
     mutate(
-      { blogId, parentId, content: data.content },
+      { blogId, replyToId, content: data.content },
       {
         // show toast message
         onSuccess: () => toast.success("Comment created"),
@@ -79,6 +83,20 @@ function CmtCreateForm({
 
   return (
     <form onSubmit={handleSubmit(submitHandler)} className={styles.cmtForm}>
+      {/* show mention chip */}
+      {replyToId && mentions && mentions.length > 0 && (
+        <div className={styles.mentionList}>
+          {mentions.map((mention, idx) => (
+            <MentionChip
+              key={`${mention.slug}-${idx}`}
+              slug={mention.slug}
+              disabled={isPending}
+              onRemove={cancelCmt} // click this will cancel reply state
+            />
+          ))}
+        </div>
+      )}
+
       <div className={styles.formInput}>
         <img
           loading="lazy"
@@ -90,11 +108,13 @@ function CmtCreateForm({
           onFocus={() => setIsUsing(true)}
           {...register("content")}
           placeholder="Write your comment"
-          className="input"></input>
+          className="input"
+        />
 
         {isUsing && (
           <>
             <button
+              type="button"
               onClick={() => cancelCmt()}
               className={`${styles.sendCmtBtn} btn-secondary`}>
               Cancel

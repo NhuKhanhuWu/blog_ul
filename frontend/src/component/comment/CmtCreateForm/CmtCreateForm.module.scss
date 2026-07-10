@@ -16,6 +16,14 @@
   }
 }
 
+.mentionList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  padding-left: 4rem;
+  font-size: 1.4rem;
+}
+
 @include respond(lg) {
   .cmtFormCotainer {
     margin: 1rem 0;

@@ -1,6 +1,6 @@
 /** @format */
 import { z } from "zod";
-import { objectIdSchema } from "./object-id.validation";
+import { objectIdSchema } from "./general.validation";
 
 export const toggleVoteSchema = z.object({
   body: z.object({

@@ -7,6 +7,7 @@ import { ShowMoreText } from "../../ui/ShowMoreText/ShowMoreText";
 import CmtPopover from "../CmtPopover/CmtPopover";
 import { useAppSelector } from "../../../hook/shared/reduxHooks";
 import { useCmtItem } from "../../../context/CmtItemContext";
+import { buildCmtContentNode } from "../../../utils/buildCmtContentNode";
 
 function CmtContent() {
   const userId = useAppSelector((state) => state.auth.user?._id);
@@ -29,7 +30,13 @@ function CmtContent() {
 
       {/* content */}
       <div className={styles.cmtContent}>
-        <ShowMoreText text={cmt.content} lines={4} />
+        <ShowMoreText
+          text={buildCmtContentNode({
+            content: cmt.content,
+            mentions: cmt.mentions,
+          })}
+          lines={4}
+        />
       </div>
     </>
   );

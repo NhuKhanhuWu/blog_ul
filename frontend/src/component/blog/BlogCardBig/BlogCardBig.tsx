@@ -43,7 +43,7 @@ function BlogCardBig({ blog, isList, popItems }: BlogCard) {
           </div>
 
           <h3 className={`font-serif ${styles.title}`}>{blog.title}</h3>
-          <p className={styles.preview}>{blog.preview.text}</p>
+          <p className={styles.preview}>{blog.preview?.text}</p>
         </Link>
 
         <div className={styles.engagementRow}>

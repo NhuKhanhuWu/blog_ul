@@ -90,7 +90,7 @@ export const checkOtp = catchAsync(async (req, res) => {
 export const createUser = catchAsync(async (req, res) => {
   // get email from token
   const token = getToken(req);
-  // chek if token is sended
+  // check if token is sended
   if (!token)
     throw new AppError(
       "Please validate for email before execute this action!",

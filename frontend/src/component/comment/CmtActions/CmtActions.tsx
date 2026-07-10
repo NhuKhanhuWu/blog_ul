@@ -16,6 +16,11 @@ import CmtCreateForm from "../CmtCreateForm/CmtCreateForm";
 function CmtActions({ cmt }: { cmt: Cmt }) {
   const { mutate, isPending } = useToggleCmtVote();
   const [isRepling, setIsRepling] = useState(false);
+  const mention = {
+    slug: cmt.userId?.slug,
+    offset: 0,
+    length: cmt.userId?.slug.length,
+  };
 
   const handleVote = (type: 1 | -1) => {
     if (isPending) return;
@@ -50,7 +55,8 @@ function CmtActions({ cmt }: { cmt: Cmt }) {
       {isRepling && (
         <CmtCreateForm
           blogId={cmt.blogId}
-          parentId={cmt._id}
+          replyToId={cmt._id}
+          mentions={[mention]}
           isUsing={isRepling}
           setIsUsing={setIsRepling}
         />
