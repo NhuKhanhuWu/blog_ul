@@ -132,6 +132,7 @@ const getCommentsWithVote = async ({
           "userId.role": 0,
           "userId.passwordChangedAt": 0,
           "userId.__v": 0,
+          "userId.tokenVersion": 0,
         },
       },
     );

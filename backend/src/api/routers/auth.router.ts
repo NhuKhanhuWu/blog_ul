@@ -22,6 +22,7 @@ import {
   signupIpLimiter,
 } from "../middlewares/auth.middleware";
 import {
+  createUserSchema,
   forgotPasswordSchema,
   loginSchema,
   sendSignUpOtpSchema,
@@ -39,7 +40,11 @@ authRouter.post(
   sendSignUpOtp,
 );
 authRouter.post("/signup/verify", checkOtp);
-authRouter.post("/signup/create-user", createUser);
+authRouter.post(
+  "/signup/create-user",
+  validateRequest(createUserSchema),
+  createUser,
+);
 
 // login route
 authRouter.post("/login", loginLimiter, validateRequest(loginSchema), login);

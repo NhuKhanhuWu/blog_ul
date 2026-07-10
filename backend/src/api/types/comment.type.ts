@@ -2,6 +2,12 @@
 
 import { Types } from "mongoose";
 
+export interface CommentMention {
+  slug: string; // slug, use to build link /profile/:slug
+  offset: number; // start position in cmt
+  length: number; // length (including @)
+}
+
 export interface Comment {
   _id?: Types.ObjectId;
 
@@ -14,6 +20,7 @@ export interface Comment {
   depth: number;
 
   content: string;
+  mentions: CommentMention[];
 
   upVotes: number;
   downVotes: number;

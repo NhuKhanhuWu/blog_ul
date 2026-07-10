@@ -17,6 +17,10 @@ export const userSchema = new Schema<UserDocument>(
       trim: true,
       minlength: [2, "Name must be at least 2 characters"],
       maxlength: [50, "Name must be at most 50 characters"],
+      match: [
+        /^[\p{L}\p{N} ]+$/u,
+        "Name must not contain special characters or emoji",
+      ],
     },
     slug: {
       type: String,

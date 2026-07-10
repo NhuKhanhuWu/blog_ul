@@ -24,11 +24,11 @@ export async function getCmtByBlog({
 
 export async function createCmt({
   blogId,
-  parentId = undefined,
+  replyToId = undefined,
   content,
 }: CreateCmt): Promise<Cmt> {
   const res = await axiosInstance.post(`/blogs/${blogId}/cmt`, {
-    parentId,
+    replyToId,
     content,
   });
 

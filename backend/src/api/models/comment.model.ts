@@ -39,6 +39,18 @@ const commentSchema = new Schema<Comment>(
       maxlength: 5000,
     },
 
+    mentions: {
+      type: [
+        {
+          slug: { type: String, required: true },
+          offset: { type: Number, required: true },
+          length: { type: Number, required: true },
+        },
+      ],
+      default: [],
+      _id: false,
+    },
+
     // cmt's depth
     depth: {
       type: Number,

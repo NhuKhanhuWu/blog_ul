@@ -1,7 +1,7 @@
 /** @format */
 
 import { z } from "zod";
-import { objectIdSchema } from "./object-id.validation";
+import { objectIdSchema } from "./general.validation";
 
 // check cmt's id
 export const cmtIdSchema = z.object({
@@ -18,7 +18,7 @@ export const createCmtParamsSchema = z.object({
     content: z
       .string("Comment's content is required")
       .min(1, "Content cannot be empty")
-      .max(2000, "Content cannot exceed 2000 characters")
+      .max(5000, "Content cannot exceed 2000 characters")
       .trim(),
   }),
 });

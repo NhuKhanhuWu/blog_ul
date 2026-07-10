@@ -14,6 +14,7 @@ export interface Cmt {
   blogId: string;
   parentId: string;
   content: string;
+  mentions: { slug: string; offset: number; length: number }[];
   upVotes: number;
   downVotes: number;
   replyCount: number;
@@ -32,7 +33,7 @@ export type CmtCache = InfiniteData<{ data: Cmt[]; nextPage?: number }>;
 
 export interface CreateCmt {
   blogId: string;
-  parentId?: string | undefined;
+  replyToId?: string | undefined;
   content: string;
 }
 
@@ -49,9 +50,34 @@ export interface EditCmt {
   content: string;
 }
 
-export interface CmtFormProps {
+// export interface CmtFormProps {
+//   isUsing: boolean;
+//   setIsUsing: Dispatch<SetStateAction<boolean>>;
+//   blogId: string;
+//   replyToId?: string;
+// }
+
+interface BaseCmtFormProps {
   isUsing: boolean;
   setIsUsing: Dispatch<SetStateAction<boolean>>;
   blogId: string;
-  parentId?: string;
+}
+
+export type CmtFormProps = BaseCmtFormProps &
+  (
+    | {
+        replyToId: string;
+        mentions: CmtMentionProps[]; // require mentions when pass replyToId
+      }
+    | {
+        // avoid pass replyToId / mentions ablone
+        replyToId?: never;
+        mentions?: never;
+      }
+  );
+
+export interface CmtMentionProps {
+  slug: string;
+  offset: number;
+  length: number;
 }

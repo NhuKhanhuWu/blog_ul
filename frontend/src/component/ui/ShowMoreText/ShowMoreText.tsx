@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import styles from "./ShowMoreText.module.scss";
 
 interface ShowMoreTextProps {
-  text: string | undefined;
+  text: React.ReactNode;
   lines?: number;
   className?: string; // Class CSS
 }
