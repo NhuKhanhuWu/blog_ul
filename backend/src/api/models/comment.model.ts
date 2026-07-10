@@ -5,36 +5,55 @@ import { Comment } from "../types/comment.type";
 
 const commentSchema = new Schema<Comment>(
   {
-    // tác giả comment
+    // comment owner
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      index: true,
     },
 
-    // comment thuộc post nào
+    // comment of which blog
     blogId: {
       type: Schema.Types.ObjectId,
       ref: "Post",
       required: true,
-      index: true,
     },
 
-    // reply cho comment nào (null = comment gốc)
+    // for which comment (null = root)
     parentId: {
       type: Schema.Types.ObjectId,
       ref: "Comment",
       default: null,
-      index: true,
     },
 
-    // nội dung comment
+    replyToId: {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+      default: null,
+    },
+
     content: {
       type: String,
       required: true,
       trim: true,
       maxlength: 5000,
+    },
+
+    mentions: {
+      type: [
+        {
+          slug: { type: String, required: true },
+          offset: { type: Number, required: true },
+          length: { type: Number, required: true },
+        },
+      ],
+      default: [],
+      _id: false,
+    },
+
+    // cmt's depth
+    depth: {
+      type: Number,
     },
 
     // vote
@@ -48,7 +67,7 @@ const commentSchema = new Schema<Comment>(
       default: 0,
     },
 
-    // số lượng reply trực tiếp
+    // direct reply cnt
     replyCount: {
       type: Number,
       default: 0,
@@ -67,16 +86,17 @@ const commentSchema = new Schema<Comment>(
 
 /* ================= INDEX ================= */
 
-// load comment theo post
+// get cmt
+commentSchema.index({ userId: 1 }); // user
+commentSchema.index({ blogId: 1 }); //blog
+
+// load comment by post
 commentSchema.index({ postId: 1, createdAt: -1 });
 
 // load reply
-commentSchema.index({ parentId: 1, createdAt: 1 });
+commentSchema.index({ parentId: 1 });
 
-// load comment của user
-commentSchema.index({ authorId: 1 });
-
-// lọc comment chưa bị xoá
+// filter comment undeleted cmt
 commentSchema.index({ isDeleted: 1 });
 
 const CommentModel = mongoose.model<Comment>("Comment", commentSchema);

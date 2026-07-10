@@ -52,9 +52,7 @@ const handleUserSessions = async (
 };
 
 export const changePass = catchAsync(async (req, res) => {
-  const { password, passwordConfirm, currentPassword, isLogoutOthers } =
-    req.body;
-  // const { accessToken } = req;
+  const { password, passwordConfirm, currentPassword } = req.body;
 
   // check if data is present
   if (!password || !passwordConfirm || !currentPassword) {

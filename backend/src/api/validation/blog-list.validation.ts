@@ -1,7 +1,7 @@
 /** @format */
 
 import { z } from "zod";
-import { objectIdSchema } from "./object-id.validation";
+import { objectIdSchema } from "./general.validation";
 
 export const updateBlogListSchema = z.object({
   body: z

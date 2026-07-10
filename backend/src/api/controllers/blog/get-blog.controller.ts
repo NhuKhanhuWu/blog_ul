@@ -59,7 +59,7 @@ function applyCategoryFilter(
     throw new AppError("Logic must be either 'or' or 'and'", 400);
   }
 
-  // 🔥 Validate ObjectId
+  // Validate ObjectId
   const categoryIds = values.map((id) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new AppError(`Invalid category id: ${id}`, 400);
@@ -67,7 +67,7 @@ function applyCategoryFilter(
     return new mongoose.Types.ObjectId(id);
   });
 
-  // 🔥 Apply filter
+  // Apply filter
   if (logic === "and") {
     baseQuery.find({ categories: { $all: categoryIds } });
   } else {

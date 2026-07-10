@@ -36,7 +36,7 @@ const getPipeline = ({
       ? [
           {
             $match: {
-              name: { $regex: keyword, $options: "i" },
+              $text: { $search: keyword },
             },
           },
         ]

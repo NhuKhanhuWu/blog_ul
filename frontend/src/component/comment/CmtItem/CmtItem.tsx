@@ -44,7 +44,6 @@ function CmtLayout({ children }: { children: ReactNode }) {
 const CmtItem = memo(({ cmt, depth = 0 }: { cmt: Cmt; depth?: number }) => {
   const [isShowReply, setIsShowReply] = useState(false);
 
-  // Logic fetch replies cmt
   const { data, isFetchingNextPage, isError, hasNextPage, fetchNextPage } =
     useInfiniteQuery({
       queryKey: ["cmt-replies", cmt._id.toString()],
@@ -58,7 +57,8 @@ const CmtItem = memo(({ cmt, depth = 0 }: { cmt: Cmt; depth?: number }) => {
         }),
       initialPageParam: 0,
       getNextPageParam: (lastPage) => lastPage.nextPage,
-      enabled: isShowReply && depth < 3, // avoidl infinite fetch when open reply and have more than 3 level of reply
+
+      enabled: isShowReply,
     });
 
   const replies = useMemo(
@@ -66,23 +66,23 @@ const CmtItem = memo(({ cmt, depth = 0 }: { cmt: Cmt; depth?: number }) => {
     [data],
   );
 
+  const nextDepth = Math.min(depth + 1, 2);
+
   return (
     <CommentItemProvider initCmt={cmt}>
       <CmtLayout>
-        {/* main content */}
         <div className={styles.cmtTxt}>
           <CmtContent />
           <CmtActions cmt={cmt} />
         </div>
 
-        {/* replies: only render when open */}
         {isShowReply && (
           <div className={styles.repliesList}>
             {isError && (
               <span className="error-mgs">Error loading replies</span>
             )}
             {replies.map((reply) => (
-              <CmtItem key={reply._id} cmt={reply} depth={depth + 1} />
+              <CmtItem key={reply._id} cmt={reply} depth={nextDepth} />
             ))}
           </div>
         )}

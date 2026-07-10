@@ -17,6 +17,10 @@ export const userSchema = new Schema<UserDocument>(
       trim: true,
       minlength: [2, "Name must be at least 2 characters"],
       maxlength: [50, "Name must be at most 50 characters"],
+      match: [
+        /^[\p{L}\p{N} ]+$/u,
+        "Name must not contain special characters or emoji",
+      ],
     },
     slug: {
       type: String,
@@ -75,8 +79,6 @@ export const userSchema = new Schema<UserDocument>(
     timestamps: true, // createdAt, updatedAt
   },
 );
-
-userSchema.index({ name: "text", email: "text" });
 
 // Middleware to hash password before saving
 userSchema.pre<UserDocument>("save", async function (next) {
