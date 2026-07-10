@@ -36,6 +36,11 @@ function CmtPopover({ cmt }: { cmt: Cmt }) {
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",
+        }}
+        slotProps={{
+          root: {
+            style: { zIndex: 9999 },
+          },
         }}>
         <div className={styles.popContent}>
           {/* edit cmt */}

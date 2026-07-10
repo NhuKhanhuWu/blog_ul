@@ -71,10 +71,10 @@ function CmtEditForm() {
           src={avatar}
           className={styles.avatar}
         />
-        <input
+        <textarea
           {...register("content")}
           placeholder="Write your comment"
-          className="input"></input>
+          className="input"></textarea>
 
         {/* action btns */}
         <button

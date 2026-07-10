@@ -12,7 +12,7 @@ import defaultAvatar from "../../../utils/default-avatar";
 import { useCreateCmt } from "../../../hook/cmt/useCreateCmt";
 import { CmtFormProps } from "../../../types/comment.type";
 import toast from "react-hot-toast";
-import MentionChip from "../../ui/MentionChip/MentionChip";
+import { Dispatch, SetStateAction } from "react";
 
 const formSchema = yup.object().shape({
   content: yup
@@ -23,13 +23,18 @@ const formSchema = yup.object().shape({
 
 type TFormSchema = yup.InferType<typeof formSchema>;
 
+type CmtCreateForm = CmtFormProps & {
+  onCreateCmt: Dispatch<SetStateAction<boolean>>;
+};
+
 function CmtCreateForm({
   isUsing,
   setIsUsing,
   blogId,
   replyToId,
-  mentions,
-}: CmtFormProps) {
+  replyToName,
+  onCreateCmt,
+}: CmtCreateForm) {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   const {
@@ -72,8 +77,13 @@ function CmtCreateForm({
     mutate(
       { blogId, replyToId, content: data.content },
       {
-        // show toast message
-        onSuccess: () => toast.success("Comment created"),
+        onSuccess: () => {
+          // show toast message
+          toast.success("Comment created");
+
+          // show replies
+          onCreateCmt(true);
+        },
 
         // close form after send cmt
         onSettled: () => cancelCmt(),
@@ -83,20 +93,6 @@ function CmtCreateForm({
 
   return (
     <form onSubmit={handleSubmit(submitHandler)} className={styles.cmtForm}>
-      {/* show mention chip */}
-      {replyToId && mentions && mentions.length > 0 && (
-        <div className={styles.mentionList}>
-          {mentions.map((mention, idx) => (
-            <MentionChip
-              key={`${mention.slug}-${idx}`}
-              slug={mention.slug}
-              disabled={isPending}
-              onRemove={cancelCmt} // click this will cancel reply state
-            />
-          ))}
-        </div>
-      )}
-
       <div className={styles.formInput}>
         <img
           loading="lazy"
@@ -104,10 +100,12 @@ function CmtCreateForm({
           src={avatar}
           className={styles.avatar}
         />
-        <input
+        <textarea
           onFocus={() => setIsUsing(true)}
           {...register("content")}
-          placeholder="Write your comment"
+          placeholder={
+            replyToName ? "Reply to @" + replyToName : "Write your comment"
+          }
           className="input"
         />
 

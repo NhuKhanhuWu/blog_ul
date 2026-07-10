@@ -5,7 +5,7 @@ import catchAsync from "../../utils/error/catch-async";
 import { BlogModel } from "../../models/blog.model";
 import { Types } from "mongoose";
 import UserModel from "../../models/user.model";
-import { CommentMention } from "../../types/comment.type";
+import { CommentReply } from "../../types/comment.type";
 
 const MAX_DEPTH = 3; // level 0,1,2 normal nested; flatten cmt from 3
 
@@ -18,8 +18,8 @@ export const createCmt = catchAsync(async (req, res) => {
   let depth = 0;
   let parentId: Types.ObjectId | null = null;
   let replyToId: Types.ObjectId | null = null;
-  let finalContent = content;
-  let mentions: CommentMention[] = [];
+
+  let replyTo: CommentReply | null = null;
 
   if (replyToCmt) {
     depth = replyToCmt.depth + 1;
@@ -37,16 +37,10 @@ export const createCmt = catchAsync(async (req, res) => {
         "slug",
       );
       if (repliedUser) {
-        const mentionText = `@${repliedUser.slug}`;
-        finalContent = `${mentionText} ${content}`;
-
-        mentions = [
-          {
-            slug: repliedUser.slug,
-            offset: 0,
-            length: mentionText.length,
-          },
-        ];
+        replyTo = {
+          _id: repliedUser._id,
+          slug: repliedUser.slug,
+        };
       }
     }
   }
@@ -55,10 +49,9 @@ export const createCmt = catchAsync(async (req, res) => {
     userId,
     blogId,
     parentId,
-    replyToId,
+    replyTo,
     depth,
-    content: finalContent,
-    mentions,
+    content,
   });
 
   const writeOps: Promise<any>[] = [];

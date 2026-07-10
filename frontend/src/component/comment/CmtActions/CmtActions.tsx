@@ -10,17 +10,17 @@ import { Cmt } from "../../../types/comment.type";
 import styles from "./CmtActions.module.scss";
 import { MdOutlineMessage } from "react-icons/md";
 import { useToggleCmtVote } from "../../../hook/vote/useToggleVote";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import CmtCreateForm from "../CmtCreateForm/CmtCreateForm";
 
-function CmtActions({ cmt }: { cmt: Cmt }) {
+interface CmtActionProps {
+  cmt: Cmt;
+  onCreateCmt: Dispatch<SetStateAction<boolean>>;
+}
+
+function CmtActions({ cmt, onCreateCmt }: CmtActionProps) {
   const { mutate, isPending } = useToggleCmtVote();
   const [isRepling, setIsRepling] = useState(false);
-  const mention = {
-    slug: cmt.userId?.slug,
-    offset: 0,
-    length: cmt.userId?.slug.length,
-  };
 
   const handleVote = (type: 1 | -1) => {
     if (isPending) return;
@@ -56,9 +56,10 @@ function CmtActions({ cmt }: { cmt: Cmt }) {
         <CmtCreateForm
           blogId={cmt.blogId}
           replyToId={cmt._id}
-          mentions={[mention]}
+          replyToName={cmt.userId.slug}
           isUsing={isRepling}
           setIsUsing={setIsRepling}
+          onCreateCmt={onCreateCmt}
         />
       )}
     </>
