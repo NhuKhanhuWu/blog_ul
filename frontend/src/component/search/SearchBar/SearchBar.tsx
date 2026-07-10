@@ -42,6 +42,7 @@ function SubmitClearBtns() {
       <button type="submit" className="btn-primary">
         Search
       </button>
+
       <button
         type="button"
         className="btn-secondary"

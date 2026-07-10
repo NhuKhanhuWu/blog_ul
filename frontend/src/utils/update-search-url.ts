@@ -16,8 +16,14 @@ export function updateSearchUrl({
 }: IUpdateSearchUrl) {
   const param = new URLSearchParams(searchParams);
   const { title, sort, logic, categories } = data;
+  console.log(typeof title);
 
-  if (title) param.set("title", title);
+  if (title && title.trim() !== "") {
+    param.set("title", title);
+  } else {
+    param.delete("title");
+  }
+
   if (sort) param.set("sort", sort);
   if (logic) param.set("logic", logic);
   if (categories) param.set("category", categories.join(","));

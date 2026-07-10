@@ -13,8 +13,8 @@ function Sort() {
 
       <select className="flex-1" {...register("sort")} id="sort">
         <option value="-upVotes">Popular</option>
-        <option value="-updatedAt">Newest</option>
-        <option value="updatedAt">Oldest</option>
+        <option value="-createdAt">Newest</option>
+        <option value="createdAt">Oldest</option>
       </select>
     </div>
   );

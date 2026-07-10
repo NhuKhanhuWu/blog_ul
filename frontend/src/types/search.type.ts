@@ -6,8 +6,8 @@ import { ICategory } from "./category.type";
 export const formSchema = yup.object({
   title: yup.string().default(""),
   sort: yup
-    .mixed<"-upVotes" | "-updatedAt" | "updatedAt">()
-    .oneOf(["-upVotes", "-updatedAt", "updatedAt"])
+    .mixed<"-upVotes" | "-createdAt" | "createdAt">()
+    .oneOf(["-upVotes", "-createdAt", "createdAt"])
     .required()
     .default("-upVotes"),
   logic: yup
