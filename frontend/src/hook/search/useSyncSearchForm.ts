@@ -7,14 +7,14 @@ import { TSearchFormValues } from "../../types/search.type";
 import { useFormContext } from "react-hook-form";
 
 type Logic = "or" | "and";
-type Sort = "-upVotes" | "-pub_date" | "pub_date";
+type Sort = "-upVotes" | "-createdAt" | "createdAt";
 
 function isLogic(value: string): value is Logic {
   return ["or", "and"].includes(value);
 }
 
 function isSort(value: string): value is Sort {
-  return ["-upVotes", "-pub_date", "pub_date"].includes(value);
+  return ["-upVotes", "-createdAt", "createdAt"].includes(value);
 }
 
 function useSyncSearchForm() {

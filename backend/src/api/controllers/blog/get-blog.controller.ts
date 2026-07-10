@@ -28,8 +28,8 @@ const SELECTED_FIELDS = {
 
 // Fields allowed for sorting
 const SORT_FIELDS = [
-  "-updatedAt", // newest/oldest
-  "updatedAt",
+  "-createdAt", // newest/oldest
+  "createdAt",
   "-upVotes", // alphabetical"title",
 ];
 
@@ -225,7 +225,7 @@ export const getMultBlog = catchAsync(async (req, res) => {
     .findbyUser()
     .searchByTitle()
     .filter(FILTER_FIELDS)
-    .sort(SORT_FIELDS, "-updatedAt")
+    .sort(SORT_FIELDS, "-createdAt")
     .limitedFields(SELECTED_FIELDS);
 
   // Capture the count promise

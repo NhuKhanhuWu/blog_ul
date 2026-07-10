@@ -6,11 +6,6 @@ import styles from "./Navbar.module.scss";
 import { useAppSelector } from "../../../hook/shared/reduxHooks";
 import getLogo from "../../../utils/get-logo";
 
-const navItemsGeneral = [
-  { text: "Home", link: "/" },
-  { text: "About", link: "/about" },
-];
-
 const navItemsLogin = [
   { text: "Account", link: "user/me" },
   { text: "Log out", link: "auth/logout" },
@@ -41,19 +36,6 @@ function NavLinks({ isOpen, setIsOpen }: INavLinks) {
 
   return (
     <>
-      {/* ---- general links ----*/}
-      <div className={styles.navLink}>
-        {navItemsGeneral.map((item, i) => (
-          <NavLink
-            onClick={() => handleClose()}
-            to={item.link}
-            key={`general-nav-${i}`}
-            className={styles.linkItem}>
-            <span>{item.text}</span>
-          </NavLink>
-        ))}
-      </div>
-
       <div className={styles.navLink}>
         {isLogin
           ? navItemsLogin.map((item, i) => (
