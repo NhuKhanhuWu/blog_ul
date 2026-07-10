@@ -16,7 +16,6 @@ export function updateSearchUrl({
 }: IUpdateSearchUrl) {
   const param = new URLSearchParams(searchParams);
   const { title, sort, logic, categories } = data;
-  console.log(typeof title);
 
   if (title && title.trim() !== "") {
     param.set("title", title);
