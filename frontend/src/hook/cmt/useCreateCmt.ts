@@ -12,8 +12,10 @@ export function useCreateCmt() {
     mutationFn: createCmt,
 
     onSuccess: (newCmt) => {
+      const parentIdStr = newCmt.parentId ? newCmt.parentId.toString() : null;
+
       const cmtQueryKey = newCmt.parentId
-        ? ["cmt-replies", newCmt.parentId.toString()] // if this is child cmt
+        ? ["cmt-replies", parentIdStr] // if this is child cmt
         : ["cmt"]; // if this is parent cmt
 
       // update cmt list
@@ -47,7 +49,7 @@ export function useCreateCmt() {
               pages: oldData.pages.map((page) => ({
                 ...page,
                 data: page.data.map((cmt) =>
-                  cmt._id === newCmt.parentId
+                  cmt._id.toString() === parentIdStr
                     ? { ...cmt, replyCount: cmt.replyCount + 1 }
                     : cmt,
                 ),
@@ -59,7 +61,7 @@ export function useCreateCmt() {
 
       // update blog's total cmt
       queryClient.setQueriesData<BlogDetailProps>(
-        { queryKey: ["blog"] },
+        { queryKey: ["blog"], exact: false },
         (oldData) => {
           if (!oldData) return oldData;
 

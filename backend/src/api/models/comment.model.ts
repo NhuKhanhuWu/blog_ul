@@ -26,9 +26,11 @@ const commentSchema = new Schema<Comment>(
       default: null,
     },
 
-    replyToId: {
-      type: Schema.Types.ObjectId,
-      ref: "Comment",
+    replyTo: {
+      type: {
+        _id: { type: Schema.Types.ObjectId, ref: "Comment" },
+        slug: String,
+      },
       default: null,
     },
 
@@ -39,17 +41,17 @@ const commentSchema = new Schema<Comment>(
       maxlength: 5000,
     },
 
-    mentions: {
-      type: [
-        {
-          slug: { type: String, required: true },
-          offset: { type: Number, required: true },
-          length: { type: Number, required: true },
-        },
-      ],
-      default: [],
-      _id: false,
-    },
+    // mentions: {
+    //   type: [
+    //     {
+    //       slug: { type: String, required: true },
+    //       offset: { type: Number, required: true },
+    //       length: { type: Number, required: true },
+    //     },
+    //   ],
+    //   default: [],
+    //   _id: false,
+    // },
 
     // cmt's depth
     depth: {

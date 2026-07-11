@@ -4,13 +4,15 @@ import express from "express";
 import { getMe, getUserBySlug } from "../controllers/user/get-user.controller";
 import { changePass } from "../controllers/user/change-pass.controller";
 import {
-  changeEmail,
-  checkChangeEmailController,
+  changeEmailOtpStep,
+  changeEmailUpdateStep,
+  checkPassAndEmail,
 } from "../controllers/user/change-email.controller";
 import {
   changeEmailByIPLimiter,
   changePassLimiter,
   updateUserLimiter,
+  verifyEmailLimiter,
 } from "../middlewares/user.middleware";
 import { changeEmailByUserLimiter } from "../middlewares/user.middleware";
 import {
@@ -34,14 +36,20 @@ userRouter.route("/:slug").get(getUserBySlug);
 userRouter.patch("/change-password", protect, changePassLimiter, changePass);
 
 userRouter.post(
-  "/change-email",
+  "/change-email/request",
   protect,
-  changeEmailByUserLimiter,
-  changeEmailByIPLimiter,
-  changeEmail,
+  // changeEmailByUserLimiter,
+  // changeEmailByIPLimiter,
+  checkPassAndEmail,
+  changeEmailOtpStep,
 );
 
-userRouter.post("/change-email/verify", checkChangeEmailController);
+userRouter.post(
+  "/change-email/verify",
+  protect,
+  verifyEmailLimiter,
+  changeEmailUpdateStep,
+);
 
 // Vote Routes
 userRouter.route("/me/my-blog-vote").get(protect, getUserBlogVote);

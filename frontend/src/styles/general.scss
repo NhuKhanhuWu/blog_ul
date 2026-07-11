@@ -76,7 +76,9 @@ textarea,
 
 textarea {
   font-family: "Parkinsans", sans-serif;
-  min-height: 15rem;
+  field-sizing: content;
+  min-height: 4rem;
+  max-height: 20rem;
   resize: none;
 }
 
@@ -179,7 +181,7 @@ select {
   display: flex;
   gap: 1rem;
   flex: 1;
-  height: 4rem;
+  min-height: 3rem;
   border-radius: 5px;
   border-width: 1.5px;
   transition: all 0.3s;

@@ -7,13 +7,20 @@ import { ShowMoreText } from "../../ui/ShowMoreText/ShowMoreText";
 import CmtPopover from "../CmtPopover/CmtPopover";
 import { useAppSelector } from "../../../hook/shared/reduxHooks";
 import { useCmtItem } from "../../../context/CmtItemContext";
-import { buildCmtContentNode } from "../../../utils/buildCmtContentNode";
 
 function CmtContent() {
   const userId = useAppSelector((state) => state.auth.user?._id);
   const cmt = useCmtItem().state.cmt;
 
   if (!cmt) return;
+
+  const mentionLink = cmt.replyTo ? (
+    <Link to={`/profile/${cmt.replyTo?.slug}`} className={styles.mentionLink}>
+      @{cmt.replyTo?.slug}
+    </Link>
+  ) : (
+    ""
+  );
 
   return (
     <>
@@ -31,10 +38,11 @@ function CmtContent() {
       {/* content */}
       <div className={styles.cmtContent}>
         <ShowMoreText
-          text={buildCmtContentNode({
-            content: cmt.content,
-            mentions: cmt.mentions,
-          })}
+          text={
+            <>
+              {mentionLink} {cmt.content}
+            </>
+          }
           lines={4}
         />
       </div>

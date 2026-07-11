@@ -73,7 +73,7 @@ const CmtItem = memo(({ cmt, depth = 0 }: { cmt: Cmt; depth?: number }) => {
       <CmtLayout>
         <div className={styles.cmtTxt}>
           <CmtContent />
-          <CmtActions cmt={cmt} />
+          <CmtActions cmt={cmt} onCreateCmt={setIsShowReply} />
         </div>
 
         {isShowReply && (

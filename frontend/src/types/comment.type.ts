@@ -13,6 +13,10 @@ export interface Cmt {
   };
   blogId: string;
   parentId: string;
+  replyTo?: {
+    _id: string;
+    slug: string;
+  };
   content: string;
   mentions: { slug: string; offset: number; length: number }[];
   upVotes: number;
@@ -50,13 +54,6 @@ export interface EditCmt {
   content: string;
 }
 
-// export interface CmtFormProps {
-//   isUsing: boolean;
-//   setIsUsing: Dispatch<SetStateAction<boolean>>;
-//   blogId: string;
-//   replyToId?: string;
-// }
-
 interface BaseCmtFormProps {
   isUsing: boolean;
   setIsUsing: Dispatch<SetStateAction<boolean>>;
@@ -67,12 +64,12 @@ export type CmtFormProps = BaseCmtFormProps &
   (
     | {
         replyToId: string;
-        mentions: CmtMentionProps[]; // require mentions when pass replyToId
+        replyToName: string; // require mentions when pass replyToId
       }
     | {
         // avoid pass replyToId / mentions ablone
         replyToId?: never;
-        mentions?: never;
+        replyToName?: never;
       }
   );
 
