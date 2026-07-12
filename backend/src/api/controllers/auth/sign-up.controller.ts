@@ -27,13 +27,16 @@ export const sendSignUpOtp = catchAsync(
 
     // 2. create otp
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const TTL_IN_SECONDS = 10 * 60; // 10 mins
 
     // 3. save request to redis với key dạng otp:register:[email]
     const redisKey = `otp:register:${email}`;
 
     try {
-      await redisClient.setEx(redisKey, TTL_IN_SECONDS, otp);
+      await redisClient.setEx(
+        redisKey,
+        Number(process.env.TTL_IN_SECONDS || 10 * 60),
+        otp,
+      );
     } catch (err) {
       throw new AppError("Unable to create OTP, please try again later!", 500);
     }

@@ -71,15 +71,13 @@ export const otpEmail = function (otp: string) {
   return wrapEmail(content);
 };
 
-export const resetPasswordEmail = function (token: string) {
+export const resetPasswordEmail = function (otp: string) {
   const content = `
     <p>Hi there,</p>
     <p>We received a request to reset your password for your Blogie account.</p>
-    <p>To reset your password, click the link below:</p>
-    <a href="${process.env.FRONTEND_URL}/reset-password/${token}" class="btn">
-      Reset your password
-    </a>
-    <p>This link will expire in 10 minutes.</p>
+    <p>Your verification code is:</p>
+    <p><strong style="font-size: 24px;">🔐 ${otp}</strong></p>
+    <p>This code is valid for the next 10 minutes.</p>
     <p>If you didn't request this, please ignore this email — your account is safe.</p>
     <p>Thank you,<br />The Blogie Team</p>
   `;

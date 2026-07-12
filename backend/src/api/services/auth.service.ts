@@ -7,6 +7,7 @@ import {
   createRefreshToken,
 } from "../utils/token/create-token";
 import RefreshToken from "../models/refresh-token.model";
+import { redisClient } from "../utils/redis";
 
 interface RevokeAndRegenerateTokensOptions {
   forceLogoutOthers?: boolean;
@@ -45,6 +46,13 @@ export const revokeAndRegenerateTokens = async (
       path: "/",
     });
   }
+
+  // update tokenVersion in redis
+  await redisClient.setEx(
+    `user:version:${user._id}`,
+    Number(process.env.USER_VERSION_TTL),
+    String(user.tokenVersion),
+  );
 
   // create access token
   const accessToken = createAccessToken(user.id, user.tokenVersion);

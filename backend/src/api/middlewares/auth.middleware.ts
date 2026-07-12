@@ -131,6 +131,12 @@ export const forgotPasswordOtpLimiterDevice = createLimiter({
   keyGenerator: (req) => req.ip || "",
 });
 
+export const forgotPasswordVerifyOtpLimiter = createLimiter({
+  max: 20,
+  windowMs: 5 * 60 * 1000,
+  message: "Too many attempts from this device. Please try again later.",
+});
+
 // ----------- login -----------
 export const loginLimiter = createLimiter({
   max: 5,

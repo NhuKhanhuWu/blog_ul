@@ -14,9 +14,13 @@ export const passwordSchema = z
   .max(128, "Password must be at most 128 characters");
 
 export const passwordConfirmSchema = z
+  .string()
+  .min(1, "Please confirm your password");
+
+export const passwordWithConfirmSchema = z
   .object({
     password: passwordSchema,
-    passwordConfirm: z.string().min(1, "Please confirm your password"),
+    passwordConfirm: passwordConfirmSchema,
   })
   .refine((data) => data.password === data.passwordConfirm, {
     message: "Passwords do not match",

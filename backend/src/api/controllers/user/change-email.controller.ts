@@ -7,14 +7,11 @@ import { sendTokenEmail } from "../../utils/email/email-service";
 import { changeEmailEmail } from "../../utils/email/email-template";
 import { redisClient } from "../../utils/redis";
 import { revokeAndRegenerateTokens } from "../../services/auth.service";
+import { OtpCache } from "../../types/auth.type";
 
-interface OtpCache {
-  otp: string;
+interface OtpChangeEmail extends OtpCache {
   newEmail: string;
-  attempts: number;
 }
-
-const TTL_IN_SECONDS = 10 * 60; // 10 mins
 
 export const checkPassAndEmail = catchAsync(async (req, res, next) => {
   const { password, newEmail } = req.body;
@@ -64,7 +61,7 @@ export const changeEmailOtpStep = catchAsync(async (req, res) => {
   try {
     await redisClient.setEx(
       redisKey,
-      TTL_IN_SECONDS,
+      Number(process.env.TTL_IN_SECONDS || 10 * 60),
       JSON.stringify({ otp, newEmail, attemps: 0 }),
     );
   } catch (err) {
@@ -75,7 +72,7 @@ export const changeEmailOtpStep = catchAsync(async (req, res) => {
   const message = changeEmailEmail(otp);
   await sendTokenEmail({
     email: newEmail,
-    subject: "Your change OTP email in Blogie",
+    subject: "Your email change OTP in Blogie",
     htmlMessage: message,
   });
 
@@ -99,7 +96,7 @@ export const changeEmailUpdateStep = catchAsync(async (req, res, next) => {
     throw new AppError("OTP has expired or never requested", 400);
 
   // check otp
-  const data: OtpCache = JSON.parse(redisValue || "");
+  const data: OtpChangeEmail = JSON.parse(redisValue || "");
 
   // limit 5 attemp for otp
   if (data.attempts >= 5) {
@@ -112,7 +109,11 @@ export const changeEmailUpdateStep = catchAsync(async (req, res, next) => {
 
   if (Number(candidateOtp) !== Number(data.otp)) {
     data.attempts += 1;
-    await redisClient.setEx(redisKey, TTL_IN_SECONDS, JSON.stringify(data));
+    await redisClient.setEx(
+      redisKey,
+      Number(process.env.TTL_IN_SECONDS || 10 * 60),
+      JSON.stringify(data),
+    );
     throw new AppError("Invalid otp", 400);
   }
 
