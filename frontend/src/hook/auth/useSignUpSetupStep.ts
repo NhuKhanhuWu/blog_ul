@@ -1,15 +1,15 @@
 /** @format */
 
 import { useMutation } from "@tanstack/react-query";
-import { signUpPasswordStep } from "../../api/auth.api";
+import { signUpSetupStep } from "../../api/auth.api";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-function useSignUpPasswordStep() {
+function useSignUpSetupStep() {
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: signUpPasswordStep,
+    mutationFn: signUpSetupStep,
     meta: {
       disableToast: true,
     },
@@ -23,4 +23,4 @@ function useSignUpPasswordStep() {
   });
 }
 
-export default useSignUpPasswordStep;
+export default useSignUpSetupStep;

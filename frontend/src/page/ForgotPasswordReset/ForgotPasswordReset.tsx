@@ -9,8 +9,7 @@ import { PasswordField } from "../../component/input/PasswordField";
 import { PasswordConfirmField } from "../../component/input/PasswordConfirmField";
 import { useForgotPassword } from "../../context/ForgotPasswordContext";
 import useForgotPasswordReset from "../../hook/auth/useForgotPasswordReset";
-import { Link } from "react-router-dom";
-import { FaArrowLeftLong } from "react-icons/fa6";
+import ReEnterEmail from "../../component/ui/ReEnterEmail/ReEnterEmail";
 
 const formSchema = yup.object().shape({
   password: passwordSchema,
@@ -48,13 +47,7 @@ function ForgotPasswordReset() {
         subtitle="All of your devices will be logged out"
       />
 
-      {/* re-enter email */}
-      <Link
-        to="/auth/forgot-password"
-        style={{ alignSelf: "flex-start" }}
-        className="link">
-        <FaArrowLeftLong /> Re-enter email
-      </Link>
+      <ReEnterEmail link="/auth/forgot-password" />
 
       {/* err message */}
       {queryErr && <p className="error-mgs">{queryErr.message}</p>}

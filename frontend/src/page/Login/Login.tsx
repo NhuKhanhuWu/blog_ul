@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { emaiSchema, passwordSchema } from "../../utils/form-schema";
 import AuthHeader from "../../component/auth/AuthHeader/AuthHeader";
@@ -34,7 +34,6 @@ function Login() {
   // handling fetching data
   const { isLoading, error } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
   async function submitHandler(data: IFormSchema) {
     try {
@@ -42,7 +41,7 @@ function Login() {
         loginThunk({ email: data.email, password: data.password }),
       ).unwrap();
 
-      navigate("/");
+      window.location.href = "/";
     } catch (err) {
       console.error(err);
     }

@@ -11,15 +11,21 @@ import Loader from "../component/ui/Loader/Loader";
 function AppLayout() {
   // auto login when reload/open website
   const dispatch = useAppDispatch();
+
   // avoid render page before checking auth status (refresh token, get user info)
   const [authReady, setAuthReady] = useState(false);
+
+  // try get user after login
 
   useEffect(() => {
     // refresh token & get user info when reload to store in redux
     const initAuth = async () => {
       try {
-        // Parallelize both requests instead of sequential
-        await Promise.all([dispatch(refreshThunk()), dispatch(getMeThunk())]);
+        // 1. Refresh the token first to ensure we have a valid access token
+        await dispatch(refreshThunk()).unwrap();
+
+        // 2. Only fetch user data if the token refresh succeeded
+        await dispatch(getMeThunk());
       } finally {
         setAuthReady(true);
       }

@@ -53,17 +53,18 @@ export async function signUpOtpStep({
   return response.data;
 }
 
-export async function signUpPasswordStep({
+export async function signUpSetupStep({
   username,
   token,
   password,
   passwordConfirm,
 }: SignUpPasswordArgs): Promise<User> {
-  const response = await axiosInstance.post(
-    "/auth/signup/create-user",
-    { name: username, password, passwordConfirm },
-    { headers: { Authorization: `Bearer ${token}` } },
-  );
+  const response = await axiosInstance.post("/auth/signup/create-user", {
+    username,
+    password,
+    passwordConfirm,
+    token,
+  });
 
   return response.data;
 }

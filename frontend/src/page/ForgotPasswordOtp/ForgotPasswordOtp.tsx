@@ -6,12 +6,12 @@ import { useForgotPassword } from "../../context/ForgotPasswordContext";
 import useForgotPasswordOtp from "../../hook/auth/useForgotPasswordOtp";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { createOtpSchema } from "../../utils/form-schema";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AuthHeader from "../../component/auth/AuthHeader/AuthHeader";
 import OtpInputField from "../../component/input/OtpInput";
 import ResendOtp from "../../component/auth/ResendOtp/ResendOtp";
 import useForgotPasswordEmail from "../../hook/auth/useForgotPasswordEmail";
-import { FaArrowLeftLong } from "react-icons/fa6";
+import ReEnterEmail from "../../component/ui/ReEnterEmail/ReEnterEmail";
 
 const formSchema = yup.object().shape({
   otp: createOtpSchema(),
@@ -19,7 +19,6 @@ const formSchema = yup.object().shape({
 
 type FormSchemaProps = yup.InferType<typeof formSchema>;
 
-// TODO: finish this page
 function ForgotPasswordOtp() {
   const { email } = useForgotPassword();
   const { mutate: resendMutate } = useForgotPasswordEmail();
@@ -54,13 +53,7 @@ function ForgotPasswordOtp() {
         title="Validate your mail"
       />
 
-      {/* re-enter email */}
-      <Link
-        to="/auth/forgot-password"
-        style={{ alignSelf: "flex-start" }}
-        className="link">
-        <FaArrowLeftLong /> Re-enter email
-      </Link>
+      <ReEnterEmail link="/auth/forgot-password" />
 
       {/* err message */}
       {error && <p className="error-mgs">{error.message}</p>}
