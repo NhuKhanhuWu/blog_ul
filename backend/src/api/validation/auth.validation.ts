@@ -39,14 +39,14 @@ export const forgotPasswordSchema = z.object({
 export const checkResetPasswordSchema = z.object({
   body: z.object({
     email: z.email("Invalid email"),
-    otp: z.number("OTP required"),
+    otp: z.string("OTP required"),
   }),
 });
 
 export const resetPasswordSchema = z.object({
   body: passwordWithConfirmSchema.and(
     z.object({
-      resetToken: z.string("Token required"),
+      token: z.string("Token required"),
       password: passwordSchema,
       passwordConfirm: passwordConfirmSchema,
     }),

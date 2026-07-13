@@ -58,13 +58,13 @@ authRouter.post("/logout", logout);
 // forgot password route
 authRouter.post(
   "/forgot-password",
+  validateRequest(forgotPasswordSchema),
   forgotPasswordOtpLimiterEmail,
   forgotPasswordOtpLimiterDevice,
-  validateRequest(forgotPasswordSchema),
   forgotPassword,
 );
 authRouter.post(
-  "/forgot-password/verify-otp",
+  "/forgot-password/verify",
   forgotPasswordVerifyOtpLimiter,
   validateRequest(checkResetPasswordSchema),
   checkResetPasswordToken,

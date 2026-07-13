@@ -27,7 +27,6 @@ const formSchema = yup.object().shape({
 
 type formSchemaArgs = yup.InferType<typeof formSchema>;
 
-// TODO: change password here
 function ChangePassForm() {
   const {
     register,

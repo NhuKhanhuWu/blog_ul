@@ -4,10 +4,11 @@ import axiosInstance from "../utils/axios-instance";
 import {
   AuthResponse,
   Login,
-  SignUpOtpArgs,
-  SignUpOtpResponse,
+  EmailOtpArgs,
+  OtpVerificationResponse,
   SignUpPasswordArgs,
   User,
+  ForgotPasswordResetArgs,
 } from "../types/auth.type";
 
 export async function login({ email, password }: Login): Promise<AuthResponse> {
@@ -33,7 +34,7 @@ export async function refreshToken(): Promise<AuthResponse> {
   return response.data;
 }
 
-// sign up
+// ----- sign up -----
 export async function signUpEmailStep(email: string) {
   const response = await axiosInstance.post("/auth/signup", { email });
 
@@ -43,7 +44,7 @@ export async function signUpEmailStep(email: string) {
 export async function signUpOtpStep({
   email,
   otp,
-}: SignUpOtpArgs): Promise<SignUpOtpResponse> {
+}: EmailOtpArgs): Promise<OtpVerificationResponse> {
   const response = await axiosInstance.post("/auth/signup/verify", {
     email,
     otp,
@@ -65,4 +66,37 @@ export async function signUpPasswordStep({
   );
 
   return response.data;
+}
+
+// ----- forgot password -----
+export async function forgotPasswordEmail(email: string) {
+  const res = await axiosInstance.post("/auth/forgot-password", { email });
+
+  return res.data;
+}
+
+export async function forgotPasswordOtp({
+  email,
+  otp,
+}: EmailOtpArgs): Promise<OtpVerificationResponse> {
+  const res = await axiosInstance.post("/auth/forgot-password/verify", {
+    email,
+    otp,
+  });
+
+  return res.data;
+}
+
+export async function forgotPasswordReset({
+  password,
+  passwordConfirm,
+  token,
+}: ForgotPasswordResetArgs) {
+  const res = await axiosInstance.patch("/auth/forgot-password/reset", {
+    password,
+    passwordConfirm,
+    token,
+  });
+
+  return res.data;
 }

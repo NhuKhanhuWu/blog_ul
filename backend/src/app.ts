@@ -27,6 +27,9 @@ const allowedOrigins = [
   "http://localhost:8080",
 ];
 
+// Trust the first proxy in front of the app
+app.set("trust proxy", 1);
+
 app.use(
   cors({
     origin: (og, cb) => {
