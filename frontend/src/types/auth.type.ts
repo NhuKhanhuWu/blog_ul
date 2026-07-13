@@ -36,17 +36,17 @@ export interface Login {
   password: string;
 }
 
-// ---- sign up -----
 // otp
-export interface SignUpOtpArgs {
+export interface EmailOtpArgs {
   otp: string;
   email: string;
 }
 
-export interface SignUpOtpResponse {
+export interface OtpVerificationResponse {
   token: string;
 }
 
+// ---- sign up api's response: start -----
 // password
 export interface SignUpPasswordArgs {
   username: string;
@@ -54,6 +54,7 @@ export interface SignUpPasswordArgs {
   password: string;
   passwordConfirm: string;
 }
+// ---- sign up api's response: end -----
 
 // auth form fields interface
 export interface Props<T extends FieldValues> {
@@ -64,3 +65,11 @@ export interface Props<T extends FieldValues> {
   isLoading?: boolean;
   fieldName?: string;
 }
+
+// ---- forgot password api's response: start -----
+export interface ForgotPasswordResetArgs {
+  token: string;
+  password: string;
+  passwordConfirm: string;
+}
+// ---- forgot password api's response: end -----

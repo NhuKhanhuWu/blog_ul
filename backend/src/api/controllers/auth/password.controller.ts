@@ -72,7 +72,7 @@ export const checkResetPasswordToken = catchAsync(async (req, res, next) => {
   const data = JSON.parse(redisValue);
 
   // check if otp valid
-  if (Number(candidateOtp) !== Number(data.otp)) {
+  if (String(candidateOtp) !== String(data.otp)) {
     data.attempts += 1;
     await redisClient.setEx(redisKey, 5 * 60, JSON.stringify(data));
     throw new AppError("Invalid OTP", 400);
@@ -91,23 +91,23 @@ export const checkResetPasswordToken = catchAsync(async (req, res, next) => {
   await redisClient.del(redisKey);
 
   // create a otken in redis for the next step
-  const resetToken = crypto.randomBytes(32).toString("hex");
-  const tokenKey = `token:reset-password:${resetToken}`;
+  const token = crypto.randomBytes(32).toString("hex");
+  const tokenKey = `token:reset-password:${token}`;
   await redisClient.setEx(tokenKey, 5 * 60, email);
 
   res.status(200).json({
     status: "success",
     message: "OTP verified successfully. You can now reset your password.",
-    resetToken,
+    token,
   });
 });
 
 // RESET PASSWORD
 export const resetPassword = catchAsync(async (req, res) => {
-  const { resetToken, password, passwordConfirm } = req.body;
+  const { token, password, passwordConfirm } = req.body;
 
   // check token
-  const tokenKey = `token:reset-password:${resetToken}`;
+  const tokenKey = `token:reset-password:${token}`;
   const email = await redisClient.get(tokenKey);
 
   if (!email) {

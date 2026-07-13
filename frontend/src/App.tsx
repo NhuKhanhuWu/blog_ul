@@ -15,6 +15,8 @@ import { store } from "./redux/store.ts";
 import axios from "axios";
 import { StyledEngineProvider } from "@mui/material/styles";
 import Loader from "./component/ui/Loader/Loader.tsx";
+import { SignUpProvider } from "./context/SignUpContext.tsx";
+import { ForgotPasswordProvider } from "./context/ForgotPasswordContext.tsx";
 
 // lazy load
 const AppLayout = lazy(() => import("./layout/AppLayout.tsx"));
@@ -37,6 +39,19 @@ const SignUpEmail = lazy(() => import("./page/SignUpEmail/SignUpEmai.tsx"));
 const SignUpOtp = lazy(() => import("./page/SignUpOtp/SignUpOtp.tsx"));
 const SignUpPassword = lazy(() => import("./page/SignUpSetUp/SignUpSetUp.tsx"));
 
+const ForgotPasswordGuardLayout = lazy(
+  () => import("./layout/ForgotPasswordGuardLayout.tsx"),
+);
+const ForgotPasswordEmail = lazy(
+  () => import("./page/ForgotPasswordEmail/ForgotPasswordEmail.tsx"),
+);
+const ForgotPasswordOtp = lazy(
+  () => import("./page/ForgotPasswordOtp/ForgotPasswordOtp.tsx"),
+);
+const ForgotPasswordReset = lazy(
+  () => import("./page/ForgotPasswordReset/ForgotPasswordReset.tsx"),
+);
+
 const AccountSetting = lazy(() => import("./layout/AccountLayout.tsx"));
 const ChangePassword = lazy(
   () => import("./page/ChangePassword/ChangePassword.tsx"),
@@ -57,11 +72,30 @@ const router = createBrowserRouter([
           // sign up
           {
             path: "signup",
-            element: <SignUpGuardLayout />,
+            element: (
+              <SignUpProvider>
+                <SignUpGuardLayout />
+              </SignUpProvider>
+            ),
             children: [
               { index: true, element: <SignUpEmail /> }, // URL: /auth/signup
               { path: "verify-otp", element: <SignUpOtp /> }, // URL: /auth/signup/verify-otp
               { path: "setup-password", element: <SignUpPassword /> }, // URL: /auth/signup/setup-password
+            ],
+          },
+
+          // forgot pass
+          {
+            path: "forgot-password",
+            element: (
+              <ForgotPasswordProvider>
+                <ForgotPasswordGuardLayout />
+              </ForgotPasswordProvider>
+            ),
+            children: [
+              { index: true, element: <ForgotPasswordEmail /> }, // URL: /auth/forgot-password
+              { path: "verify-otp", element: <ForgotPasswordOtp /> }, // URL: /auth/forgot-password/verify-otp
+              { path: "reset", element: <ForgotPasswordReset /> }, // URL: /auth/forgot-password/reset
             ],
           },
 

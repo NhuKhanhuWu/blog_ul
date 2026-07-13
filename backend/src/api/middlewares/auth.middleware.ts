@@ -120,9 +120,10 @@ export const forgotPasswordOtpLimiterEmail = createLimiter({
   windowMs: 60 * 1000,
   message:
     "You can only request a password reset once every 1 minute with this email.",
-  keyGenerator: (req) => req.body.email,
-}); // For forgot-password OTP: limit 10 request per 1 hour by IP
+  keyGenerator: (req) => req.body.email.toLowerCase().trim(),
+});
 
+// For forgot-password OTP: limit 15 request per 1 hour by IP
 export const forgotPasswordOtpLimiterDevice = createLimiter({
   max: 15,
   windowMs: 60 * 60 * 1000,

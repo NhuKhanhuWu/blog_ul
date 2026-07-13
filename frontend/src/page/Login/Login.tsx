@@ -72,7 +72,7 @@ function Login() {
       <Link
         className={`link `}
         style={{ textAlign: "left", width: "100%", fontSize: "1.2rem" }}
-        to="auth/forgot-password">
+        to="/auth/forgot-password">
         Forgot password?
       </Link>
 

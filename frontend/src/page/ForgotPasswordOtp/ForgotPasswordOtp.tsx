@@ -1,16 +1,17 @@
 /** @format */
 
 import * as yup from "yup";
-import { useSignUp } from "../../context/SignUpContext";
 import { useForm } from "react-hook-form";
+import { useForgotPassword } from "../../context/ForgotPasswordContext";
+import useForgotPasswordOtp from "../../hook/auth/useForgotPasswordOtp";
 import { yupResolver } from "@hookform/resolvers/yup";
-import OtpInputField from "../../component/input/OtpInput";
-import AuthHeader from "../../component/auth/AuthHeader/AuthHeader";
-import useSignUpOtpStep from "../../hook/auth/useSignUpOtpStep";
 import { createOtpSchema } from "../../utils/form-schema";
-import useSignUpEmailStep from "../../hook/auth/useSignUpEmailStep";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import AuthHeader from "../../component/auth/AuthHeader/AuthHeader";
+import OtpInputField from "../../component/input/OtpInput";
 import ResendOtp from "../../component/auth/ResendOtp/ResendOtp";
+import useForgotPasswordEmail from "../../hook/auth/useForgotPasswordEmail";
+import { FaArrowLeftLong } from "react-icons/fa6";
 
 const formSchema = yup.object().shape({
   otp: createOtpSchema(),
@@ -18,12 +19,13 @@ const formSchema = yup.object().shape({
 
 type FormSchemaProps = yup.InferType<typeof formSchema>;
 
-function SignUpOtp() {
-  const { email } = useSignUp();
-  const { mutate: resendMutate } = useSignUpEmailStep();
+// TODO: finish this page
+function ForgotPasswordOtp() {
+  const { email } = useForgotPassword();
+  const { mutate: resendMutate } = useForgotPasswordEmail();
 
   // query
-  const { mutate, isPending, error } = useSignUpOtpStep();
+  const { mutate, isPending, error } = useForgotPasswordOtp();
 
   // form
   const { control, handleSubmit } = useForm({
@@ -38,8 +40,8 @@ function SignUpOtp() {
       { email, otp: data.otp },
       {
         onSuccess: () => {
-          // navigate to password page
-          navigate("/auth/signup/setup-password");
+          // navigate to reset password page
+          navigate("/auth/forgot-password/reset");
         },
       },
     );
@@ -51,6 +53,14 @@ function SignUpOtp() {
         subtitle="Check email for the OTP (takes 10-15s)"
         title="Validate your mail"
       />
+
+      {/* re-enter email */}
+      <Link
+        to="/auth/forgot-password"
+        style={{ alignSelf: "flex-start" }}
+        className="link">
+        <FaArrowLeftLong /> Re-enter email
+      </Link>
 
       {/* err message */}
       {error && <p className="error-mgs">{error.message}</p>}
@@ -73,4 +83,4 @@ function SignUpOtp() {
   );
 }
 
-export default SignUpOtp;
+export default ForgotPasswordOtp;
