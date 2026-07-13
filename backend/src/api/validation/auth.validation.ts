@@ -6,6 +6,15 @@ import {
   passwordWithConfirmSchema,
 } from "./general.validation";
 
+// ----- general -----
+export const verifyOtpSchema = z.object({
+  body: z.object({
+    email: z.email("Invalid email"),
+    otp: z.string("OTP required"),
+  }),
+});
+
+// ----- login -----
 export const loginSchema = z.object({
   body: z.object({
     email: z.email("Invalid email"),
@@ -13,33 +22,10 @@ export const loginSchema = z.object({
   }),
 });
 
-export const createUserSchema = z.object({
-  body: passwordWithConfirmSchema.and(
-    z.object({
-      name: z
-        .string()
-        .trim()
-        .min(2, "Name must be at least 2 characters")
-        .max(50, "Name must be at most 50 characters")
-        .regex(
-          /^[\p{L}\p{N} ]+$/u,
-          "Name must not contain special characters or emoji",
-        ),
-    }),
-  ),
-});
-
 // --------- forgot pass ----------
 export const forgotPasswordSchema = z.object({
   body: z.object({
     email: z.email("Invalid email"),
-  }),
-});
-
-export const checkResetPasswordSchema = z.object({
-  body: z.object({
-    email: z.email("Invalid email"),
-    otp: z.string("OTP required"),
   }),
 });
 
@@ -52,10 +38,29 @@ export const resetPasswordSchema = z.object({
     }),
   ),
 });
-// --------- forgot pass ----------
 
+// --------- sign up ---------
 export const sendSignUpOtpSchema = z.object({
   body: z.object({
     email: z.email("Invalid email"),
   }),
+});
+
+export const createUserSchema = z.object({
+  body: passwordWithConfirmSchema.and(
+    z.object({
+      username: z
+        .string()
+        .trim()
+        .min(2, "Name must be at least 2 characters")
+        .max(50, "Name must be at most 50 characters")
+        .regex(
+          /^[\p{L}\p{N} ]+$/u,
+          "Name must not contain special characters or emoji",
+        ),
+      password: passwordSchema,
+      passwordConfirm: passwordConfirmSchema,
+      token: z.string("Token required"),
+    }),
+  ),
 });

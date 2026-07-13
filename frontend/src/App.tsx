@@ -80,7 +80,7 @@ const router = createBrowserRouter([
             children: [
               { index: true, element: <SignUpEmail /> }, // URL: /auth/signup
               { path: "verify-otp", element: <SignUpOtp /> }, // URL: /auth/signup/verify-otp
-              { path: "setup-password", element: <SignUpPassword /> }, // URL: /auth/signup/setup-password
+              { path: "setup", element: <SignUpPassword /> }, // URL: /auth/signup/setup-password
             ],
           },
 

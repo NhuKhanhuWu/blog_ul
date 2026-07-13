@@ -34,10 +34,7 @@ export const forgotPassword = catchAsync(async (req, res) => {
       JSON.stringify({ otp, attempts: 0 }),
     );
   } catch (err) {
-    throw new AppError(
-      "Unable to process request, please try again later!",
-      500,
-    );
+    throw new AppError("Unable to create OTP, please try again later!", 500);
   }
 
   // 3. send email
@@ -56,20 +53,20 @@ export const forgotPassword = catchAsync(async (req, res) => {
 });
 
 // check token in the reset password link middleware
-export const checkResetPasswordToken = catchAsync(async (req, res, next) => {
+export const checkResetPasswordToken = catchAsync(async (req, res) => {
   const { email, otp: candidateOtp } = req.body;
 
   const redisKey = `otp:forgot-password:${email}`;
-  const redisValue = await redisClient.get(redisKey);
+  const redisOtp = await redisClient.get(redisKey);
 
-  if (!redisValue) {
+  if (!redisOtp) {
     throw new AppError(
       "OTP has expired or never requested. Please try again.",
       400,
     );
   }
 
-  const data = JSON.parse(redisValue);
+  const data = JSON.parse(redisOtp);
 
   // check if otp valid
   if (String(candidateOtp) !== String(data.otp)) {
@@ -107,8 +104,8 @@ export const resetPassword = catchAsync(async (req, res) => {
   const { token, password, passwordConfirm } = req.body;
 
   // check token
-  const tokenKey = `token:reset-password:${token}`;
-  const email = await redisClient.get(tokenKey);
+  const redisKey = `token:reset-password:${token}`;
+  const email = await redisClient.get(redisKey);
 
   if (!email) {
     throw new AppError(

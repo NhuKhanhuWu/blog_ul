@@ -6,13 +6,9 @@ import AppError from "../../utils/error/app-error";
 import UserModel from "../../models/user.model";
 import { otpEmail } from "../../utils/email/email-template";
 import { sendTokenEmail } from "../../utils/email/email-service";
-import signToken from "../../utils/token/sign-token";
 import getToken from "../../utils/token/get-token";
 import { redisClient } from "../../utils/redis";
-
-interface DecodedToken extends JwtPayload {
-  email: string;
-}
+import crypto from "crypto";
 
 // 1. send verification email (otp)
 export const sendSignUpOtp = catchAsync(
@@ -22,20 +18,19 @@ export const sendSignUpOtp = catchAsync(
     if (!email) throw new AppError("Email required", 400);
 
     // 1.1 check if already in use
-    const userExists = await UserModel.exists({ email });
-    if (userExists) throw new AppError("Email already in use", 409);
+    const isUserExists = await UserModel.exists({ email });
+    if (isUserExists) throw new AppError("Email already in use", 409);
 
     // 2. create otp
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // 3. save request to redis với key dạng otp:register:[email]
+    // 3. save request to redis
     const redisKey = `otp:register:${email}`;
-
     try {
       await redisClient.setEx(
         redisKey,
         Number(process.env.TTL_IN_SECONDS || 10 * 60),
-        otp,
+        JSON.stringify({ otp, attempts: 0 }),
       );
     } catch (err) {
       throw new AppError("Unable to create OTP, please try again later!", 500);
@@ -43,17 +38,11 @@ export const sendSignUpOtp = catchAsync(
 
     // 4. send email
     const emailMessage = otpEmail(otp);
-
-    // 5. send email & response (Fire off email tracking in the background)
-    try {
-      await sendTokenEmail({
-        email,
-        subject: "Your sign up OTP in Blogie",
-        htmlMessage: emailMessage,
-      });
-    } catch (err) {
-      throw new AppError(`Failed to dispatch OTP email to ${email}`, 500);
-    }
+    await sendTokenEmail({
+      email,
+      subject: "Your sign up OTP in Blogie",
+      htmlMessage: emailMessage,
+    });
 
     res.status(200).json({
       status: "success",
@@ -64,58 +53,83 @@ export const sendSignUpOtp = catchAsync(
 
 // 2. check otp
 export const checkOtp = catchAsync(async (req, res) => {
-  // 1. check if otp and email is sended
-  const { otp, email } = req.body;
-  if (!otp || !email) throw new AppError("Otp and email required", 400);
+  // check if otp and email is sended
+  const { otp: candidateOtp, email } = req.body;
 
-  // 2. check if otp, email is valid
+  // get otp from redis
   const redisKey = `otp:register:${email}`;
-  const pendingOtp = await redisClient.get(redisKey);
-  if (!pendingOtp || pendingOtp !== otp) throw new AppError("Invalid otp", 400);
+  const redisOtp = await redisClient.get(redisKey);
 
-  // 4. create jwt
-  const token = signToken({ email }, "30m");
+  if (!redisOtp) {
+    throw new AppError(
+      "OTP has expired or never requested. Please try again.",
+      400,
+    );
+  }
 
-  // 3. delete token
+  const data = JSON.parse(redisOtp);
+
+  // check if otp valid
+  if (String(candidateOtp) !== String(data.otp)) {
+    data.attempts += 1;
+    await redisClient.setEx(redisKey, 5 * 60, JSON.stringify(data));
+    throw new AppError("Invalid OTP", 400);
+  }
+
+  // avoid brute-force: wrong over 5 times => delete otp
+  if (data.attempts >= 5) {
+    await redisClient.del(redisKey);
+    throw new AppError(
+      "Too many wrong attempts. Please request a new OTP.",
+      400,
+    );
+  }
+
+  // delete token
   await redisClient.del(redisKey);
+
+  // create token
+  const token = crypto.randomBytes(32).toString("hex");
+  const tokenKey = `token:register:${token}`;
+  await redisClient.setEx(tokenKey, 5 * 60, email);
 
   // 5. send result
   res.status(200).json({
     status: "success",
+    message: "OTP verified successfully",
     token,
-    message: "OTP valid!",
   });
 });
 
 // 3. create user
 export const createUser = catchAsync(async (req, res) => {
-  // get email from token
-  const token = getToken(req);
-  // check if token is sended
-  if (!token)
-    throw new AppError(
-      "Please validate for email before execute this action!",
-      401,
-    );
+  const { token, password, passwordConfirm, username } = req.body;
 
-  // check email
-  const decoded = jwt.verify(
-    token,
-    process.env.JWT_SECRET as string,
-  ) as DecodedToken;
-  const { email } = decoded;
+  // check token
+  const redisKey = `token:register:${token}`;
+  const email = await redisClient.get(redisKey);
+
+  if (!email) {
+    throw new AppError(
+      "Reset token is invalid or has expired. Please restart the process.",
+      400,
+    );
+  }
 
   const existsUser = await UserModel.exists({ email });
   if (existsUser) throw new AppError("Email already in used", 401);
 
   // create user
   const newUser = await UserModel.create({
-    name: req.body.name,
+    username,
     // role: req.body.role,
     email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
+    password,
+    passwordConfirm,
   });
+
+  // delete token
+  await redisClient.del(redisKey);
 
   res.status(201).json({
     status: "success",

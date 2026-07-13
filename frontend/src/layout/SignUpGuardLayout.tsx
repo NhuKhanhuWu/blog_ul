@@ -10,14 +10,14 @@ export default function SignUpGuardLayout() {
   // 1. if !email -> back to email page
   if (
     (location.pathname.includes("verify-otp") ||
-      location.pathname.includes("setup-password")) &&
+      location.pathname.includes("setup")) &&
     !email
   ) {
     return <Navigate to="/auth/signup" replace />;
   }
 
   // 2. if page==="Password" && !password -> back to OTP page
-  if (location.pathname.includes("setup-password") && !isOtpVerified) {
+  if (location.pathname.includes("setup") && !isOtpVerified) {
     return <Navigate to="/auth/signup/verify-otp" replace />;
   }
 

@@ -7,7 +7,7 @@ import {
   checkResetPasswordToken,
   forgotPassword,
   resetPassword,
-} from "../controllers/auth/password.controller";
+} from "../controllers/auth/forgot-password.controller";
 import { refreshToken } from "../controllers/auth/refresh-token.controller";
 import {
   checkOtp,
@@ -23,7 +23,7 @@ import {
   forgotPasswordVerifyOtpLimiter,
 } from "../middlewares/auth.middleware";
 import {
-  checkResetPasswordSchema,
+  verifyOtpSchema,
   createUserSchema,
   forgotPasswordSchema,
   loginSchema,
@@ -42,7 +42,7 @@ authRouter.post(
   validateRequest(sendSignUpOtpSchema),
   sendSignUpOtp,
 );
-authRouter.post("/signup/verify", checkOtp);
+authRouter.post("/signup/verify", validateRequest(verifyOtpSchema), checkOtp);
 authRouter.post(
   "/signup/create-user",
   validateRequest(createUserSchema),
@@ -59,14 +59,14 @@ authRouter.post("/logout", logout);
 authRouter.post(
   "/forgot-password",
   validateRequest(forgotPasswordSchema),
-  forgotPasswordOtpLimiterEmail,
-  forgotPasswordOtpLimiterDevice,
+  // forgotPasswordOtpLimiterEmail,
+  // forgotPasswordOtpLimiterDevice,
   forgotPassword,
 );
 authRouter.post(
   "/forgot-password/verify",
   forgotPasswordVerifyOtpLimiter,
-  validateRequest(checkResetPasswordSchema),
+  validateRequest(verifyOtpSchema),
   checkResetPasswordToken,
 );
 authRouter.patch(

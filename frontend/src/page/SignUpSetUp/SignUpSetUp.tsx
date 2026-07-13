@@ -10,7 +10,7 @@ import {
 } from "../../utils/form-schema";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import useSignUpPasswordStep from "../../hook/auth/useSignUpPasswordStep";
+import useSignUpSetupStep from "../../hook/auth/useSignUpSetupStep";
 import { PasswordConfirmField } from "../../component/input/PasswordConfirmField";
 import { useSignUp } from "../../context/SignUpContext";
 import { UsernameField } from "../../component/input/UsernameField";
@@ -39,7 +39,7 @@ function SignUpSetUp() {
   });
 
   // muation
-  const { mutate, isPending, error: queryErr } = useSignUpPasswordStep();
+  const { mutate, isPending, error: queryErr } = useSignUpSetupStep();
 
   function submitHandler(data: FormSchemaProps) {
     mutate({ ...data, token });
