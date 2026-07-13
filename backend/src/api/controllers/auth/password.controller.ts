@@ -1,97 +1,144 @@
 /** @format */
 
-import { Request, Response, NextFunction } from "express";
 import UserModel from "../../models/user.model";
 import catchAsync from "../../utils/error/catch-async";
 import { sendTokenEmail } from "../../utils/email/email-service";
-import signToken from "../../utils/token/sign-token";
 import { resetPasswordEmail } from "../../utils/email/email-template";
-import { UserDocument } from "../../types/user.type";
-import getToken from "../../utils/token/get-token";
 import AppError from "../../utils/error/app-error";
-import verifyToken from "../../utils/token/verify-token";
-import { JwtPayload } from "../../types/jwt-payload.type";
+import { redisClient } from "../../utils/redis";
+import crypto from "crypto";
 
 // FORGOT PASSWORD
-export const forgotPassword = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    // get email
-    const { email } = req.body;
+export const forgotPassword = catchAsync(async (req, res) => {
+  // get email
+  const { email } = req.body;
 
-    // 1. get user by email
-    const user = (await UserModel.findOne({ email })) as UserDocument | null;
+  // 1. get user by email
+  const isUserExists = await UserModel.exists({ email });
 
-    // still send success status to prevent attacker from guessing emails
-    if (!user) {
-      return res.status(200).json({
-        status: "success",
-        message: "Token sent to email!",
-      });
-    }
-
-    // 2. create token, expire in 5min
-    const token = signToken({ id: user._id }, "10m");
-
-    // 3. send email
-    const message = resetPasswordEmail(token);
-    await sendTokenEmail({
-      email,
-      subject: "Your password reset link in Blogie",
-      htmlMessage: message,
-    });
-
-    // send response
-    res.status(200).json({
+  // still send success status to prevent attacker from guessing emails
+  if (!isUserExists) {
+    return res.status(200).json({
       status: "success",
-      message: "Token sended to email",
+      message: "OTP sent to email!",
     });
-  },
-);
+  }
+
+  // 2. create otp, expire in 5min
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const redisKey = `otp:forgot-password:${email}`;
+  try {
+    await redisClient.setEx(
+      redisKey,
+      Number(process.env.TTL_IN_SECONDS || 10 * 60),
+      JSON.stringify({ otp, attempts: 0 }),
+    );
+  } catch (err) {
+    throw new AppError(
+      "Unable to process request, please try again later!",
+      500,
+    );
+  }
+
+  // 3. send email
+  const message = resetPasswordEmail(otp);
+  await sendTokenEmail({
+    email,
+    subject: "Your password reset OTP in Blogie",
+    htmlMessage: message,
+  });
+
+  // send response
+  res.status(200).json({
+    status: "success",
+    message: "OTP sended to email",
+  });
+});
 
 // check token in the reset password link middleware
-export const checkResetPasswordToken = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    // get token from request
-    const token = getToken(req);
-    if (!token) {
-      return next(new AppError("Token is missing", 400));
-    }
+export const checkResetPasswordToken = catchAsync(async (req, res, next) => {
+  const { email, otp: candidateOtp } = req.body;
 
-    // verify token
-    let decode: JwtPayload;
-    try {
-      decode = verifyToken(token, process.env.JWT_SECRET!, true) as JwtPayload;
-    } catch (err) {
-      return next(new AppError("Invalid or expired token", 401));
-    }
+  const redisKey = `otp:forgot-password:${email}`;
+  const redisValue = await redisClient.get(redisKey);
 
-    // get user from token
-    const user = await UserModel.findById((decode as { id: string }).id);
-    if (!user) {
-      return next(new AppError("The user no longer exists.", 400));
-    }
+  if (!redisValue) {
+    throw new AppError(
+      "OTP has expired or never requested. Please try again.",
+      400,
+    );
+  }
 
-    // attach user to request object
-    req.user = { id: user._id.toString(), _id: user._id };
-    req.body.email = user.email; // attach email to body for resetPassword controller (so user doesn't have to provide it again)
-    next();
-  },
-);
+  const data = JSON.parse(redisValue);
+
+  // check if otp valid
+  if (String(candidateOtp) !== String(data.otp)) {
+    data.attempts += 1;
+    await redisClient.setEx(redisKey, 5 * 60, JSON.stringify(data));
+    throw new AppError("Invalid OTP", 400);
+  }
+
+  // avoid brute-force: wrong over 5 times => delete otp
+  if (data.attempts >= 5) {
+    await redisClient.del(redisKey);
+    throw new AppError(
+      "Too many wrong attempts. Please request a new OTP.",
+      400,
+    );
+  }
+
+  // valid otp => delete to avoid reuse
+  await redisClient.del(redisKey);
+
+  // create a otken in redis for the next step
+  const token = crypto.randomBytes(32).toString("hex");
+  const tokenKey = `token:reset-password:${token}`;
+  await redisClient.setEx(tokenKey, 5 * 60, email);
+
+  res.status(200).json({
+    status: "success",
+    message: "OTP verified successfully. You can now reset your password.",
+    token,
+  });
+});
 
 // RESET PASSWORD
-export const resetPassword = catchAsync(async (req: Request, res: Response) => {
-  // 1. get user
-  const user = (await UserModel.findOne({
-    email: req.body.email,
-  })) as UserDocument;
+export const resetPassword = catchAsync(async (req, res) => {
+  const { token, password, passwordConfirm } = req.body;
 
-  // 2. update password
-  user.password = req.body.password;
-  user.passwordConfirm = req.body.passwordConfirm;
+  // check token
+  const tokenKey = `token:reset-password:${token}`;
+  const email = await redisClient.get(tokenKey);
+
+  if (!email) {
+    throw new AppError(
+      "Reset token is invalid or has expired. Please restart the process.",
+      400,
+    );
+  }
+
+  // get user
+  const user = await UserModel.findOne({ email });
+  if (!user) throw new AppError("User no longer exists", 404);
+
+  // update password
+  user.password = password;
+  user.passwordConfirm = passwordConfirm;
   user.passwordChangedAt = new Date();
+
+  // logout in others devide
+  user.tokenVersion += 1;
+
   await user.save();
 
-  //  response
+  // update tokenVersion in redis
+  await redisClient.setEx(
+    `user:version:${user._id}`,
+    Number(process.env.USER_VERSION_TTL),
+    String(user.tokenVersion),
+  );
+
+  // response
   res.status(201).json({
     status: "success",
     message: "Password reset successfully!",

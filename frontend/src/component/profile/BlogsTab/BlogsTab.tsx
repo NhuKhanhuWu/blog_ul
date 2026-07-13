@@ -13,7 +13,7 @@ interface BlogsTabProps {
 }
 
 function BlogsTab({ user }: BlogsTabProps) {
-  const [sort, setSort] = useState("-updatedAt"); // -updatedAt (newest), -upVotes (popular)
+  const [sort, setSort] = useState("-createdAt"); // -createAt (newest), -upVotes (popular)
 
   const { data, isPending } = useInfiniteQuery({
     queryKey: ["user-blogs", user?._id, sort],

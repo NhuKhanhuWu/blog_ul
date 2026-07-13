@@ -20,11 +20,14 @@ import {
   loginLimiter,
   signupEmailLimiter,
   signupIpLimiter,
+  forgotPasswordVerifyOtpLimiter,
 } from "../middlewares/auth.middleware";
 import {
+  checkResetPasswordSchema,
   createUserSchema,
   forgotPasswordSchema,
   loginSchema,
+  resetPasswordSchema,
   sendSignUpOtpSchema,
 } from "../validation/auth.validation";
 import { validateRequest } from "../validation/validateRequest";
@@ -55,14 +58,20 @@ authRouter.post("/logout", logout);
 // forgot password route
 authRouter.post(
   "/forgot-password",
+  validateRequest(forgotPasswordSchema),
   forgotPasswordOtpLimiterEmail,
   forgotPasswordOtpLimiterDevice,
-  validateRequest(forgotPasswordSchema),
   forgotPassword,
 );
-authRouter.patch(
-  "/forgot-password/reset-password",
+authRouter.post(
+  "/forgot-password/verify",
+  forgotPasswordVerifyOtpLimiter,
+  validateRequest(checkResetPasswordSchema),
   checkResetPasswordToken,
+);
+authRouter.patch(
+  "/forgot-password/reset",
+  validateRequest(resetPasswordSchema),
   resetPassword,
 );
 
