@@ -11,6 +11,7 @@ import { createOtpSchema } from "../../utils/form-schema";
 import useSignUpEmailStep from "../../hook/auth/useSignUpEmailStep";
 import { useNavigate } from "react-router-dom";
 import ResendOtp from "../../component/auth/ResendOtp/ResendOtp";
+import ReEnterEmail from "../../component/ui/ReEnterEmail/ReEnterEmail";
 
 const formSchema = yup.object().shape({
   otp: createOtpSchema(),
@@ -39,7 +40,7 @@ function SignUpOtp() {
       {
         onSuccess: () => {
           // navigate to password page
-          navigate("/auth/signup/setup-password");
+          navigate("/auth/signup/setup");
         },
       },
     );
@@ -51,6 +52,8 @@ function SignUpOtp() {
         subtitle="Check email for the OTP (takes 10-15s)"
         title="Validate your mail"
       />
+
+      <ReEnterEmail link="/auth/signup" />
 
       {/* err message */}
       {error && <p className="error-mgs">{error.message}</p>}

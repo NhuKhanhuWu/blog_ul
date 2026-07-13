@@ -11,7 +11,7 @@ const { Schema } = mongoose;
 
 export const userSchema = new Schema<UserDocument>(
   {
-    name: {
+    username: {
       type: String,
       required: [true, "User must have a name"],
       trim: true,
@@ -135,13 +135,13 @@ export const hasChangedPasswordAfter = (
 
 // create slug & default blog list when user create acc
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("name")) return next();
+  if (!this.isModified("username")) return next();
 
   // create slug
   const UserModel = this.constructor as mongoose.Model<any>;
   this.slug = await generateUniqueSlug(
     UserModel,
-    this.name,
+    this.username,
     this._id.toString(),
   );
 

@@ -17,7 +17,7 @@ export interface ReqUser {
 
 export interface UserDocument extends Document {
   _id: Types.ObjectId;
-  name: string;
+  username: string;
   slug: string;
   email: string;
   password?: string | undefined; // select: false makes it optional
