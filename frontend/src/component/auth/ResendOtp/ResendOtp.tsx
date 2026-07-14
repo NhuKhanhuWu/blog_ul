@@ -15,7 +15,7 @@ function ResendOtp({
   email,
   mutate,
   resetTime = 60,
-  label = "Send again",
+  label = "Resend",
   isPending,
 }: ResendOtpProps) {
   const { seconds, reset } = useCountdown(resetTime);
@@ -32,7 +32,6 @@ function ResendOtp({
 
   const style: React.CSSProperties = {
     fontWeight: 600,
-    fontStyle: "italic",
     textDecoration: "underline",
     cursor: seconds > 0 || isPending ? "not-allowed" : "pointer",
     color:
@@ -41,10 +40,11 @@ function ResendOtp({
 
   return (
     <p>
-      Didn't receive our mail?{" "}
+      Didn't receive our mail?
       <span className="btn" onClick={handleSendEmail} style={style}>
-        {label} ({seconds}s)
+        {` ${label} `}
       </span>
+      in {seconds}s
     </p>
   );
 }

@@ -12,6 +12,8 @@ import OtpInputField from "../../component/input/OtpInput";
 import ResendOtp from "../../component/auth/ResendOtp/ResendOtp";
 import useForgotPasswordEmail from "../../hook/auth/useForgotPasswordEmail";
 import ReEnterEmail from "../../component/ui/ReEnterEmail/ReEnterEmail";
+import { useState } from "react";
+import AttemptsCounter from "../../component/ui/AttemptsCounter/AttemptsCounter";
 
 const formSchema = yup.object().shape({
   otp: createOtpSchema(),
@@ -22,6 +24,7 @@ type FormSchemaProps = yup.InferType<typeof formSchema>;
 function ForgotPasswordOtp() {
   const { email } = useForgotPassword();
   const { mutate: resendMutate } = useForgotPasswordEmail();
+  const [attemptsLeft, setAttemptsLeft] = useState(5); // no attemps left when === 0
 
   // query
   const { mutate, isPending, error } = useForgotPasswordOtp();
@@ -42,6 +45,11 @@ function ForgotPasswordOtp() {
           // navigate to reset password page
           navigate("/auth/forgot-password/reset");
         },
+
+        // reduce attemps when user type wrong otp
+        onError: () => {
+          setAttemptsLeft((prev) => prev - 1);
+        },
       },
     );
   }
@@ -59,6 +67,8 @@ function ForgotPasswordOtp() {
       {error && <p className="error-mgs">{error.message}</p>}
 
       <OtpInputField name="otp" control={control} length={6} />
+
+      <AttemptsCounter attemptsLeft={attemptsLeft} />
 
       <ResendOtp
         email={email}
