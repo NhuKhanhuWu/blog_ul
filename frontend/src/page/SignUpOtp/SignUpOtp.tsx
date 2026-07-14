@@ -12,6 +12,8 @@ import useSignUpEmailStep from "../../hook/auth/useSignUpEmailStep";
 import { useNavigate } from "react-router-dom";
 import ResendOtp from "../../component/auth/ResendOtp/ResendOtp";
 import ReEnterEmail from "../../component/ui/ReEnterEmail/ReEnterEmail";
+import { useState } from "react";
+import AttemptsCounter from "../../component/ui/AttemptsCounter/AttemptsCounter";
 
 const formSchema = yup.object().shape({
   otp: createOtpSchema(),
@@ -22,6 +24,7 @@ type FormSchemaProps = yup.InferType<typeof formSchema>;
 function SignUpOtp() {
   const { email } = useSignUp();
   const { mutate: resendMutate } = useSignUpEmailStep();
+  const [attemptsLeft, setAttemptsLeft] = useState(5); // no attemps left when === 0
 
   // query
   const { mutate, isPending, error } = useSignUpOtpStep();
@@ -42,6 +45,11 @@ function SignUpOtp() {
           // navigate to password page
           navigate("/auth/signup/setup");
         },
+
+        // reduce attemps when user type wrong otp
+        onError: () => {
+          setAttemptsLeft((prev) => prev - 1);
+        },
       },
     );
   }
@@ -55,10 +63,12 @@ function SignUpOtp() {
 
       <ReEnterEmail link="/auth/signup" />
 
-      {/* err message */}
+      {/* api err message */}
       {error && <p className="error-mgs">{error.message}</p>}
 
       <OtpInputField name="otp" control={control} length={6} />
+
+      <AttemptsCounter attemptsLeft={attemptsLeft} />
 
       <ResendOtp
         email={email}
