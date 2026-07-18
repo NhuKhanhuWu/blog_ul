@@ -59,8 +59,8 @@ authRouter.post("/logout", logout);
 authRouter.post(
   "/forgot-password",
   validateRequest(forgotPasswordSchema),
-  // forgotPasswordOtpLimiterEmail,
-  // forgotPasswordOtpLimiterDevice,
+  forgotPasswordOtpLimiterEmail,
+  forgotPasswordOtpLimiterDevice,
   forgotPassword,
 );
 authRouter.post(

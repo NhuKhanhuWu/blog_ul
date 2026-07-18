@@ -5,10 +5,12 @@ import * as yup from "yup";
 export const emaiSchema = yup
   .string()
   .required("Email required")
+  .required("Email required")
   .email("Invalid email");
 
 export const basePasswordSchema = yup
   .string()
+  .required("Password required")
   .min(8, "Password must be at least 8 characters")
   .max(128, "Password must be at most 128 characters");
 
@@ -22,8 +24,8 @@ export const passwordConfirmSchema = yup
 export const createOtpSchema = (length = 6) => {
   return yup
     .string()
-    .length(length, `OTP must be ${length} digits`)
-    .required("OTP required");
+    .required("OTP required")
+    .length(length, `OTP must be ${length} digits`);
 };
 
 export const usernameSchema = yup
