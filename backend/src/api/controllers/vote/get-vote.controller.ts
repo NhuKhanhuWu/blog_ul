@@ -17,9 +17,9 @@ interface IGetPineline {
 // get params in request
 function getParams(req: Request) {
   const userId = new Types.ObjectId(req.user?._id);
-  const page = Math.max(Number(req.query.page) || 1, 1);
+  const page = Number(req.query.page) || 0;
   const limit = Math.min(Number(req.query.limit) || 10, 50);
-  const skip = (page - 1) * limit;
+  const skip = page * limit;
   const voteType = req.query.voteType ? Number(req.query.voteType) : undefined;
   const match: any = {
     userId,
@@ -65,7 +65,7 @@ function getBlogPipeline({
         title: "$blog.title",
         slug: "$blog.slug",
         voteType: 1,
-        votedAt: "$createdAt",
+        createdAt: 1,
       },
     },
   ];
@@ -121,7 +121,7 @@ function getCmtPipeline({ match, skip, limit }: IGetPineline): PipelineStage[] {
 
         // metadata vote
         voteType: 1,
-        votedAt: "$createdAt",
+        createdAt: 1,
 
         // optional (for FE)
         commentId: "$comment._id",
@@ -142,18 +142,22 @@ export const getUserBlogVote = catchAsync(async (req, res) => {
   const pipeline = getBlogPipeline({ limit, skip, match }); // pineline
 
   // get blog
-  const [items, total] = await Promise.all([
+  const [data, total] = await Promise.all([
     VoteModel.aggregate(pipeline),
     VoteModel.countDocuments(match),
   ]);
 
+  const totalPages = Math.ceil(total / limit);
+  const nextPage = page + 1 < totalPages ? page + 1 : undefined;
+
   // return
-  res.json({
+  res.status(200).json({
     page,
     limit,
     total,
-    totalPages: Math.ceil(total / limit),
-    items,
+    totalPages,
+    nextPage,
+    data,
   });
 });
 
@@ -164,18 +168,22 @@ export const getUserCmtVote = catchAsync(async (req, res) => {
   const pipeline = getCmtPipeline({ limit, skip, match }); // pineline
 
   // get blog
-  const [items, total] = await Promise.all([
+  const [data, total] = await Promise.all([
     VoteModel.aggregate(pipeline),
     VoteModel.countDocuments(match),
   ]);
 
+  const totalPages = Math.ceil(total / limit);
+  const nextPage = page + 1 < totalPages ? page + 1 : undefined;
+
   // return
-  res.json({
+  res.status(200).json({
     page,
     limit,
     total,
-    totalPages: Math.ceil(total / limit),
-    items,
+    totalPages,
+    nextPage,
+    data,
   });
 });
 // -------- CONTROLLER --------

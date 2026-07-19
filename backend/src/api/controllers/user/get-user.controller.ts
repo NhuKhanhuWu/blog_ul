@@ -4,7 +4,7 @@ import UserModel from "../../models/user.model";
 import AppError from "../../utils/error/app-error";
 import catchAsync from "../../utils/error/catch-async";
 const GET_BY_SLUG_FIELDS = {
-  name: 1,
+  username: 1,
   slug: 1,
   avatar: 1,
 };
@@ -12,7 +12,7 @@ const GET_BY_SLUG_FIELDS = {
 export const getMe = catchAsync(async (req, res) => {
   // get user from req object
   const user = await UserModel.findById(req.user?._id).select(
-    "_id name email slug passwordChangedAt createdAt",
+    "_id username email slug passwordChangedAt createdAt",
   );
 
   // send response
