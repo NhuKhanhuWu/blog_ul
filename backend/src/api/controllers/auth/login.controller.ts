@@ -66,5 +66,7 @@ export const login = catchAsync(async (req, res) => {
   res.status(200).json({
     status: "success",
     accessToken,
+    // send refreshToken to save in localStorage => simulate cookie
+    refreshToken,
   });
 });
