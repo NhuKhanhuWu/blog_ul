@@ -4,7 +4,14 @@
 import { createClient } from "redis";
 
 // get redis url (ví dụ: redis://localhost:6379 hoặc redis://:password@host:port)
-const REDIS_URL = process.env.REDIS_URL || "redis://redis:6379";
+const REDIS_URL =
+  (process.env.NODE_ENV === "development"
+    ? process.env.REDIS_URL
+    : process.env.REDIS_URL_PROD) || "redis://localhost:6379";
+
+if (!REDIS_URL) {
+  throw new Error("Please config REDIS_URL in env file");
+}
 
 const redisClient = createClient({
   url: REDIS_URL,
