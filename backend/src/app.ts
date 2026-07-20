@@ -22,7 +22,7 @@ app.use(cookieParser());
 
 // trust origin only
 const allowedOrigins = [
-  "https://blog-uk-frontend.onrender.com",
+  "https://blog-uk.vercel.app",
   "http://localhost:5173",
   "http://localhost:8080",
 ];
