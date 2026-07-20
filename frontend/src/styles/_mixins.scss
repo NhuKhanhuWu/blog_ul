@@ -41,9 +41,9 @@
 // ==== BLOGS: START ====
 @mixin responsiveBlogLayout(
   $flex-gap: 1rem,
-  $sm-xl-gap: 1rem,
-  $md-xl-gap: 1rem,
-  $lg-gap: 1rem,
+  $sm-xl-gap: 2.4rem 1.8rem,
+  $md-xl-gap: 2.4rem,
+  $lg-gap: 2rem,
   $md-list-cols: 2,
   $lg-list-cols: 2
 ) {
@@ -91,6 +91,7 @@
   height: 100%;
   object-fit: cover; // Prevents squishing or distortion
   display: block;
+  border-radius: 1.2rem 1.2rem 0 0;
 }
 
 @mixin blogTitle {
@@ -151,10 +152,6 @@
     // transform: translateY(90%);
     background-color: var(--bg-body);
     z-index: 888;
-
-    @include respond(sm-xl) {
-      margin: 0 2rem;
-    }
   }
 
   :global {

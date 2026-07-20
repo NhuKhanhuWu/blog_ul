@@ -9,4 +9,8 @@
   .tabHeader {
     @include tabBtns;
   }
+
+  .tabContent {
+    padding: 2rem;
+  }
 }

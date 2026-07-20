@@ -62,15 +62,19 @@ $header-height: 4rem; // ~64px standard toolbar height
   flex-shrink: 0;
   white-space: nowrap;
   box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
 
   // Global override targeting inner MUI wrapper classes inside scss modules
   :global {
     .MuiDrawer-paper {
       width: fit-content;
-      height: 100%;
-      position: relative !important;
+      height: 100vh;
+      position: sticky !important;
       top: 0 !important;
       overflow-x: hidden;
+      overflow-y: auto;
       border-right: 1.5px solid var(--border-color);
       z-index: 1;
     }
@@ -158,7 +162,7 @@ $header-height: 4rem; // ~64px standard toolbar height
 // ==========================================
 .mainContent {
   flex-grow: 1;
-  padding: $spacing-lg;
+  padding: 1rem;
   // Push the viewport content exactly down beneath fixed navigation layouts
   background-color: var(--bg-body);
   min-height: calc(100vh - #{$header-height});

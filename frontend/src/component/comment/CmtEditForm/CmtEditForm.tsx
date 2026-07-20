@@ -31,7 +31,7 @@ function CmtEditForm() {
   };
 
   // get avatar
-  const username = useAppSelector((state) => state.auth.user?.name) || "";
+  const username = useAppSelector((state) => state.auth.user?.username) || "";
   const avatar =
     useAppSelector((state) => state.auth.user?.avatar) ||
     defaultAvatar(username);

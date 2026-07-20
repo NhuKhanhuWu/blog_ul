@@ -10,7 +10,7 @@ import {
 
 export interface UserPublic {
   _id: string;
-  name: string;
+  username: string;
   avatar: string;
   slug: string;
 }
