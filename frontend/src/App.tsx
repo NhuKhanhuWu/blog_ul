@@ -34,11 +34,13 @@ const BlogListDetail = lazy(
 const Login = lazy(() => import("./page/Login/Login.tsx"));
 const Logout = lazy(() => import("./page/Logout/Logout.tsx"));
 
+// sign up
 const SignUpGuardLayout = lazy(() => import("./layout/SignUpGuardLayout.tsx"));
 const SignUpEmail = lazy(() => import("./page/SignUpEmail/SignUpEmai.tsx"));
 const SignUpOtp = lazy(() => import("./page/SignUpOtp/SignUpOtp.tsx"));
 const SignUpPassword = lazy(() => import("./page/SignUpSetUp/SignUpSetUp.tsx"));
 
+// forgot pass
 const ForgotPasswordGuardLayout = lazy(
   () => import("./layout/ForgotPasswordGuardLayout.tsx"),
 );
@@ -52,11 +54,17 @@ const ForgotPasswordReset = lazy(
   () => import("./page/ForgotPasswordReset/ForgotPasswordReset.tsx"),
 );
 
+// account
 const AccountSetting = lazy(() => import("./layout/AccountLayout.tsx"));
 const ChangePassword = lazy(
   () => import("./page/ChangePassword/ChangePassword.tsx"),
 );
+
+// change email
 const ChangeEmail = lazy(() => import("./page/ChangeEmail/ChangeEmail.tsx"));
+
+// my votes
+const MyVotes = lazy(() => import("./page/MyVotes/MyVotes.tsx"));
 
 const router = createBrowserRouter([
   {
@@ -110,7 +118,7 @@ const router = createBrowserRouter([
         children: [
           { path: "setting/email", element: <ChangeEmail /> },
           { path: "setting/password", element: <ChangePassword /> },
-          // { path: "activity/vote", element: <MyVote /> },
+          { path: "activity/votes", element: <MyVotes /> },
           // { path: "activity/comment", element: <MyComment /> },
         ],
       },

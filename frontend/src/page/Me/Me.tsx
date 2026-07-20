@@ -34,7 +34,6 @@ function Me() {
   const [curTab, setCurTab] = useState(0);
 
   function handleChange(_event: React.SyntheticEvent, newValue: number) {
-    // if (event) console.log("");
     setCurTab(newValue);
   }
 
@@ -65,7 +64,7 @@ function Me() {
       {/* Tab Panels Content Render */}
       {tabList.map((tab, i) => (
         <CustomTabPanel key={i} value={curTab} index={i}>
-          {tab.element}
+          <div className={styles.tabContent}>{tab.element}</div>
         </CustomTabPanel>
       ))}
     </div>

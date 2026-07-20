@@ -5,8 +5,7 @@
   display: flex;
   flex-direction: column;
   text-decoration: none;
-  padding: 1.6rem 0;
-  border-bottom: 1.5px solid var(--border-color);
+  box-shadow: 0px 4px 3px var(--shadow-light);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -49,7 +48,6 @@
 .imgWrapper {
   width: 100%;
   overflow: hidden;
-  border-radius: 1.2rem;
   margin-bottom: 1.2rem;
   aspect-ratio: 16 / 9;
 }
@@ -62,6 +60,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding: 0 1rem;
 }
 
 .metaRow {
@@ -120,8 +119,6 @@
 
 @include respond(sm-xl) {
   .blogCard {
-    // border-bottom: 1.5px solid var(--border-color); // Subtle wrapper frame ($light-500)
-    padding: 1.2rem;
     border-radius: 2rem;
     height: 100%; // Lets grid columns stretch evenly
 

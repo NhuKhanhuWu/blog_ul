@@ -2,6 +2,7 @@
 
 import { User, UserPublic } from "../types/auth.type";
 import { ChangePasswordArgs, ChangePasswordResponse } from "../types/user.type";
+import { GetMyBlogVotesResponse } from "../types/vote.type";
 import axiosInstance from "../utils/axios-instance";
 
 export async function getMe(): Promise<User> {
@@ -17,11 +18,21 @@ export async function getUser(slug: string): Promise<UserPublic> {
 }
 
 export async function changePassword(
-  chnagePassData: ChangePasswordArgs,
+  changePassData: ChangePasswordArgs,
 ): Promise<ChangePasswordResponse> {
   const res = await axiosInstance.patch(`/user/change-password`, {
-    ...chnagePassData,
+    ...changePassData,
   });
+
+  return res.data;
+}
+
+export async function getMyBlogVotes({
+  page,
+}: {
+  page: number;
+}): Promise<GetMyBlogVotesResponse> {
+  const res = await axiosInstance.get(`/user/me/my-blog-vote?page=${page}`);
 
   return res.data;
 }

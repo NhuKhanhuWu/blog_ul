@@ -1,0 +1,6 @@
+/** @format */
+@use "../../styles/_mixins.scss" as *;
+
+.tabHeader {
+  @include tabBtns;
+}

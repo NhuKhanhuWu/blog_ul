@@ -24,7 +24,7 @@ const formSchema = yup.object().shape({
 type TFormSchema = yup.InferType<typeof formSchema>;
 
 type CmtCreateForm = CmtFormProps & {
-  onCreateCmt: Dispatch<SetStateAction<boolean>>;
+  onCreateCmt?: Dispatch<SetStateAction<boolean>>;
 };
 
 function CmtCreateForm({
@@ -49,7 +49,7 @@ function CmtCreateForm({
   // handling send create cmt request
   const { mutate, isPending } = useCreateCmt();
 
-  const username = useAppSelector((state) => state.auth.user?.name) || "";
+  const username = useAppSelector((state) => state.auth.user?.username) || "";
 
   // get avatar
   const avatar =
@@ -82,7 +82,7 @@ function CmtCreateForm({
           toast.success("Comment created");
 
           // show replies
-          onCreateCmt(true);
+          if (onCreateCmt) onCreateCmt(true);
         },
 
         // close form after send cmt
