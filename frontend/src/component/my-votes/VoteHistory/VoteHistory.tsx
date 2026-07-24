@@ -1,12 +1,16 @@
 /** @format */
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { toggleVote } from "../../../api/vote.api";
 import {
   GroupedVotes,
   MyBlogVote,
   MyCommentVote,
 } from "../../../types/vote.type";
 import { formatDate } from "../../../utils/date";
+import HistoryActionPopover from "../../shared/HistoryActionPopover/HistoryActionPopover";
 import styles from "./VoteHistory.module.scss";
 
 interface VoteHistoryProps {
@@ -20,7 +24,29 @@ const getVoteUrl = (vote: MyBlogVote | MyCommentVote) => {
 };
 
 function VoteHistory({ groupedVotes }: VoteHistoryProps) {
+  const queryClient = useQueryClient();
+
+  const { mutate: removeVote } = useMutation({
+    mutationFn: toggleVote,
+    onSuccess: () => {
+      toast.success("Vote removed");
+      queryClient.invalidateQueries({ queryKey: ["my-blog-votes"] });
+      queryClient.invalidateQueries({ queryKey: ["my-cmt-votes"] });
+    },
+  });
+
   const groupedEntries = Object.entries(groupedVotes);
+
+  const handleDeleteVote = (vote: MyBlogVote | MyCommentVote) => {
+    const targetId = "commentId" in vote ? vote.commentId : vote._id;
+    const targetType = "commentId" in vote ? "comment" : "blog";
+
+    removeVote({
+      targetId,
+      targetType,
+      voteType: vote.voteType,
+    });
+  };
 
   return (
     <div className={styles.container}>
@@ -30,25 +56,27 @@ function VoteHistory({ groupedVotes }: VoteHistoryProps) {
 
           <div className={styles.votesListCard}>
             {votes.map((vote) => (
-              <Link
-                to={getVoteUrl(vote)}
-                key={vote._id}
-                className={styles.voteItemRow}>
-                <div className={styles.voteDetails}>
-                  <div>
-                    <h4>{vote.title}</h4>
+              <div key={vote._id} className={styles.voteItemRow}>
+                <Link to={getVoteUrl(vote)} className={styles.voteLink}>
+                  <div className={styles.voteDetails}>
+                    <div>
+                      <h4>{vote.title}</h4>
 
-                    {/* for comment vote */}
-                    {"commentContent" in vote && <p>{vote.commentContent}</p>}
+                      {"commentContent" in vote && <p>{vote.commentContent}</p>}
+                    </div>
                   </div>
-                </div>
 
-                {/* Dynamic class conditional matching inside styles object */}
-                <span
-                  className={`${styles.badge} ${vote.voteType === 1 ? styles.upvoted : styles.downvoted}`}>
-                  {vote.voteType === 1 ? "↑ Upvoted" : "↓ Downvoted"}
-                </span>
-              </Link>
+                  <span
+                    className={`${styles.badge} ${vote.voteType === 1 ? styles.upvoted : styles.downvoted}`}>
+                    {vote.voteType === 1 ? "↑ Upvoted" : "↓ Downvoted"}
+                  </span>
+                </Link>
+
+                <HistoryActionPopover
+                  deleteLabel="Remove vote"
+                  onDelete={() => handleDeleteVote(vote)}
+                />
+              </div>
             ))}
           </div>
         </div>
