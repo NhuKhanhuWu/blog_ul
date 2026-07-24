@@ -66,6 +66,9 @@ const ChangeEmail = lazy(() => import("./page/ChangeEmail/ChangeEmail.tsx"));
 // my votes
 const MyVotes = lazy(() => import("./page/MyVotes/MyVotes.tsx"));
 
+// my cmts
+const MyComments = lazy(() => import("./component/my-comments/MyComment.tsx"));
+
 const router = createBrowserRouter([
   {
     element: <AppLayout></AppLayout>,
@@ -119,7 +122,7 @@ const router = createBrowserRouter([
           { path: "setting/email", element: <ChangeEmail /> },
           { path: "setting/password", element: <ChangePassword /> },
           { path: "activity/votes", element: <MyVotes /> },
-          // { path: "activity/comment", element: <MyComment /> },
+          { path: "activity/comments", element: <MyComments /> },
         ],
       },
 
