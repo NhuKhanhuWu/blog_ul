@@ -32,5 +32,11 @@ export interface GetMyBlogVotesResponse {
   nextPage: number | undefined;
 }
 
+export interface GetMyCmtVotesResponse {
+  data: MyCommentVote[];
+  totalResult: number;
+  nextPage: number | undefined;
+}
+
 export type GroupedVotes = Record<string, MyBlogVote[] | MyCommentVote[]>;
 // export type GroupedCommentVotes = Record<string, MyCommentVote[]>;

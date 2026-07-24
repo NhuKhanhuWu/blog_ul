@@ -13,13 +13,13 @@ function BlogCardSm({ blog, popItems }: BlogCardProps) {
   return (
     <div className={styles.card}>
       {/* 1. Blog Image / Thumbnail */}
-      <Link to={`/blog/${blog.slug}`} className={styles.thumbnailWrapper}>
+      <Link to={`/blogs/${blog.slug}`} className={styles.thumbnailWrapper}>
         <img className={styles.blogImg} src={blog.img || placehoderImg} />
       </Link>
 
       {/* 2. Blog Content */}
       <div className={styles.content}>
-        <Link to={`/blog/${blog.slug}`} className={styles.title}>
+        <Link to={`/blogs/${blog.slug}`} className={styles.title}>
           {blog.title}
         </Link>
 
