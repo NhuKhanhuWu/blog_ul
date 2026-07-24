@@ -26,7 +26,7 @@ function BlogCardBig({ blog, isList, popItems }: BlogCard) {
 
   return (
     <div className={`${isList && styles.listMode} ${styles.blogCard}`}>
-      <Link to={`/blog/${blog.slug}`} className={styles.imgWrapper}>
+      <Link to={`/blogs/${blog.slug}`} className={styles.imgWrapper}>
         <img
           className={styles.blogImg}
           src={blog.img || placeholderImg}
@@ -35,7 +35,7 @@ function BlogCardBig({ blog, isList, popItems }: BlogCard) {
       </Link>
 
       <div className={styles.blogTxt}>
-        <Link to={`/blog/${blog.slug}`}>
+        <Link to={`/blogs/${blog.slug}`}>
           <div className={styles.metaRow}>
             <Authors blog={blog} />
             <span className={styles.separator}>•</span>

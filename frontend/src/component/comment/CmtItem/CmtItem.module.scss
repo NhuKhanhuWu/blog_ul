@@ -6,6 +6,23 @@
   align-items: flex-start;
 }
 
+.cmtItemContainer:target {
+  animation: highlightComment 3s ease-in-out;
+}
+
+@keyframes highlightComment {
+  0% {
+    background-color: $blue-200; /* Màu vàng nhạt highlight */
+    box-shadow: 0 0 0 2px $blue-300;
+  }
+  70% {
+    background-color: $blue-100;
+  }
+  100% {
+    background-color: transparent; /* Trở lại màu nền bình thường */
+  }
+}
+
 .cmt,
 .cmtTxt {
   flex: 1;

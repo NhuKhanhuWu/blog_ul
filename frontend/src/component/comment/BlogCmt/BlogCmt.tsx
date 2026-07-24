@@ -1,6 +1,6 @@
 /** @format */
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Loader from "../../ui/Loader/Loader.tsx";
 import Error from "../../ui/Error/Error.tsx";
 import { useIntersectionObserver } from "../../../hook/shared/useIntersectionObserver.ts";
@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import { useMediaQuery } from "react-responsive";
 import styles from "./BlogCmt.module.scss";
 import CmtCreateForm from "../CmtCreateForm/CmtCreateForm.tsx";
+import { useScrollToView } from "../../../hook/shared/useScrollToView.ts";
 
 interface IBlogInfor {
   blogId: string;
@@ -22,6 +23,10 @@ interface IBlogInfor {
 function BlogCmtMobile({ blogId, totalCmts }: IBlogInfor) {
   const [sort, setSort] = useState("top");
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpenModal = useCallback(() => {
+    setIsOpen(true);
+  }, []);
 
   const {
     cmts,
@@ -37,6 +42,12 @@ function BlogCmtMobile({ blogId, totalCmts }: IBlogInfor) {
     isFetchingNextPage,
     hasNextPage,
   );
+
+  // Scroll to view cmt
+  useScrollToView({
+    isLoading: isPending,
+    onOpenModal: handleOpenModal,
+  });
 
   return (
     <>
@@ -87,6 +98,11 @@ function BlogCmtDesktop({ blogId, totalCmts }: IBlogInfor) {
     hasNextPage,
   );
 
+  // Scroll to view cmt
+  useScrollToView({
+    isLoading: isPending,
+  });
+
   if (isError)
     return toast.error("Cannot load comments, please try again later");
 
@@ -127,7 +143,7 @@ function BlogCmtDesktop({ blogId, totalCmts }: IBlogInfor) {
 }
 
 function BlogCmt({ blogId, totalCmts }: IBlogInfor) {
-  const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
+  const isDesktop = useMediaQuery({ query: "(min-width: 768px)" });
 
   return (
     <>

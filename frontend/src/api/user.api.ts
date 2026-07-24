@@ -2,8 +2,15 @@
 
 import { User, UserPublic } from "../types/auth.type";
 import { ChangePasswordArgs, ChangePasswordResponse } from "../types/user.type";
-import { GetMyBlogVotesResponse } from "../types/vote.type";
+import {
+  GetMyBlogVotesResponse,
+  GetMyCmtVotesResponse,
+} from "../types/vote.type";
 import axiosInstance from "../utils/axios-instance";
+
+interface QueryWithPageArgs {
+  page: number;
+}
 
 export async function getMe(): Promise<User> {
   const res = await axiosInstance.get("/user/me");
@@ -29,10 +36,16 @@ export async function changePassword(
 
 export async function getMyBlogVotes({
   page,
-}: {
-  page: number;
-}): Promise<GetMyBlogVotesResponse> {
+}: QueryWithPageArgs): Promise<GetMyBlogVotesResponse> {
   const res = await axiosInstance.get(`/user/me/my-blog-vote?page=${page}`);
+
+  return res.data;
+}
+
+export async function getMyCmtVotes({
+  page,
+}: QueryWithPageArgs): Promise<GetMyCmtVotesResponse> {
+  const res = await axiosInstance.get(`/user/me/my-cmt-vote?page=${page}`);
 
   return res.data;
 }

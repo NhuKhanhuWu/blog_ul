@@ -71,7 +71,7 @@ const router = createBrowserRouter([
     element: <AppLayout></AppLayout>,
     children: [
       { element: <Homepage />, path: "/" },
-      { element: <BlogDetail />, path: "/blog/:slug" },
+      { element: <BlogDetail />, path: "/blogs/:slug" },
 
       {
         path: "/auth",

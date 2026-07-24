@@ -28,6 +28,8 @@ function BlogDetail() {
 
   const blog = normalizeBlog(data);
 
+  // scroll to cmt with id in url
+
   return (
     <div className={styles.container}>
       <div className={styles.blogSection}>

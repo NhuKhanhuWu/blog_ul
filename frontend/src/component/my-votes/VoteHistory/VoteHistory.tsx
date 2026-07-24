@@ -1,7 +1,11 @@
 /** @format */
 
 import { Link } from "react-router-dom";
-import { GroupedVotes } from "../../../types/vote.type";
+import {
+  GroupedVotes,
+  MyBlogVote,
+  MyCommentVote,
+} from "../../../types/vote.type";
 import { formatDate } from "../../../utils/date";
 import styles from "./VoteHistory.module.scss";
 
@@ -9,9 +13,14 @@ interface VoteHistoryProps {
   groupedVotes: GroupedVotes;
 }
 
+const getVoteUrl = (vote: MyBlogVote | MyCommentVote) => {
+  const baseUrl = `/blogs/${vote.slug}`;
+
+  return "commentId" in vote ? `${baseUrl}#comment-${vote.commentId}` : baseUrl;
+};
+
 function VoteHistory({ groupedVotes }: VoteHistoryProps) {
   const groupedEntries = Object.entries(groupedVotes);
-  // const link = `/blogs/`;
 
   return (
     <div className={styles.container}>
@@ -22,16 +31,16 @@ function VoteHistory({ groupedVotes }: VoteHistoryProps) {
           <div className={styles.votesListCard}>
             {votes.map((vote) => (
               <Link
-                to={`/blog/${vote.slug}${"commentId" in vote ? `?comment-id=${vote.commentId}` : ""}`}
+                to={getVoteUrl(vote)}
                 key={vote._id}
                 className={styles.voteItemRow}>
                 <div className={styles.voteDetails}>
-                  {/* <div> */}
-                  <h4>{vote.title}</h4>
-                  {/* </div> */}
+                  <div>
+                    <h4>{vote.title}</h4>
 
-                  {/* for comment vote */}
-                  {"commentContent" in vote && <p>{vote.commentContent}</p>}
+                    {/* for comment vote */}
+                    {"commentContent" in vote && <p>{vote.commentContent}</p>}
+                  </div>
                 </div>
 
                 {/* Dynamic class conditional matching inside styles object */}

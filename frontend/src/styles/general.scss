@@ -16,7 +16,9 @@ $error-red: rgb(188, 69, 69);
 }
 
 html {
+  scroll-behavior: smooth;
   font-size: 50%;
+
   @include respond(md) {
     font-size: 56.25%;
   }
@@ -143,6 +145,24 @@ select {
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
+}
+
+.active-highlight {
+  animation: globalHighlight 3s ease-in-out;
+}
+
+@keyframes globalHighlight {
+  0% {
+    background-color: $blue-200; /* Màu xanh nhạt dạng RGBA linh hoạt */
+    box-shadow: 0 0 0 2px $blue-300;
+  }
+  70% {
+    background-color: $blue-100;
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
 }
 
 .avatar-sm {
