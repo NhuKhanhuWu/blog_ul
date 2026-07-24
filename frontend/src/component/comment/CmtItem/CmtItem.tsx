@@ -27,7 +27,7 @@ function CmtLayout({ children }: { children: ReactNode }) {
   if (isEdit) return <CmtEditForm />;
 
   return (
-    <div className={styles.cmtItemContainer}>
+    <div className={styles.cmtItemContainer} id={`comment-${cmt._id}`}>
       <Link to={`/profile/${cmt.userId.slug}`}>
         <img
           className={cmt.parentId ? "avatar-sm" : "avatar-md"}
