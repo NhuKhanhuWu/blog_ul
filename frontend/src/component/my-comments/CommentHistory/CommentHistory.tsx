@@ -1,9 +1,13 @@
 /** @format */
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { deleteCmt } from "../../../api/comment.api";
 import { MyCommentHistoryItem } from "../../../types/comment.type";
 import { formatDate } from "../../../utils/date";
 import { groupDataByDate } from "../../../utils/groupItemByDate";
+import HistoryActionPopover from "../../shared/HistoryActionPopover/HistoryActionPopover";
 import styles from "./CommentHistory.module.scss";
 
 interface CommentHistoryProps {
@@ -11,6 +15,16 @@ interface CommentHistoryProps {
 }
 
 function CommentHistory({ comments }: CommentHistoryProps) {
+  const queryClient = useQueryClient();
+
+  const { mutate: removeComment } = useMutation({
+    mutationFn: deleteCmt,
+    onSuccess: () => {
+      toast.success("Comment deleted");
+      queryClient.invalidateQueries({ queryKey: ["my-comments"] });
+    },
+  });
+
   const groupedComments = groupDataByDate(comments, (item) => item.createdAt);
   const groupedEntries = Object.entries(groupedComments);
 
@@ -22,17 +36,23 @@ function CommentHistory({ comments }: CommentHistoryProps) {
 
           <div className={styles.commentsListCard}>
             {items.map((comment) => (
-              <Link
-                key={comment._id}
-                to={`/blogs/${comment.slug}#comment-${comment._id}`}
-                className={styles.commentItemRow}>
-                <div className={styles.commentDetails}>
-                  <div>
-                    <h4>{comment.title}</h4>
-                    <p>{comment.content}</p>
+              <div key={comment._id} className={styles.commentItemRow}>
+                <Link
+                  to={`/blogs/${comment.slug}#comment-${comment._id}`}
+                  className={styles.commentLink}>
+                  <div className={styles.commentDetails}>
+                    <div>
+                      <h4>{comment.title}</h4>
+                      <p>{comment.content}</p>
+                    </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+
+                <HistoryActionPopover
+                  deleteLabel="Delete comment"
+                  onDelete={() => removeComment(comment._id)}
+                />
+              </div>
             ))}
           </div>
         </div>
