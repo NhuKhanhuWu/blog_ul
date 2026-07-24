@@ -33,20 +33,36 @@ export interface GetCmtRes {
   nextPage: number | undefined;
 }
 
-export type CmtCache = InfiniteData<{ data: Cmt[]; nextPage?: number }>;
-
-export interface CreateCmt {
-  blogId: string;
-  replyToId?: string | undefined;
-  content: string;
-}
-
 export interface GetCmtByBlog {
   blogId: string;
   sort: string;
   page: number;
   limit?: number;
   parentId?: string;
+}
+
+export interface MyCommentHistoryItem {
+  _id: string;
+  content: string;
+  title: string;
+  slug: string;
+  createdAt: Date;
+}
+
+export interface GetCmtByUser {
+  status: string;
+  totalCmts: number;
+  nextPage: number | undefined;
+  amount: number;
+  data: MyCommentHistoryItem[];
+}
+
+export type CmtCache = InfiniteData<{ data: Cmt[]; nextPage?: number }>;
+
+export interface CreateCmt {
+  blogId: string;
+  replyToId?: string | undefined;
+  content: string;
 }
 
 export interface EditCmt {
