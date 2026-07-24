@@ -5,6 +5,7 @@ import {
   CreateCmt,
   EditCmt,
   GetCmtByBlog,
+  GetCmtByUser,
   GetCmtRes,
 } from "../types/comment.type";
 import axiosInstance from "../utils/axios-instance";
@@ -20,6 +21,12 @@ export async function getCmtByBlog({
   const data = await axiosInstance.get(`/blogs/${blogId}/cmt?${query}`);
 
   return data.data;
+}
+
+export async function getCmtByUser(page: number): Promise<GetCmtByUser> {
+  const res = await axiosInstance.get(`/cmt/my-cmt?page=${page}`);
+
+  return res.data;
 }
 
 export async function createCmt({

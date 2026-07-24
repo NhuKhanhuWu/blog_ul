@@ -2,10 +2,7 @@
 
 import { format, parseISO } from "date-fns";
 
-/**
- * A highly flexible, generic function to group any data array by a date property.
- */
-export const groupDataByDate = <T extends Record<string, unknown>>(
+export const groupDataByDate = <T>(
   items: T[],
   dateKeySelector: (item: T) => string | Date,
 ): Record<string, T[]> => {

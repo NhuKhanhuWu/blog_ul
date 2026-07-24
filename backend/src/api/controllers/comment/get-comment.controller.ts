@@ -8,7 +8,7 @@ import { Request, Response } from "express";
 
 // Metadata để quản lý type-safety
 interface ExtraMetadata {
-  totalCmts?: number;
+  totalResult?: number;
   totalParentCmts?: number;
   nextPage?: number | null;
 }
@@ -30,6 +30,68 @@ interface GetCommentOptions {
   userId: string | undefined;
   isFetchUser: boolean;
 }
+
+interface BuildUserCmtPipeline {
+  userObjectId: Types.ObjectId;
+  skip: number;
+  limit: number;
+}
+
+const DEFAULT_COMMENT_LIMIT = 20;
+
+const getPageAndLimit = (req: Request) => {
+  const page = Number(req.query.page) || 0;
+  const limit = Number(req.query.limit) || DEFAULT_COMMENT_LIMIT;
+
+  return {
+    page,
+    limit,
+    skip: page * limit,
+  };
+};
+
+const buildUserCmtPipeline = ({
+  userObjectId,
+  skip,
+  limit,
+}: BuildUserCmtPipeline): PipelineStage[] => [
+  {
+    $match: {
+      userId: userObjectId,
+      isDeleted: false,
+    },
+  },
+  {
+    $sort: {
+      createdAt: -1,
+    },
+  },
+  { $skip: skip },
+  { $limit: limit },
+  {
+    $lookup: {
+      from: "blogs",
+      localField: "blogId",
+      foreignField: "_id",
+      as: "blog",
+    },
+  },
+  {
+    $unwind: {
+      path: "$blog",
+      preserveNullAndEmptyArrays: true,
+    },
+  },
+  {
+    $project: {
+      _id: 1,
+      content: 1,
+      title: "$blog.title",
+      slug: "$blog.slug",
+      createdAt: 1,
+    },
+  },
+];
 
 // 1. Query Service
 const getCommentsWithVote = async ({
@@ -174,7 +236,7 @@ const executeAndSendComments = async (
 
   return res.status(200).json({
     status: "success",
-    totalCmts: extraMetadata.totalCmts,
+    totalResult: extraMetadata.totalResult,
     totalParentCmts: extraMetadata.totalParentCmts,
     nextPage,
     amount: comments.length,
@@ -217,7 +279,7 @@ export const getCmtByBlog = catchAsync(async (req: Request, res, next) => {
   }
 
   const extraMetadata: ExtraMetadata = {
-    totalCmts: blog.totalCmts || 0,
+    totalResult: blog.totalCmts || 0,
     totalParentCmts: blog.totalParentCmts || 0,
     nextPage: nextPage ?? null,
   };
@@ -226,15 +288,26 @@ export const getCmtByBlog = catchAsync(async (req: Request, res, next) => {
 });
 
 export const getCmtByUser = catchAsync(async (req: Request, res, next) => {
-  const userId = new Types.ObjectId(req.user?._id);
+  const userId = req.user?._id;
 
-  const filter = {
-    userId,
-    isDeleted: false,
-  };
+  const { page, limit, skip } = getPageAndLimit(req);
+  const userObjectId = new Types.ObjectId(userId);
 
-  // when get my cmt (/my-cmt), does not need to fetch user profile
-  const isFetchUser = req.path.includes("my-cmt") ? false : true;
+  const [comments, totalResult] = await Promise.all([
+    CommentModel.aggregate(buildUserCmtPipeline({ userObjectId, skip, limit })),
+    CommentModel.countDocuments({
+      userId: userObjectId,
+      isDeleted: false,
+    }),
+  ]);
 
-  await executeAndSendComments(req, res, filter, {}, isFetchUser);
+  const nextPage = comments.length === limit ? page + 1 : undefined;
+
+  return res.status(200).json({
+    status: "success",
+    totalResult,
+    nextPage,
+    amount: comments.length,
+    data: comments,
+  });
 });
