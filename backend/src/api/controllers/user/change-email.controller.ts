@@ -13,6 +13,7 @@ interface OtpChangeEmail extends OtpCache {
   newEmail: string;
 }
 
+// ------ROUTE:  "/change-email"------
 export const checkPassAndEmail = catchAsync(async (req, res, next) => {
   const { password, newEmail } = req.body;
 
@@ -49,7 +50,7 @@ export const checkPassAndEmail = catchAsync(async (req, res, next) => {
 });
 
 // update to use otp here & optimize controller
-export const changeEmailOtpStep = catchAsync(async (req, res) => {
+export const changeEmailCreateOtp = catchAsync(async (req, res) => {
   const { newEmail } = req.body;
   const userId = req.user?.id;
 
@@ -83,22 +84,22 @@ export const changeEmailOtpStep = catchAsync(async (req, res) => {
   });
 });
 
-export const changeEmailUpdateStep = catchAsync(async (req, res, next) => {
-  const userId = req.user?.id;
-  const { otp: candidateOtp } = req.body;
-
-  if (!candidateOtp) throw new AppError("OTP required", 400);
-
+// ------ROUTE:  "/change-email/verify"------
+// 1. Helper: Domain Logic for OTP verification & state management
+async function verifyChangeEmailOtp(
+  userId: string,
+  candidateOtp: string,
+): Promise<string> {
   const redisKey = `otp:change-email:${userId}`;
   const redisValue = await redisClient.get(redisKey);
 
-  if (!redisValue)
+  if (!redisValue) {
     throw new AppError("OTP has expired or never requested", 400);
+  }
 
-  // check otp
-  const data: OtpChangeEmail = JSON.parse(redisValue || "");
+  const data: OtpChangeEmail = JSON.parse(redisValue);
 
-  // limit 5 attemp for otp
+  // Rate limiting check
   if (data.attempts >= 5) {
     await redisClient.del(redisKey);
     throw new AppError(
@@ -107,43 +108,69 @@ export const changeEmailUpdateStep = catchAsync(async (req, res, next) => {
     );
   }
 
+  // OTP mismatch check
   if (Number(candidateOtp) !== Number(data.otp)) {
     data.attempts += 1;
-    await redisClient.setEx(
-      redisKey,
-      Number(process.env.TTL_IN_SECONDS || 10 * 60),
-      JSON.stringify(data),
-    );
+    const ttl = Number(process.env.TTL_IN_SECONDS || 10 * 60);
+    await redisClient.setEx(redisKey, ttl, JSON.stringify(data));
     throw new AppError("Invalid otp", 400);
   }
 
-  // avoid Race Condition: check if email is used in the last 10 mins
-  const isEmailInUse = await UserModel.exists({ email: data.newEmail });
+  // Cleanup OTP after successful verification
+  await redisClient.del(redisKey);
+
+  return data.newEmail;
+}
+
+// 2. Helper: Domain Logic for safely changing user email
+async function updateUserEmail(userId: string, newEmail: string) {
+  // 1. Check for duplicates
+  const isEmailInUse = await UserModel.exists({ email: newEmail });
   if (isEmailInUse) {
-    await redisClient.del(redisKey);
     throw new AppError("Email is already in use by another account", 409);
   }
 
-  // update email
-  const user = await UserModel.findById(userId);
-  if (!user) {
-    throw new AppError("User not found", 404);
+  try {
+    // 2. Perform targeted update
+    const user = await UserModel.findByIdAndUpdate(
+      userId,
+      { email: newEmail },
+      { new: true, runValidators: true },
+    );
+
+    if (!user) throw new AppError("User not found", 404);
+
+    return user;
+  } catch (error: any) {
+    if (error.code === 11000) {
+      throw new AppError("Email is already in use by another account", 409);
+    }
+    throw error;
+  }
+}
+
+// 3. Main Express Controller Orchestrator
+export const changeEmailOtpVerify = catchAsync(async (req, res, next) => {
+  const userId = req.user?.id;
+  const { otp: candidateOtp } = req.body;
+
+  if (!candidateOtp) throw new AppError("OTP required", 400);
+
+  if (!userId) {
+    throw new AppError("Authentication required. Please log in again.", 401);
   }
 
-  user.email = data.newEmail;
+  // Verification step
+  const newEmail = await verifyChangeEmailOtp(userId, candidateOtp);
 
-  // logout from others device (obligatory)
+  // Database update step
+  const user = await updateUserEmail(userId, newEmail);
+
+  // Session / Token update step
   const accessToken = await revokeAndRegenerateTokens(user, req, res, {
     forceLogoutOthers: true,
   });
 
-  // save user
-  await user.save();
-
-  // delete otp from redis
-  await redisClient.del(redisKey);
-
-  // respond
   res.status(200).json({
     status: "success",
     message: "Email changed successfully!",

@@ -10,6 +10,7 @@ import {
   createAccessToken,
   createRefreshToken,
 } from "../../utils/token/create-token";
+import { redisClient } from "../../utils/redis";
 
 type PlainUser = Omit<
   UserDocument,
@@ -62,11 +63,16 @@ export const login = catchAsync(async (req, res) => {
     path: "/",
   });
 
+  // save token version in redis
+  await redisClient.setEx(
+    `user:version:${user._id}`,
+    Number(process.env.USER_VERSION_TTL),
+    String(user.tokenVersion),
+  );
+
   // response
   res.status(200).json({
     status: "success",
     accessToken,
-    // send refreshToken to save in localStorage => simulate cookie
-    refreshToken,
   });
 });

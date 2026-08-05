@@ -4,10 +4,10 @@ import { createLimiter } from "../utils/core/create-limiter";
 
 // ---- change email -----
 export const changeEmailByUserLimiter = createLimiter({
-  max: 1,
+  max: 5,
   windowMs: 60 * 1000,
   message:
-    "You can only request change email every 1 minute with your account.",
+    "You can only request change email 5 times every 1 minute with your account.",
   keyGenerator: (req) => req.user?.id || "",
 });
 

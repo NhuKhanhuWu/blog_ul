@@ -36,7 +36,7 @@ export const changePass = catchAsync(async (req, res) => {
     );
   }
 
-  // check if password===passwordConfirm
+  // check if password!==passwordConfirm
   if (password !== passwordConfirm) {
     throw new AppError("Passwords do not match", 400);
   }

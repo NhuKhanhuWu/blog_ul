@@ -1,7 +1,11 @@
 /** @format */
 
 import { User, UserPublic } from "../types/auth.type";
-import { ChangePasswordArgs, ChangePasswordResponse } from "../types/user.type";
+import {
+  ChangeEmailArgs,
+  ChangePasswordArgs,
+  ChangePasswordResponse,
+} from "../types/user.type";
 import {
   GetMyBlogVotesResponse,
   GetMyCmtVotesResponse,
@@ -30,6 +34,22 @@ export async function changePassword(
   const res = await axiosInstance.patch(`/user/change-password`, {
     ...changePassData,
   });
+
+  return res.data;
+}
+
+export async function changeEmail(changeEmailData: ChangeEmailArgs) {
+  const res = await axiosInstance.post("/user/change-email", {
+    ...changeEmailData,
+  });
+
+  return res.data;
+}
+
+export async function changeEmailOtp(
+  otp: number,
+): Promise<{ accessToken: string }> {
+  const res = await axiosInstance.post("/user/change-email/verify", { otp });
 
   return res.data;
 }

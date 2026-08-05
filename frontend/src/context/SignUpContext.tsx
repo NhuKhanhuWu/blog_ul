@@ -42,7 +42,6 @@ export const SignUpProvider = ({ children }: { children: ReactNode }) => {
 
 export const useSignUp = () => {
   const context = useContext(SignUpContext);
-  if (!context)
-    throw new Error("useSignUpData must be used within SignUpProvider");
+  if (!context) throw new Error("useSignUp must be used within SignUpProvider");
   return context;
 };
