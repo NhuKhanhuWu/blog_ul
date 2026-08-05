@@ -17,6 +17,7 @@ import { StyledEngineProvider } from "@mui/material/styles";
 import Loader from "./component/ui/Loader/Loader.tsx";
 import { SignUpProvider } from "./context/SignUpContext.tsx";
 import { ForgotPasswordProvider } from "./context/ForgotPasswordContext.tsx";
+import { ChangeEmailProvider } from "./context/ChangeEmailContext.tsx";
 
 // lazy load
 const AppLayout = lazy(() => import("./layout/AppLayout.tsx"));
@@ -61,7 +62,13 @@ const ChangePassword = lazy(
 );
 
 // change email
+const ChangeEmailGuardLayout = lazy(
+  () => import("./layout/ChangeEmailGuardLayout.tsx"),
+);
 const ChangeEmail = lazy(() => import("./page/ChangeEmail/ChangeEmail.tsx"));
+const ChangeEmailOtp = lazy(
+  () => import("./page/ChangeEmailOtp/ChangeEmailOtp.tsx"),
+);
 
 // my votes
 const MyVotes = lazy(() => import("./page/MyVotes/MyVotes.tsx"));
@@ -119,7 +126,18 @@ const router = createBrowserRouter([
         path: "/account",
         element: <AccountSetting />,
         children: [
-          { path: "setting/email", element: <ChangeEmail /> },
+          {
+            path: "setting/email",
+            element: (
+              <ChangeEmailProvider>
+                <ChangeEmailGuardLayout />
+              </ChangeEmailProvider>
+            ),
+            children: [
+              { index: true, element: <ChangeEmail /> },
+              { path: "verify-otp", element: <ChangeEmailOtp /> },
+            ],
+          },
           { path: "setting/password", element: <ChangePassword /> },
           { path: "activity/votes", element: <MyVotes /> },
           { path: "activity/comments", element: <MyComments /> },

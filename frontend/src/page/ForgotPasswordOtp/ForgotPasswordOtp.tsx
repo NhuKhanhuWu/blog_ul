@@ -23,7 +23,8 @@ type FormSchemaProps = yup.InferType<typeof formSchema>;
 
 function ForgotPasswordOtp() {
   const { email } = useForgotPassword();
-  const { mutate: resendMutate } = useForgotPasswordEmail();
+  const { mutate: resendMutate, isPending: resendIsPending } =
+    useForgotPasswordEmail();
   const [attemptsLeft, setAttemptsLeft] = useState(5); // no attemps left when === 0
 
   // query
@@ -71,7 +72,7 @@ function ForgotPasswordOtp() {
       <AttemptsCounter attemptsLeft={attemptsLeft} />
 
       <ResendOtp
-        email={email}
+        payload={email}
         mutate={resendMutate}
         resetTime={60}
         isPending={isPending}
@@ -79,7 +80,7 @@ function ForgotPasswordOtp() {
 
       <button
         type="submit"
-        className={`btn-primary  ${isPending && "disabled"}`}>
+        className={`btn-primary  ${(isPending || resendIsPending) && "disabled"}`}>
         Submit
       </button>
     </form>

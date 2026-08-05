@@ -1,49 +1,53 @@
 /** @format */
 
-import { UseMutateFunction } from "@tanstack/react-query";
 import useCountdown from "../../../hook/shared/useCountDown";
 
-interface ResendOtpProps {
-  email: string;
-  mutate: UseMutateFunction<unknown, Error, string, unknown>;
+type ResendOtpProps<T> = {
+  payload: T;
+  mutate: (
+    variables: T,
+    options?: { onSuccess?: () => void; onError?: (error: unknown) => void },
+  ) => void;
   resetTime?: number;
   label?: string;
-  isPending: boolean;
-}
+  isPending?: boolean;
+};
 
-function ResendOtp({
-  email,
+function ResendOtp<T>({
+  payload,
   mutate,
   resetTime = 60,
   label = "Resend",
-  isPending,
-}: ResendOtpProps) {
+  isPending = false,
+}: ResendOtpProps<T>) {
   const { seconds, reset } = useCountdown(resetTime);
 
   function handleSendEmail() {
-    if (seconds > 0) return;
+    if (seconds > 0 || isPending) return;
 
-    mutate(email, {
+    // pass payload to mutate
+    mutate(payload, {
       onSuccess: () => {
         reset(resetTime);
       },
     });
   }
 
+  const isDisabled = seconds > 0 || isPending;
+
   const style: React.CSSProperties = {
     fontWeight: 600,
     textDecoration: "underline",
-    cursor: seconds > 0 || isPending ? "not-allowed" : "pointer",
-    color:
-      seconds > 0 || isPending ? "var(--text-muted)" : "var(--accent-color)",
+    cursor: isDisabled ? "not-allowed" : "pointer",
+    color: isDisabled ? "var(--text-muted)" : "var(--accent-color)",
   };
 
   return (
     <p>
-      Didn't receive our mail?
+      Didn't receive our mail?{" "}
       <span className="btn" onClick={handleSendEmail} style={style}>
-        {` ${label} `}
-      </span>
+        {label}
+      </span>{" "}
       in {seconds}s
     </p>
   );

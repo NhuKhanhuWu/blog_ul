@@ -2,7 +2,7 @@
 
 import * as yup from "yup";
 
-import styles from "./ChangePassword.module.scss";
+import styles from "../../styles/form-page.module.scss";
 import { PasswordField } from "../../component/input/PasswordField";
 import {
   basePasswordSchema,
@@ -122,7 +122,7 @@ function ChangePassForm() {
 
       {/* Submit Button */}
       <button type="submit" className={`btn-primary ${styles.submitBtn}`}>
-        Update Password
+        Submit
       </button>
     </form>
   );
