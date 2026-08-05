@@ -8,6 +8,11 @@ export interface ChangePasswordArgs {
   isLogoutOthers: boolean;
 }
 
+export interface ChangeEmailArgs {
+  password: string;
+  newEmail: string;
+}
+
 // response
 export interface ChangePasswordResponse {
   accessToken: string;

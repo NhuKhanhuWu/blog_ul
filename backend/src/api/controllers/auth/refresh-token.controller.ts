@@ -82,7 +82,10 @@ export const refreshToken = catchAsync(async (req, res, next) => {
 
   if (currentTokenVersion !== decode.tokenVersion) {
     return next(
-      new AppError("User recently changed password! Please log in again.", 401),
+      new AppError(
+        "User recently changed password/email! Please log in again.",
+        401,
+      ),
     );
   }
 

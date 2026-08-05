@@ -23,7 +23,8 @@ type FormSchemaProps = yup.InferType<typeof formSchema>;
 
 function SignUpOtp() {
   const { email } = useSignUp();
-  const { mutate: resendMutate } = useSignUpEmailStep();
+  const { mutate: resendMutate, isPending: resendIsPending } =
+    useSignUpEmailStep();
   const [attemptsLeft, setAttemptsLeft] = useState(5); // no attemps left when === 0
 
   // query
@@ -71,10 +72,10 @@ function SignUpOtp() {
       <AttemptsCounter attemptsLeft={attemptsLeft} />
 
       <ResendOtp
-        email={email}
+        payload={email}
         mutate={resendMutate}
         resetTime={60}
-        isPending={isPending}
+        isPending={resendIsPending}
       />
 
       <button

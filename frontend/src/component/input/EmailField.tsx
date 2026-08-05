@@ -12,26 +12,27 @@ function EmailField<T extends FieldValues>({
   control,
   errors,
   isLoading,
+  fieldName = "email",
 }: Props<T>) {
-  const emailValue = useWatch({ control, name: "email" as Path<T> });
+  const emailValue = useWatch({ control, name: fieldName as Path<T> });
 
   return (
     <div className={styles.inputContainer}>
       <div className={`input ${isLoading && styles.disabled}`}>
         <IoMailOutline className={styles.icon} />
 
-        <input {...register("email" as Path<T>)} placeholder="*Email" />
+        <input {...register(fieldName as Path<T>)} placeholder="*Email" />
 
         {emailValue && (
           <GoXCircleFill
             className="btn-reset--input"
-            onClick={() => resetField("email" as Path<T>)}
+            onClick={() => resetField(fieldName as Path<T>)}
           />
         )}
       </div>
 
-      {errors.email && (
-        <p className="error-mgs">*{String(errors.email.message)}</p>
+      {errors[fieldName] && (
+        <p className="error-mgs">*{String(errors[fieldName].message)}</p>
       )}
     </div>
   );

@@ -4,8 +4,8 @@ import express from "express";
 import { getMe, getUserBySlug } from "../controllers/user/get-user.controller";
 import { changePass } from "../controllers/user/change-pass.controller";
 import {
-  changeEmailOtpStep,
-  changeEmailUpdateStep,
+  changeEmailCreateOtp,
+  changeEmailOtpVerify,
   checkPassAndEmail,
 } from "../controllers/user/change-email.controller";
 import {
@@ -35,20 +35,20 @@ userRouter.route("/:slug").get(getUserBySlug);
 
 userRouter.patch("/change-password", protect, changePassLimiter, changePass);
 
+// change email
 userRouter.post(
-  "/change-email/request",
+  "/change-email",
   protect,
-  // changeEmailByUserLimiter,
-  // changeEmailByIPLimiter,
+  changeEmailByUserLimiter,
+  changeEmailByIPLimiter,
   checkPassAndEmail,
-  changeEmailOtpStep,
+  changeEmailCreateOtp,
 );
-
 userRouter.post(
   "/change-email/verify",
   protect,
   verifyEmailLimiter,
-  changeEmailUpdateStep,
+  changeEmailOtpVerify,
 );
 
 // Vote Routes

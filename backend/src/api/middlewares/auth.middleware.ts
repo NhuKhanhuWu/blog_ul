@@ -97,7 +97,7 @@ export const protect = catchAsync(
 
     if (currentVersion !== decoded.tokenVersion) {
       throw new AppError(
-        "User recently changed password! Please log in again.",
+        "User recently changed password / email! Please log in again.",
         401,
       );
     }

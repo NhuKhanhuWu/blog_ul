@@ -14,8 +14,6 @@ export const updateCmt = catchAsync(async (req, res) => {
   if (!cmt) throw new AppError("Comment not found", 404);
 
   // update cmt
-  // cmt.content = content;
-  // await cmt.save();
   const updatedCmt = await CommentModel.findByIdAndUpdate(
     cmt._id,
     { content },
