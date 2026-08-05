@@ -7,10 +7,9 @@ export default function ChangeEmailGuardLayout() {
   const { isPasswordVerified } = useChangeEmail();
   const location = useLocation();
 
-  // TODO: turn on guard after testing
   // if didnt verify password & email -> back to email page
   if (!isPasswordVerified && location.pathname.includes("verify-otp")) {
-    // return <Navigate to="/account/setting/email" replace />;
+    return <Navigate to="/account/setting/email" replace />;
   }
 
   return <Outlet />;

@@ -21,7 +21,6 @@ const formSchema = yup.object().shape({
 
 type FormSchemaProps = yup.InferType<typeof formSchema>;
 
-// TODO: finish this page & test change email feature
 function ChangeEmailOtp() {
   const { newEmail, password } = useChangeEmail();
   const { mutate: resendMutate, isPending: resendIsPending } =
