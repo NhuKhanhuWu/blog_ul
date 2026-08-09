@@ -60,6 +60,7 @@ function SignUpEmail() {
 
       <button
         type="submit"
+        style={{ width: "100%" }}
         className={`btn-primary ${isPending && "disabled"}`}>
         Sign up
       </button>
