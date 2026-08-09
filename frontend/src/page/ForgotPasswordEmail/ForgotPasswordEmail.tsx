@@ -65,6 +65,7 @@ function ForgotPassword() {
 
       <button
         type="submit"
+        style={{ width: "100%" }}
         className={`btn-primary ${isPending && "disabled"}`}>
         Send OTP
       </button>
