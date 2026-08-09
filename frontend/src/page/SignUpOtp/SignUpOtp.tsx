@@ -80,7 +80,8 @@ function SignUpOtp() {
 
       <button
         type="submit"
-        className={`btn-primary  ${isPending && "disabled"}`}>
+        style={{ width: "100%" }}
+        className={`btn-primary ${isPending && "disabled"}`}>
         Submit
       </button>
     </form>
