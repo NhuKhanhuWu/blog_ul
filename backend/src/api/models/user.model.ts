@@ -93,6 +93,29 @@ userSchema.pre<UserDocument>("save", async function (next) {
   next();
 });
 
+userSchema.pre("findOneAndUpdate", async function (next) {
+  const update = this.getUpdate() as Record<string, any>;
+
+  // Check if password is being updated (handles both direct & $set updates)
+  const password = update.password || update.$set?.password;
+
+  if (!password) return next();
+
+  // Hash the password
+  const hashedPassword = await bcrypt.hash(password, 12);
+
+  // Apply hash and strip passwordConfirm from the update payload
+  if (update.$set) {
+    update.$set.password = hashedPassword;
+    delete update.$set.passwordConfirm;
+  } else {
+    update.password = hashedPassword;
+    delete update.passwordConfirm;
+  }
+
+  next();
+});
+
 // check password
 userSchema.methods.checkPassword = async function (candidatePassword: string) {
   return await bcrypt.compare(candidatePassword, this.password);
@@ -171,15 +194,15 @@ userSchema.pre("save", async function (next) {
 userSchema.pre("findOneAndUpdate", async function (next) {
   const update = this.getUpdate() as any;
 
-  const name = update?.name ?? update?.$set?.name;
-  if (!name) return next();
+  const username = update?.username ?? update?.$set?.username;
+  if (!username) return next();
 
   const user = await this.model.findOne(this.getQuery());
   if (!user) return next();
 
   const newSlug = await generateUniqueSlug(
     this.model,
-    name,
+    username,
     user._id.toString(),
   );
 
