@@ -3,7 +3,7 @@
 // src/config/redis.ts
 import { createClient } from "redis";
 
-// get redis url (ví dụ: redis://localhost:6379 hoặc redis://:password@host:port)
+// get redis url
 const REDIS_URL =
   (process.env.NODE_ENV === "development"
     ? process.env.REDIS_URL
@@ -17,7 +17,7 @@ const redisClient = createClient({
   url: REDIS_URL,
 });
 
-// Lắng nghe các sự kiện kết nối
+// listen to connect eveny
 redisClient.on("connect", () => {
   console.log("🔌 Redis Client connecting...");
 });
