@@ -35,7 +35,10 @@ const buildStoragePath = (
   const baseName = `${Date.now()}-${randomId}-${safeFileName}`;
 
   // Placing userId first ensures standard Supabase RLS compatibility
-  return [userId, folder, prefix, baseName].filter(Boolean).join("/");
+  return [userId, folder, prefix, baseName]
+    .filter(Boolean)
+    .join("/")
+    .replace(/^\/+/, ""); // Strips any leading slash;
 };
 
 // helper for public URLs

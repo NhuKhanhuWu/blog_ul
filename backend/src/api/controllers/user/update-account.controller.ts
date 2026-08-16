@@ -3,6 +3,25 @@
 import catchAsync from "../../utils/error/catch-async";
 import UserModel from "../../models/user.model";
 import AppError from "../../utils/error/app-error";
+import { createAvatarSignedUploadUrl } from "../../supabase/uploadImages";
+
+export const getAvatarUploadUrl = catchAsync(async (req, res) => {
+  const userId = req.user?._id.toString();
+  const { fileName } = req.body;
+
+  if (!userId) throw new AppError("Not authenticated!", 401);
+
+  if (!fileName) {
+    throw new AppError("fileName is required", 400);
+  }
+
+  const uploadData = await createAvatarSignedUploadUrl(userId, fileName);
+
+  res.status(200).json({
+    status: "success",
+    data: uploadData, // contains signedUrl, token, publicUrl, etc.
+  });
+});
 
 export const updateMe = catchAsync(async (req, res) => {
   const { username, avatar } = req.body;

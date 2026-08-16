@@ -27,6 +27,7 @@ export const verifyEmailLimiter = createLimiter({
 });
 // ---- change email -----
 
+// ---- update user ----
 export const changePassLimiter = createLimiter({
   max: 5,
   windowMs: 60 * 1000, // 1 min
@@ -35,4 +36,10 @@ export const changePassLimiter = createLimiter({
 export const updateUserLimiter = createLimiter({
   max: 5,
   windowMs: 60 * 1000, // 1 min
+});
+
+// upload avatar
+export const uploadAvatarLimiter = createLimiter({
+  max: 10,
+  windowMs: 10 * 60 * 1000, //10 min
 });
