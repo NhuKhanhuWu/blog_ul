@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Cropper, { Area, Point } from "react-easy-crop";
 import { IoClose } from "react-icons/io5";
-import styles from "./EditProfileForm.module.scss";
+import styles from "./UpdateProfileForm.module.scss";
 
 interface CropAvatarModalProps {
   imageUrl: string;

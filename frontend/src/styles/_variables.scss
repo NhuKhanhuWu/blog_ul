@@ -85,6 +85,7 @@ $spacing-lg: 2.4rem;
   --bg-body: #{map.get($colors, "light", 200)};
   --bg-card: #{map.get($colors, "light", 100)};
   --bg-gray: #{map.get($colors, "dark", 100)};
+  --bg-contrast: #{map.get($colors, "dark", 400)};
   --text-main: #{map.get($colors, "dark", 900)};
   --text-muted: #{map.get($colors, "dark", 300)};
   --border-color: #{map.get($colors, "light", 500)};

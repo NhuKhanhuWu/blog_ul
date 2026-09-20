@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction } from "react";
 import { IoClose } from "react-icons/io5";
 import CropAvatarModal from "./CropAvatarModal";
 import { useEditProfile } from "../../../hook/user/useEditProfile";
-import styles from "./EditProfileForm.module.scss";
+import styles from "./UpdateProfileForm.module.scss";
 import AvatarSection from "./AvatarSection";
 import { ProfileFormFields } from "./ProfileFormFields";
 
@@ -13,7 +13,7 @@ interface EditProfileModalProps {
   handleCloseForm: Dispatch<SetStateAction<boolean>>;
 }
 
-const EditProfileForm = ({
+const UpdateProfileForm = ({
   avatarUrl = "/default-avatar.png",
   name = "",
   handleCloseForm,
@@ -21,8 +21,7 @@ const EditProfileForm = ({
   // Custom hook containing all states and business logic
   const {
     fileInputRef,
-    username,
-    setUsername,
+    register,
     displayedAvatar,
     cropImageUrl,
     hasChanges,
@@ -38,7 +37,8 @@ const EditProfileForm = ({
 
   return (
     <>
-      <section
+      <form
+        onSubmit={handleSubmit}
         className={styles.modal}
         role="dialog"
         aria-modal="true"
@@ -63,10 +63,7 @@ const EditProfileForm = ({
             onFileChange={handleFileChange}
           />
 
-          <ProfileFormFields
-            username={username}
-            onUsernameChange={setUsername}
-          />
+          <ProfileFormFields register={register} />
         </div>
 
         {/* Modal Footer / Actions */}
@@ -79,14 +76,14 @@ const EditProfileForm = ({
           </button>
 
           <button
-            type="button"
-            className="btn-primary"
+            type="submit"
+            className={`btn-primary ${!hasChanges && "disabled"}`}
             disabled={!hasChanges}
-            onClick={handleSubmit}>
+            onClick={undefined}>
             Save
           </button>
         </footer>
-      </section>
+      </form>
 
       {/* Image Cropping Modal Pop-up */}
       {cropImageUrl && (
@@ -100,4 +97,4 @@ const EditProfileForm = ({
   );
 };
 
-export default EditProfileForm;
+export default UpdateProfileForm;

@@ -75,6 +75,12 @@ textarea,
   background-color: transparent;
   color: var(--text-main);
   font-family: "Parkinsans", sans-serif;
+
+  &:disabled {
+    color: $dark-600;
+    cursor: not-allowed;
+    background-color: var(--border-color);
+  }
 }
 
 textarea {
@@ -258,7 +264,7 @@ select {
 }
 
 .disabled {
-  color: var(--text-muted);
+  color: $dark-600;
   pointer-events: none;
   cursor: not-allowed;
   background-color: var(--border-color);
