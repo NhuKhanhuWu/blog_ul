@@ -2,6 +2,7 @@
 import { ChangeEvent, Dispatch, SetStateAction, useRef, useState } from "react";
 import { Area } from "react-easy-crop";
 import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
 import { useObjectUrl } from "../shared/useObjectUrl";
 import useUpdateAccount from "./useUpdateAccount";
 import useUploadAvatar from "./useUploadAvatar";
@@ -15,6 +16,10 @@ interface UseEditProfileProps {
   onClose: Dispatch<SetStateAction<boolean>>;
 }
 
+interface ProfileFormValues {
+  username: string;
+}
+
 export const useEditProfile = ({
   initialName = "",
   initialAvatar = "/default-avatar.png",
@@ -23,9 +28,14 @@ export const useEditProfile = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
 
-  // Form states
-  const [username, setUsername] = useState(initialName);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const {
+    register,
+    handleSubmit: submitForm,
+    watch,
+  } = useForm<ProfileFormValues>({
+    defaultValues: { username: initialName },
+  });
 
   // API mutations hooks
   const { mutateAsync: uploadAvatar } = useUploadAvatar();
@@ -69,13 +79,13 @@ export const useEditProfile = ({
   };
 
   // Form change validations
-  const trimmedUsername = username.trim();
+  const trimmedUsername = watch("username").trim();
   const hasUsernameChange = trimmedUsername !== initialName;
   const hasChanges = hasUsernameChange || avatarFile !== null;
   const displayedAvatar = avatarPreview || initialAvatar;
 
   // Handle background submit (non-blocking UX)
-  const handleSubmit = async () => {
+  const handleSubmit = submitForm(async () => {
     if (!hasChanges) return;
 
     // Instantly close the modal to let users continue browsing
@@ -105,12 +115,11 @@ export const useEditProfile = ({
         id: toastId,
       });
     }
-  };
+  });
 
   return {
     fileInputRef,
-    username,
-    setUsername,
+    register,
     displayedAvatar,
     cropImageUrl,
     hasChanges,

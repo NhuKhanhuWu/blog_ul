@@ -23,7 +23,7 @@ import {
 import {
   getAvatarUploadUrl,
   updateMe,
-} from "../controllers/user/update-account.controller";
+} from "../controllers/user/update-user.controller";
 import { protect } from "../middlewares/auth.middleware";
 import { validateRequest } from "../validation/validateRequest";
 import { updateMeSchema } from "../validation/user.validation";
