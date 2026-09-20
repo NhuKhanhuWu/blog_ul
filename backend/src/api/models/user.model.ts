@@ -199,31 +199,6 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// // when user update acc
-// userSchema.pre("findOneAndUpdate", async function (next) {
-//   const update = this.getUpdate() as any;
-
-//   const username = update?.username ?? update?.$set?.username;
-//   if (!username) return next();
-
-//   const user = await this.model.findOne(this.getQuery());
-//   if (!user) return next();
-
-//   const newSlug = await generateUniqueSlug(
-//     this.model,
-//     username,
-//     user._id.toString(),
-//   );
-
-//   if (update.$set) {
-//     update.$set.slug = newSlug;
-//   } else {
-//     update.slug = newSlug;
-//   }
-
-//   next();
-// });
-
 // when user change account's information (username)
 userSchema.pre("findOneAndUpdate", async function (next) {
   const update = this.getUpdate() as any;
