@@ -13,6 +13,7 @@ export interface UserPublic {
   username: string;
   avatar: string;
   slug: string;
+  updatedAt?: string;
 }
 
 export interface User extends UserPublic {

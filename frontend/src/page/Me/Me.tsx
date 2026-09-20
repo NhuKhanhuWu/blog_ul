@@ -11,13 +11,31 @@ import { useAppSelector } from "../../hook/shared/reduxHooks";
 import ProfileHeader from "../../component/profile/ProfileHeader/ProfileHeader";
 import styles from "./Me.module.scss";
 import { Link } from "react-router-dom";
+import ModalOverlay from "../../component/ui/Modal/Modal";
+import EditProfileForm from "../../component/profile/EditProfileForm/EditProfileForm";
 
 function ActionBtns() {
+  const user = useAppSelector((state) => state.auth.user);
+  const [isEdit, setIsEdit] = useState(false);
+
   return (
     <div className={styles.profileActions}>
-      <Link to="/account/setting/email" className="btn-secondary">
+      <Link to="/account/activity/votes" className="btn-secondary">
         Account centre
       </Link>
+
+      {/* edit profile form */}
+      <button className="btn-secondary" onClick={() => setIsEdit(true)}>
+        Edit profile
+      </button>
+
+      <ModalOverlay isShow={isEdit} setIsShow={setIsEdit}>
+        <EditProfileForm
+          handleCloseForm={setIsEdit}
+          avatarUrl={user?.avatar}
+          name={user?.username}
+        />
+      </ModalOverlay>
     </div>
   );
 }

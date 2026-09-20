@@ -16,7 +16,6 @@ function AppLayout() {
   const [authReady, setAuthReady] = useState(false);
 
   // try get user after login
-
   useEffect(() => {
     // refresh token & get user info when reload to store in redux
     const initAuth = async () => {

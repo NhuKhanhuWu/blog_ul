@@ -12,6 +12,7 @@ import {
   changeEmailByIPLimiter,
   changePassLimiter,
   updateUserLimiter,
+  uploadAvatarLimiter,
   verifyEmailLimiter,
 } from "../middlewares/user.middleware";
 import { changeEmailByUserLimiter } from "../middlewares/user.middleware";
@@ -19,7 +20,10 @@ import {
   getUserBlogVote,
   getUserCmtVote,
 } from "../controllers/vote/get-vote.controller";
-import { updateMe } from "../controllers/user/update-account.controller";
+import {
+  getAvatarUploadUrl,
+  updateMe,
+} from "../controllers/user/update-account.controller";
 import { protect } from "../middlewares/auth.middleware";
 import { validateRequest } from "../validation/validateRequest";
 import { updateMeSchema } from "../validation/user.validation";
@@ -31,8 +35,18 @@ userRouter
   .get(protect, getMe)
   .patch(protect, updateUserLimiter, validateRequest(updateMeSchema), updateMe);
 
+// upload avatar
+userRouter.get(
+  "/avatar-upload-url",
+  protect,
+  uploadAvatarLimiter,
+  getAvatarUploadUrl,
+);
+
+// get user infor by slug (public infor)
 userRouter.route("/:slug").get(getUserBySlug);
 
+// change password (for authorized user)
 userRouter.patch("/change-password", protect, changePassLimiter, changePass);
 
 // change email
