@@ -35,7 +35,10 @@ const buildStoragePath = (
   const baseName = `${Date.now()}-${randomId}-${safeFileName}`;
 
   // Placing userId first ensures standard Supabase RLS compatibility
-  return [userId, folder, prefix, baseName].filter(Boolean).join("/");
+  return [userId, folder, prefix, baseName]
+    .filter(Boolean)
+    .join("/")
+    .replace(/^\/+/, ""); // Strips any leading slash;
 };
 
 // helper for public URLs
@@ -57,6 +60,7 @@ export interface SignedUploadUrlOptions {
   folder?: string;
   prefix?: string;
   upsert?: boolean;
+  fixedFileName?: boolean;
 }
 
 export interface SignedUploadUrlResult {
@@ -71,12 +75,16 @@ export const createSignedUploadUrl = async (
   options: SignedUploadUrlOptions,
 ): Promise<SignedUploadUrlResult> => {
   const bucket = options.bucketName || DEFAULT_AVATAR_BUCKET;
-  const filePath = buildStoragePath(
-    options.userId,
-    options.fileName,
-    options.folder,
-    options.prefix,
-  );
+  const filePath = options.fixedFileName
+    ? [options.userId, options.folder, options.prefix, options.fileName]
+        .filter(Boolean)
+        .join("/")
+    : buildStoragePath(
+        options.userId,
+        options.fileName,
+        options.folder,
+        options.prefix,
+      );
 
   const { data, error } = await supabase.storage
     .from(bucket)
@@ -104,16 +112,20 @@ export const createSignedUploadUrl = async (
 
 export const createAvatarSignedUploadUrl = async (
   userId: string,
-  fileName: string,
-  options?: Omit<SignedUploadUrlOptions, "userId" | "fileName" | "bucketName">,
-): Promise<SignedUploadUrlResult> =>
-  createSignedUploadUrl({
+  options?: Omit<
+    SignedUploadUrlOptions,
+    "userId" | "fileName" | "bucketName" | "fixedFileName"
+  >,
+): Promise<SignedUploadUrlResult> => {
+  return createSignedUploadUrl({
     bucketName: DEFAULT_AVATAR_BUCKET,
     userId,
-    fileName,
-    upsert: true, // Typically true for avatars to overwrite old files
+    fileName: "avatar",
+    upsert: true,
+    fixedFileName: true,
     ...options,
   });
+};
 
 export const createBlogImageSignedUploadUrl = async (
   userId: string,

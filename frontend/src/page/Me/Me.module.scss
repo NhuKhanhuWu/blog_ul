@@ -4,6 +4,9 @@
 .container {
   .profileActions {
     @include profileActions;
+
+    display: flex;
+    gap: 1rem;
   }
 
   .tabHeader {

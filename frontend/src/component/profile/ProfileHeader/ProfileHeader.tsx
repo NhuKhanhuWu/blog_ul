@@ -12,15 +12,14 @@ interface ProfileHeaderProps {
 
 function ProfileHeader({ user, btns }: ProfileHeaderProps) {
   const avatar = user?.avatar || defaultAvatar(user?.username || "");
+  const avatarUrl = user.updatedAt
+    ? `${avatar}${avatar.includes("?") ? "&" : "?"}v=${encodeURIComponent(user.updatedAt)}`
+    : avatar;
 
   return (
     <div className={styles.profileHeader}>
       {/* Large Profile Avatar */}
-      <img
-        className={styles.avatar}
-        alt={user?.username}
-        src={avatar} // Replace with actual avatar URL if available
-      />
+      <img className={styles.avatar} alt={user?.username} src={avatarUrl} />
 
       {/* User Details */}
       <div className={styles.userDetail}>

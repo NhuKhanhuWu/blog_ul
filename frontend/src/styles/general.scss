@@ -74,6 +74,7 @@ textarea,
   outline: none;
   background-color: transparent;
   color: var(--text-main);
+  font-family: "Parkinsans", sans-serif;
 }
 
 textarea {
@@ -261,6 +262,14 @@ select {
   pointer-events: none;
   cursor: not-allowed;
   background-color: var(--border-color);
+}
+
+.helperText {
+  margin: 0.8rem 0 0;
+
+  color: var(--text-muted);
+  font-size: 1.3rem;
+  line-height: 1.5;
 }
 
 .hidden {
