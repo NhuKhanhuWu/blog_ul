@@ -36,7 +36,7 @@ userRouter
   .patch(protect, updateUserLimiter, validateRequest(updateMeSchema), updateMe);
 
 // upload avatar
-userRouter.post(
+userRouter.get(
   "/avatar-upload-url",
   protect,
   uploadAvatarLimiter,

@@ -17,6 +17,11 @@ interface QueryWithPageArgs {
   page: number;
 }
 
+interface UpdateAccountProps {
+  username?: string;
+  avatar?: string;
+}
+
 export async function getMe(): Promise<User> {
   const res = await axiosInstance.get("/user/me");
 
@@ -73,29 +78,18 @@ export async function changeEmailOtp(
 }
 
 // ---- update user feature ----
+// update avatar
 async function uploadFile(signedUrl: string, avatar: File) {
-  try {
-    await axios.put(signedUrl, avatar, {
-      headers: {
-        // Always specify the file MIME type so Supabase serves it correctly
-        "Content-Type": avatar.type,
-      },
-    });
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error("Upload failed with status code:", error.response?.status);
-      console.error("Error response details:", error.response?.data);
-    } else {
-      console.error("Unexpected error:", error);
-    }
-  }
+  await axios.put(signedUrl, avatar, {
+    headers: {
+      "Content-Type": avatar.type,
+    },
+  });
 }
 
-export async function uploadAvatar(avatar: File): Promise<UserPublic> {
+export async function uploadAvatar(avatar: File): Promise<string> {
   // get upload url to supabase
-  const uploadUrlRes = await axiosInstance.post("/avatar-upload-url", {
-    fileName: avatar.name,
-  });
+  const uploadUrlRes = await axiosInstance.get("/user/avatar-upload-url");
 
   const { signedUrl, publicUrl } = uploadUrlRes.data.data;
 
@@ -103,8 +97,17 @@ export async function uploadAvatar(avatar: File): Promise<UserPublic> {
   await uploadFile(signedUrl, avatar);
 
   // update avatar url in db
+  return publicUrl;
+}
+
+// update user's account (avatar & name)
+export async function updateAccount({
+  avatar,
+  username,
+}: UpdateAccountProps): Promise<UserPublic> {
   const updatedUser = await axiosInstance.patch("/user/me", {
-    avatar: publicUrl,
+    avatar,
+    username,
   });
 
   return updatedUser.data;

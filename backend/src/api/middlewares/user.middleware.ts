@@ -40,6 +40,6 @@ export const updateUserLimiter = createLimiter({
 
 // upload avatar
 export const uploadAvatarLimiter = createLimiter({
-  max: 10,
-  windowMs: 10 * 60 * 1000, //10 min
+  max: 5,
+  windowMs: 60 * 1000, //1 min
 });

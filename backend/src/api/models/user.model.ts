@@ -61,10 +61,14 @@ export const userSchema = new Schema<UserDocument>(
     },
 
     avatar: {
-      type: String, // URL to avatar
+      type: String,
       validate: {
-        validator: (v: string) => !v || validator.isURL(v),
-        message: "Invalid image URL",
+        validator: (v: string) =>
+          !v ||
+          validator.isURL(v) ||
+          /^(?:temp\/)?[A-Za-z0-9_-]+\/[A-Za-z0-9._-]+$/.test(v) ||
+          /^[A-Za-z0-9._/-]+$/.test(v),
+        message: "Invalid avatar value",
       },
     },
 

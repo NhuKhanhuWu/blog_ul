@@ -39,7 +39,7 @@ function AccountLayout() {
     <>
       <Sidebar
         title="My Admin Dashboard"
-        menuGroups={[accountSetting, accountActivity]}>
+        menuGroups={[accountActivity, accountSetting]}>
         <Outlet />
       </Sidebar>
     </>
