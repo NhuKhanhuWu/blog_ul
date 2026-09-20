@@ -19,6 +19,7 @@ export interface UserPublic {
 export interface User extends UserPublic {
   email: string;
   role?: string;
+  usernameLastUpdated?: Date;
 }
 
 export interface AuthResponse {

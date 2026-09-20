@@ -12,7 +12,7 @@ import ProfileHeader from "../../component/profile/ProfileHeader/ProfileHeader";
 import styles from "./Me.module.scss";
 import { Link } from "react-router-dom";
 import ModalOverlay from "../../component/ui/Modal/Modal";
-import EditProfileForm from "../../component/profile/EditProfileForm/EditProfileForm";
+import UpdateProfileForm from "../../component/profile/UpdateProfileForm/UpdateProfileForm";
 
 function ActionBtns() {
   const user = useAppSelector((state) => state.auth.user);
@@ -30,7 +30,7 @@ function ActionBtns() {
       </button>
 
       <ModalOverlay isShow={isEdit} setIsShow={setIsEdit}>
-        <EditProfileForm
+        <UpdateProfileForm
           handleCloseForm={setIsEdit}
           avatarUrl={user?.avatar}
           name={user?.username}

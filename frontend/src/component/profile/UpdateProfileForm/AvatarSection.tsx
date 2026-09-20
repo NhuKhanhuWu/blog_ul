@@ -1,7 +1,7 @@
 /** @format */
 import { ChangeEvent, RefObject } from "react";
 import { LuPencil } from "react-icons/lu";
-import styles from "./EditProfileForm.module.scss";
+import styles from "./UpdateProfileForm.module.scss";
 
 interface AvatarSectionProps {
   displayedAvatar: string;

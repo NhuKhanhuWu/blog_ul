@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import { UserDocument } from "../types/user.type";
 import { generateUniqueSlug } from "../utils/helpers/generate-unique-slug";
 import { BlogListModel } from "./blog-list.model";
+import AppError from "../utils/error/app-error";
 
 const { Schema } = mongoose;
 
@@ -21,6 +22,10 @@ export const userSchema = new Schema<UserDocument>(
         /^[\p{L}\p{N} ]+$/u,
         "Name must not contain special characters or emoji",
       ],
+    },
+    usernameLastUpdated: {
+      type: Date,
+      default: null,
     },
     slug: {
       type: String,
@@ -194,16 +199,76 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// when user update acc
+// // when user update acc
+// userSchema.pre("findOneAndUpdate", async function (next) {
+//   const update = this.getUpdate() as any;
+
+//   const username = update?.username ?? update?.$set?.username;
+//   if (!username) return next();
+
+//   const user = await this.model.findOne(this.getQuery());
+//   if (!user) return next();
+
+//   const newSlug = await generateUniqueSlug(
+//     this.model,
+//     username,
+//     user._id.toString(),
+//   );
+
+//   if (update.$set) {
+//     update.$set.slug = newSlug;
+//   } else {
+//     update.slug = newSlug;
+//   }
+
+//   next();
+// });
+
+// when user change account's information (username)
 userSchema.pre("findOneAndUpdate", async function (next) {
   const update = this.getUpdate() as any;
-
   const username = update?.username ?? update?.$set?.username;
+
+  // If there is no intent to change the username, skip this middleware
   if (!username) return next();
 
+  // Reuse a single findOne query to fetch the current user document
   const user = await this.model.findOne(this.getQuery());
   if (!user) return next();
 
+  // 1. CHECK 7-DAY USERNAME UPDATE RESTRICTION
+  // If the new username matches the current one, skip the time check
+  if (username !== user.username) {
+    const now = new Date();
+    const SEVEN_DAYS_IN_MS = 7 * 24 * 60 * 60 * 1000;
+
+    if (user.usernameLastUpdated) {
+      const lastUpdatedTime = new Date(user.usernameLastUpdated).getTime();
+      const timeElapsed = now.getTime() - lastUpdatedTime;
+
+      if (timeElapsed < SEVEN_DAYS_IN_MS) {
+        const daysLeft = Math.ceil(
+          (SEVEN_DAYS_IN_MS - timeElapsed) / (1000 * 60 * 60 * 24),
+        );
+        // Block the request and return an error directly at the middleware level
+        return next(
+          new AppError(
+            `You can only change your username after ${daysLeft} more day(s).`,
+            400,
+          ),
+        );
+      }
+    }
+
+    // If conditions are met, automatically attach the new timestamp to the update payload
+    if (update.$set) {
+      update.$set.usernameLastUpdated = now;
+    } else {
+      update.usernameLastUpdated = now;
+    }
+  }
+
+  // 2. HANDLE UNIQUE SLUG GENERATION
   const newSlug = await generateUniqueSlug(
     this.model,
     username,
