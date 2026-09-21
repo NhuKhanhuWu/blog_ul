@@ -24,12 +24,13 @@ export interface BlogCardProps {
 
 export type ContentBlock =
   | {
+      type: "paragraph" | "title" | "section" | "quote" | "highlight" | "meta";
       text: string;
-      heading?: 1 | 2 | 3 | 4 | 5 | 6;
       img?: undefined;
       note?: undefined;
     }
   | {
+      type: "image";
       img: string;
       note?: string;
       text?: undefined;
