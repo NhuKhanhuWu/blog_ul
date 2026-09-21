@@ -29,8 +29,6 @@ function BlogDetail() {
 
   if (isPending) return <Loader />;
 
-  // const blog = normalizeBlog(data);
-
   return (
     <div className={styles.container}>
       <div className={styles.blogSection}>
