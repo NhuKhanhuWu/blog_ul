@@ -34,16 +34,23 @@ export const categoriesValidator = z
   .optional();
 
 const textBlockSchema = z.object({
+  type: z.enum(["paragraph", "title", "section", "quote", "highlight", "meta"]),
   text: z
     .string("Text content is required")
     .min(1, "Text is required")
     .max(10000, "Text block is too long (max 10,000 characters)"),
-  heading: z.number().int().min(1).max(6).optional(),
+  // Ensure that text blocks strictly do not contain img or note fields
+  img: z.undefined().optional(),
+  note: z.undefined().optional(),
 });
 
+// 2. Schema specifically for image blocks
 const imageBlockSchema = z.object({
-  img: z.string().url("Image must be a valid URL"),
+  type: z.literal("image"), // Explicitly restrict type to "image"
+  img: z.string("Image URL is required").url("Image must be a valid URL"),
   note: z.string().max(500, "Note too long").optional(),
+  // Ensure that image blocks strictly do not contain text fields
+  text: z.undefined().optional(),
 });
 
 /* -----------------------------------
@@ -60,7 +67,7 @@ export const contentValidator = z
   .nonempty("Content cannot be empty")
   .superRefine((blocks, ctx) => {
     const totalLength = blocks.reduce((acc, block) => {
-      if ("text" in block) return acc + block.text.length;
+      if ("text" in block) return acc + (block.text?.length || 0);
       if ("img" in block)
         return acc + block.img.length + (block.note?.length || 0);
       return acc;
