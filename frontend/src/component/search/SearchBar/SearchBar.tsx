@@ -109,8 +109,6 @@ function SearchBar() {
 
   return (
     <FormProvider {...methods}>
-      {/* header */}
-
       {/* Mobile Toggle */}
       <button
         className={styles.searchMobileToggle}
@@ -121,7 +119,7 @@ function SearchBar() {
       {/* Mobile Modal */}
       {!isDesktop && (
         <Sheet
-          className={`${!isOpen && "hidden"}`}
+          className={`${!isOpen && "hidden"} ${styles.modalMobile}`}
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}>
           <Sheet.Container>

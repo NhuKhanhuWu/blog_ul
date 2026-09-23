@@ -37,7 +37,15 @@ export default function Sidebar({ menuGroups, children }: SidebarProps) {
       {/*  SIDEBAR (DRAWER) */}
       <Drawer
         variant="permanent"
-        className={`${styles.drawer} ${!open ? styles.drawerClose : ""}`}>
+        className={`${styles.drawer} ${!open ? styles.drawerClose : ""}`}
+        slotProps={{
+          paper: {
+            sx: {
+              backgroundColor: "var(--bg-body)",
+              color: "var(--text-main)",
+            },
+          },
+        }}>
         <div className={styles.drawerHeader}>
           <IconButton onClick={() => setOpen(!open)}>
             {open ? <FaChevronLeft /> : <FaChevronRight />}

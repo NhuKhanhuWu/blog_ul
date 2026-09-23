@@ -116,35 +116,26 @@ input[type="radio"] {
 }
 
 select {
-  border: solid 1px var(--border-color);
+  color: var(--text-main);
+  background-color: var(--bg-body);
+
+  border: 1.5px solid var(--border-color);
   outline: none;
   padding: 0 3.6rem 0 1.6rem;
   height: 4rem;
   border-radius: 5px;
-  border-width: 1.5px;
   min-width: 8rem;
 
-  /* Tell the browser to scale the width to the content */
   field-sizing: content;
-
-  /* Hide the default browser arrow */
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-
-  /*  Insert a custom SVG down arrow */
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23070605' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
-  background-repeat: no-repeat;
-
-  /*  Position the arrow nicely from the right edge */
-  background-position: right 1.2rem center;
-  background-size: 1.6rem;
-
   cursor: pointer;
 
   @include respond(lg) {
     height: 3.4rem;
   }
+}
+
+svg {
+  color: var(--text-main);
 }
 
 :root {

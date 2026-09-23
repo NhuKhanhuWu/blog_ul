@@ -2,7 +2,7 @@
 
 import { Outlet } from "react-router";
 import NavBar from "../component/ui/NavBar/NavBar.tsx";
-import { useAppDispatch } from "../hook/shared/reduxHooks.ts";
+import { useAppDispatch, useAppSelector } from "../hook/shared/reduxHooks.ts";
 import { useEffect, useState } from "react";
 import { getMeThunk, refreshThunk } from "../redux/auth.slice";
 import "../styles/general.scss";
@@ -11,6 +11,14 @@ import Loader from "../component/ui/Loader/Loader";
 function AppLayout() {
   // auto login when reload/open website
   const dispatch = useAppDispatch();
+
+  // Get theme from Redux state
+  const theme = useAppSelector((state) => state.theme.theme);
+
+  // Sync data-theme to HTML root once theme change
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
 
   // avoid render page before checking auth status (refresh token, get user info)
   const [authReady, setAuthReady] = useState(false);
@@ -37,7 +45,7 @@ function AppLayout() {
 
   return (
     <div
-      className="light"
+      className={theme}
       style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <NavBar></NavBar>
 

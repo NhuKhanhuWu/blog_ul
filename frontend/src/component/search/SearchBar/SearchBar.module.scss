@@ -5,11 +5,14 @@
   justify-content: space-between;
   font-size: 18px;
   font-weight: 700;
-  margin: 1rem 2rem;
+  padding: 1rem 2rem;
+  border-top: 1.5px solid var(--border-color);
+  background-color: var(--bg-body);
 }
 
 .searchForm {
-  padding: 0 2rem;
+  padding: 1rem 2rem 0 2rem;
+  background-color: var(--bg-body);
 }
 
 // ===== MOBILE DEFAULT =====
@@ -29,13 +32,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: $light-200;
+  background: var(--bg-body);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: var(--text-main);
   z-index: 999;
+}
+
+.modalMobile {
+  background-color: var(--bg-body);
 }
 
 .searchForm {
   margin: auto;
+  background: var(--bg-body);
 }
 
 .formFieldsContainer {
@@ -49,7 +58,7 @@
   position: sticky;
   bottom: 0;
   grid-column: span 2;
-  background-image: linear-gradient(to top, $light-200, #ffffff7a);
+  background-image: linear-gradient(to top, var(--border-color), #ffffff7a);
   text-align: center;
   padding: 1rem;
 }
@@ -84,6 +93,8 @@
   .header {
     margin: 0;
     margin-bottom: 1rem;
+    border: none;
+    padding: 0;
   }
 
   .searchMobileToggle {
@@ -94,6 +105,7 @@
   .icon {
     font-size: 2.5rem;
     cursor: pointer;
+    color: var(--text-main);
   }
 
   .searchDesktop {
@@ -101,7 +113,6 @@
     height: fit-content;
     max-width: 30rem;
 
-    background: $light-200;
     padding: 0 1rem;
 
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
