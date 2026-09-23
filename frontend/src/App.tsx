@@ -13,7 +13,11 @@ import { lazy, Suspense } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { store } from "./redux/store.ts";
 import axios from "axios";
-import { StyledEngineProvider } from "@mui/material/styles";
+import {
+  createTheme,
+  StyledEngineProvider,
+  ThemeProvider,
+} from "@mui/material/styles";
 import Loader from "./component/ui/Loader/Loader.tsx";
 import { SignUpProvider } from "./context/SignUpContext.tsx";
 import { ForgotPasswordProvider } from "./context/ForgotPasswordContext.tsx";
@@ -195,6 +199,27 @@ const queryClient = new QueryClient({
   }),
 });
 
+// mui theme
+const theme = createTheme({
+  components: {
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: "var(--bg-body)",
+          color: "var(--text-main)",
+          borderRadius: "8px",
+          border: "1px solid var(--border-color)",
+          boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+          // padding: "8px",
+        },
+      },
+      defaultProps: {
+        elevation: 3,
+      },
+    },
+  },
+});
+
 function App() {
   const isDev = import.meta.env.VITE_NODE_ENV === "development";
 
@@ -202,25 +227,27 @@ function App() {
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <StyledEngineProvider injectFirst>
-          {isDev && <ReactQueryDevtools initialIsOpen={false} />}
+          <ThemeProvider theme={theme}>
+            {isDev && <ReactQueryDevtools initialIsOpen={false} />}
 
-          <Toaster
-            position="bottom-left"
-            toastOptions={{
-              duration: 3000,
-              style: {
-                borderRadius: "10px",
-                background: "var(--bg-body)",
-                color: "var(--text-main)",
-                border: "1px solid var(--border-color)",
-                zIndex: 9999,
-              },
-            }}
-          />
+            <Toaster
+              position="bottom-left"
+              toastOptions={{
+                duration: 3000,
+                style: {
+                  borderRadius: "10px",
+                  background: "var(--bg-body)",
+                  color: "var(--text-main)",
+                  border: "1px solid var(--border-color)",
+                  zIndex: 9999,
+                },
+              }}
+            />
 
-          <Suspense fallback={<Loader />}>
-            <RouterProvider router={router}></RouterProvider>
-          </Suspense>
+            <Suspense fallback={<Loader />}>
+              <RouterProvider router={router}></RouterProvider>
+            </Suspense>
+          </ThemeProvider>
         </StyledEngineProvider>
       </QueryClientProvider>
     </Provider>

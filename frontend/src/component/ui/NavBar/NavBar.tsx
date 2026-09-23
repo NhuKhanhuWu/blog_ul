@@ -1,67 +1,18 @@
 /** @format */
 
 import { Dispatch, SetStateAction, useState } from "react";
-import { Link, NavLink } from "react-router";
+import { Link } from "react-router";
 import styles from "./Navbar.module.scss";
-import { useAppSelector } from "../../../hook/shared/reduxHooks";
-import getLogo from "../../../utils/get-logo";
-
-const navItemsLogin = [
-  { text: "Account", link: "user/me" },
-  { text: "Log out", link: "auth/logout" },
-];
-
-const navItemsGuest = [
-  { text: "Login", link: "auth/login" },
-  { text: "Sign up", link: "auth/signup" },
-];
+import useGetLogo from "../../../utils/get-logo";
+import NavLinks from "./NavLinks";
+import ThemeToggleButton from "./ThemeToggleButton";
 
 interface IHamburgerBtn {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-interface INavLinks {
-  isOpen?: boolean;
-  setIsOpen?: Dispatch<SetStateAction<boolean>>;
-}
-
-// including links in navbar
-function NavLinks({ isOpen, setIsOpen }: INavLinks) {
-  const isLogin = useAppSelector((state) => state.auth.isAuthenticated);
-
-  function handleClose() {
-    if (setIsOpen) setIsOpen(!isOpen);
-  }
-
-  return (
-    <>
-      <div className={styles.navLink}>
-        {isLogin
-          ? navItemsLogin.map((item, i) => (
-              <NavLink
-                onClick={() => handleClose()}
-                to={item.link}
-                key={`login-nav-${i}`}
-                className={styles.linkItem}>
-                <span>{item.text}</span>
-              </NavLink>
-            ))
-          : navItemsGuest.map((item, i) => (
-              <NavLink
-                onClick={() => handleClose()}
-                to={item.link}
-                key={`guest-nav-${i}`}
-                className={styles.linkItem}>
-                <span>{item.text}</span>
-              </NavLink>
-            ))}
-      </div>
-    </>
-  );
-}
-
-// including logo and toggle btn
+// Hamburger menu button for Mobile View
 function HamburgerButton({ isOpen, setIsOpen }: IHamburgerBtn) {
   return (
     <button
@@ -75,43 +26,55 @@ function HamburgerButton({ isOpen, setIsOpen }: IHamburgerBtn) {
   );
 }
 
-// nav bars
+// Mobile Navbar layout
 function NavBarMobile() {
   const [isOpen, setIsOpen] = useState(false);
-  const logo = getLogo();
+  const logo = useGetLogo();
 
   return (
     <div className={styles.navBar}>
-      {/* show part */}
+      {/* Visible header bar */}
       <div className={`${styles.navBar} ${styles.showBar}`}>
         <Link to="/" className={styles.logo}>
-          <img src={logo} loading="lazy" />
+          <img src={logo} loading="lazy" alt="Blogie Logo" />
         </Link>
         <HamburgerButton isOpen={isOpen} setIsOpen={setIsOpen} />
       </div>
 
-      {/* hidden part */}
-      <div className={`${styles.collapsed} ${isOpen ? styles.expand : ""}`}>
+      {/* Collapsible menu container */}
+      <div
+        className={`${styles.navItems} ${styles.collapsed} ${
+          isOpen ? styles.expand : ""
+        }`}>
+        <ThemeToggleButton />
         <NavLinks isOpen={isOpen} setIsOpen={setIsOpen} />
       </div>
     </div>
   );
 }
 
+// Desktop Navbar layout
 function NavBarDesktop() {
+  const logo = useGetLogo();
+
   return (
     <div className={`${styles.showBar} ${styles.navBar}`}>
       <Link to="/" className={styles.logo}>
-        <img src="/logo-full-light-mode.png" loading="lazy" />
+        <img src={logo} loading="lazy" alt="Blogie Logo" />
       </Link>
-      <NavLinks />
+
+      <div className={styles.navItems}>
+        <ThemeToggleButton />
+        <NavLinks />
+      </div>
     </div>
   );
 }
 
+// Main exported Navbar Wrapper
 function NavBar() {
   return (
-    <div className={`${styles.navContainer}`}>
+    <div className={styles.navContainer}>
       <div className={styles.navMobile}>
         <NavBarMobile />
       </div>

@@ -38,14 +38,14 @@
   gap: 1rem;
   padding: 1rem 1.25rem;
   border-bottom: 1px solid var(--border-color);
-  transition: bg-color 0.2s ease;
+  transition: all 0.3s ease;
 
   &:last-child {
     border-bottom: none;
   }
 
   &:hover {
-    background-color: #fafafa;
+    background-color: var(--blue-bg);
   }
 }
 

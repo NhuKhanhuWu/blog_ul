@@ -67,8 +67,9 @@
 
 // ---- category ----
 .categoriesContainer {
-  border-top: 2px solid var(--text-muted);
-  padding-top: 1rem;
+  border-top: 2px solid var(--border-color);
+  border-bottom: 2px solid var(--border-color);
+  padding: 1.2rem 0;
 }
 
 .categories {
