@@ -109,16 +109,13 @@ $header-height: 4rem; // ~64px standard toolbar height
 // ==========================================
 .listItemButton {
   min-height: 3rem;
-  padding: 0 $spacing-lg !important;
-  color: var(--text-main) !important;
+  padding: 0 $spacing-lg;
+  color: var(--text-main);
   gap: 1rem;
 
-  &:hover {
-    background-color: var(--blue-bg) !important;
-  }
-
+  &:hover,
   &:global(.active) {
-    background-color: #e3f2fd !important;
+    background-color: var(--blue-bg);
   }
 
   &.centerJustify {

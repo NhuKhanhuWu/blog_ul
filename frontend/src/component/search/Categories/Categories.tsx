@@ -107,7 +107,6 @@ function Categories() {
   } = useFormContext<TSearchFormValues>();
 
   // Track if categories section is expanded/active
-  const [isExpanded, setIsExpanded] = useState(false);
 
   // get data from form
   const categoryName = watch("categoryName");
@@ -115,11 +114,10 @@ function Categories() {
   const debouncedCategoryName = useDebounce(categoryName, 500);
 
   // Only enable fetching when section is expanded OR when categories are already selected
-  const shouldFetchCategories = isExpanded || selectedIds.length > 0;
 
   // fetch categories from api
   const { data, fetchNextPage, hasNextPage, isPending, isFetchingNextPage } =
-    useCategories(debouncedCategoryName, shouldFetchCategories);
+    useCategories(debouncedCategoryName);
   const { lastElementRef } = useIntersectionObserver(
     fetchNextPage,
     isFetchingNextPage,
@@ -176,13 +174,6 @@ function Categories() {
     <div>
       <div className={styles.searchOption}>
         <label htmlFor="logic">Categories</label>
-        <button
-          type="button"
-          className={styles.expandBtn}
-          onClick={() => setIsExpanded(!isExpanded)}
-          aria-expanded={isExpanded}>
-          {isExpanded ? "▼" : "▶"}
-        </button>
       </div>
 
       {errors.categories && (
@@ -199,20 +190,16 @@ function Categories() {
       )}
 
       {/* display cats from api only when expanded */}
-      {isExpanded && (
-        <>
-          <CategoriesOption />
-          <UnSelectedCats
-            categories={apiCategories}
-            isPending={isPending || isFetchingNextPage}
-            infinityObserver={
-              <InfinityObserver lastElementRef={lastElementRef}>
-                {(isPending || isFetchingNextPage) && <Loader />}
-              </InfinityObserver>
-            }
-          />
-        </>
-      )}
+      <CategoriesOption />
+      <UnSelectedCats
+        categories={apiCategories}
+        isPending={isPending || isFetchingNextPage}
+        infinityObserver={
+          <InfinityObserver lastElementRef={lastElementRef}>
+            {(isPending || isFetchingNextPage) && <Loader />}
+          </InfinityObserver>
+        }
+      />
     </div>
   );
 }

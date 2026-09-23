@@ -18,6 +18,78 @@
   }
 }
 
+.avatarImg {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 999px;
+}
+
+.themeToggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 999px; //  (pill)
+  border: 1.5px solid var(--border-color);
+  background-color: var(--bg-body);
+  cursor: pointer;
+  outline: none;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+
+  .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    font-size: 20px;
+    z-index: 2;
+    transition:
+      color 0.3s ease,
+      opacity 0.3s ease;
+  }
+
+  // LIGHT MODE:
+  &.light {
+    .sunIcon {
+      color: var(--text-main);
+      opacity: 1;
+    }
+
+    .moonIcon {
+      color: var(--text-muted);
+      opacity: 0.5;
+    }
+  }
+
+  //  DARK MODE:
+  &.dark {
+    .sunIcon {
+      color: var(--text-muted);
+      opacity: 0.5;
+    }
+
+    .moonIcon {
+      color: var(--text-main);
+      opacity: 1;
+    }
+  }
+}
+
+.logoutBtn > div {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 999px; //  (pill)
+  border: 1.5px solid var(--border-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .hamburger {
   width: 3.6rem;
   height: 2.8rem;
@@ -58,12 +130,31 @@
   position: relative;
 }
 
-.navLink {
+.navItems {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.4rem;
+  justify-content: center;
+  gap: 1.2rem;
   font-size: 1.6rem;
+
+  button,
+  a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  svg {
+    font-size: 2.5rem;
+    color: var(--bg-contrast);
+  }
+
+  > * {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
 }
 
 .showBar {
@@ -76,7 +167,7 @@
 }
 
 .collapsed {
-  gap: 1rem;
+  gap: 2rem;
   align-items: center;
   padding: 2rem 0;
   position: absolute;
@@ -89,11 +180,8 @@
   transition: all 0.3s;
   font-weight: 500;
   font-size: 1.6rem;
-  background-color: $dark-800;
-
-  .linkItem {
-    color: $light-100;
-  }
+  background-color: var(--bg-body);
+  border-bottom: 1.5px solid var(--border-color);
 
   .linkItemActive {
     text-decoration: underline;
@@ -125,16 +213,29 @@
     }
   }
 
+  .avatarImg,
+  .themeToggle,
+  .logoutBtn > div {
+    width: 4rem;
+    height: 4rem;
+  }
+
   .navBar {
     justify-content: space-between;
     // padding: 1rem 2rem;
   }
 
-  .navLink {
+  .navItems {
     flex-direction: row;
     font-size: 1.8rem;
     font-weight: 500;
-    gap: 3rem;
+    gap: 2rem;
+
+    > * {
+      .navLinkItemText {
+        display: none;
+      }
+    }
   }
 }
 // ===== TABLET AND DESKTOP =====

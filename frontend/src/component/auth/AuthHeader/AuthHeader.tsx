@@ -1,7 +1,7 @@
 /** @format */
 
 import styles from "./AuthHeader.module.scss";
-import getLogo from "../../../utils/get-logo";
+import useGetLogo from "../../../utils/get-logo";
 
 interface Props {
   title: string;
@@ -9,7 +9,7 @@ interface Props {
 }
 
 function AuthHeader({ title, subtitle }: Props) {
-  const logo = getLogo();
+  const logo = useGetLogo();
 
   return (
     <>

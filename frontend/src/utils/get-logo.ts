@@ -1,12 +1,13 @@
 /** @format */
 
-function getLogo() {
-  const isDarkMode = false;
-  const logo = isDarkMode
-    ? "/logo-full-dark-mode.png"
-    : "/logo-full-light-mode.png";
+import { useAppSelector } from "../hook/shared/reduxHooks";
+
+function useGetLogo() {
+  const theme = useAppSelector((state) => state.theme.theme);
+  const logo =
+    theme == "light" ? "/logo-full-light-mode.png" : "/logo-full-dark-mode.png";
 
   return logo;
 }
 
-export default getLogo;
+export default useGetLogo;
