@@ -3,13 +3,13 @@
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { emaiSchema, passwordSchema } from "../../utils/form-schema";
 import AuthHeader from "../../component/auth/AuthHeader/AuthHeader";
 import AuthFooter from "../../component/auth/AuthFooter/AuthFooter";
 import { useAppDispatch, useAppSelector } from "../../hook/shared/reduxHooks";
-import { loginThunk } from "../../redux/auth.slice";
+import { getMeThunk, loginThunk } from "../../redux/auth.slice";
 import EmailField from "../../component/input/EmailField";
 import { PasswordField } from "../../component/input/PasswordField";
 
@@ -21,6 +21,8 @@ const formSchema = yup.object().shape({
 type IFormSchema = yup.InferType<typeof formSchema>;
 
 function Login() {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -37,11 +39,15 @@ function Login() {
 
   async function submitHandler(data: IFormSchema) {
     try {
+      // login
       await dispatch(
         loginThunk({ email: data.email, password: data.password }),
       ).unwrap();
 
-      window.location.href = "/";
+      // get user
+      await dispatch(getMeThunk());
+
+      navigate("/");
     } catch (err) {
       console.error(err);
     }

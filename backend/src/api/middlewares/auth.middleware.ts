@@ -140,9 +140,9 @@ export const forgotPasswordVerifyOtpLimiter = createLimiter({
 
 // ----------- login -----------
 export const loginLimiter = createLimiter({
-  max: 5,
-  windowMs: 15 * 60 * 1000, //15 min
-  message: "You try to login too many times. Please try again after 15 minutes",
+  max: 10,
+  windowMs: 5 * 60 * 1000, //5 min
+  message: "You try to login too many times. Please try again after 5 minutes",
 });
 
 // ----------- logout -----------
