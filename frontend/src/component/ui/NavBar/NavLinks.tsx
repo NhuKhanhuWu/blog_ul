@@ -12,8 +12,7 @@ interface INavLinks {
 }
 
 // Default avatar placeholder if the user hasn't uploaded one
-const DEFAULT_AVATAR =
-  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200";
+const DEFAULT_AVATAR = "/default-avatar.png";
 
 function NavLinks({ isOpen, setIsOpen }: INavLinks) {
   const isLogin = useAppSelector((state) => state.auth.isAuthenticated);
