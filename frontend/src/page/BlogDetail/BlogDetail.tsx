@@ -32,7 +32,7 @@ function BlogDetail() {
   return (
     <div className={styles.container}>
       <div className={styles.blogSection}>
-        <BlogInfor blog={blog} />
+        <BlogInfor blog={blog} key={blog._id} />
         <BlogCmt blogId={blog._id} totalCmts={blog.totalCmts} />
       </div>
 
