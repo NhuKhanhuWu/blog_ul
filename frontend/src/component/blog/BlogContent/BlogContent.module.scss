@@ -1,0 +1,125 @@
+/** @format */
+
+.blogContentWrapper {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto 2rem auto;
+
+  :global {
+    /* 1. Base Framework & Editor Container */
+    .bn-container,
+    .bn-editor {
+      padding-inline: 0 !important;
+      background-color: var(--bg-body) !important;
+      color: var(--text-main) !important;
+      font-family: "Parkinsans", sans-serif !important;
+      font-size: 1.6rem !important; /* Mặc định .blogContent { font-size: 1.6rem } */
+    }
+
+    .bn-editor * {
+      font-family: inherit !important;
+    }
+
+    .bn-block-outer {
+      margin-bottom: 0.5rem; /* Khoảng cách giữa các khối */
+    }
+
+    .bn-block-content {
+      background-color: transparent !important;
+    }
+
+    /* 2. Text Paragraph mặc định */
+    .bn-block-content[data-content-type="paragraph"] {
+      p {
+        font-size: 1.6rem !important;
+        line-height: 1.6 !important;
+      }
+    }
+
+    /* 5. Highlight -> 1.8rem, italic, underline, line-height 1.6 */
+    .bn-block[data-text-color="yellow"] {
+      p,
+      span,
+      em,
+      strong {
+        font-size: 1.8rem !important;
+        line-height: 1.6 !important;
+        font-weight: 500 !important;
+        font-style: italic !important;
+        text-decoration: underline !important;
+        color: var(--text-main) !important;
+        margin: 1rem 0 !important;
+      }
+    }
+
+    /* 6. Quote (Trích dẫn nổi bật) */
+    .bn-block[data-text-color="blue"] {
+      border-left: 4px solid var(--primary-color, #3b82f6) !important;
+      background-color: var(--bg-quote, rgba(59, 130, 246, 0.05)) !important;
+      padding: 0.8rem 1.2rem !important;
+      margin: 1.2rem 0 !important;
+      border-radius: 0 8px 8px 0 !important;
+
+      /* Reset lại background của block content bên trong để tránh đè nền */
+      .bn-block-content {
+        background-color: transparent !important;
+      }
+
+      p,
+      span,
+      em,
+      strong {
+        font-size: 1.6rem !important;
+        line-height: 1.6 !important;
+        font-style: italic !important;
+        font-weight: 500 !important;
+        color: var(--text-main) !important;
+      }
+    }
+
+    /* 7. Meta -> 1.4rem, muted color */
+    .bn-block[data-text-color="gray"] {
+      p,
+      span {
+        font-size: 1.4rem !important;
+        color: var(--text-muted) !important;
+      }
+    }
+
+    /* 8. Image & Caption -> Căn giữa, width 80%, caption 1.3rem italic */
+    .bn-block-content[data-content-type="image"] {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 1.4rem 0 !important;
+      width: 100% !important;
+
+      .bn-visual-media-wrapper,
+      figure,
+      div {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+      }
+
+      img {
+        width: 80% !important; /* Dựa theo style cũ: img { width: 80%; } */
+        max-width: 100% !important;
+        height: auto !important;
+        border-radius: 8px !important;
+        object-fit: cover !important;
+      }
+
+      .bn-visual-media-caption,
+      figcaption {
+        margin-top: 0.6rem !important;
+        font-size: 1.3rem !important; /* Dựa theo style cũ: p { font-size: 1.3rem } */
+        font-style: italic !important;
+        color: var(--text-muted) !important;
+        text-align: center !important;
+      }
+    }
+  }
+}
