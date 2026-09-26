@@ -210,46 +210,72 @@ BlogSchema.index({ isDraft: 1 });
 
 // add & pub_date slug before saving
 BlogSchema.pre("save", async function (next) {
-  // Generate slug only when title exists and is modified
-  if (this.title && this.isModified("title")) {
-    const BlogModel = this.constructor as mongoose.Model<any>;
+  try {
+    if (this.isDraft) next(); // not set slug yet when the blog is draft
 
-    const slug = await generateUniqueSlug(
-      BlogModel,
-      this.title,
-      this._id.toString(),
-    );
+    if (this.isModified("title") && this.title) {
+      const BlogModel = this.constructor as mongoose.Model<any>;
 
-    this.slug = slug;
+      this.slug = await generateUniqueSlug(
+        BlogModel,
+        this.title,
+        this._id.toString(),
+      );
+    }
+
+    if (!this.isDraft && !this.pub_date) {
+      this.pub_date = new Date();
+    }
+
+    next();
+  } catch (error) {
+    next(error as Error);
   }
-
-  // Set publication date only on first publish
-  if (!this.isDraft && !this.pub_date) {
-    this.pub_date = new Date();
-  }
-
-  next();
 });
 
 BlogSchema.pre("findOneAndUpdate", async function (next) {
-  const update = this.getUpdate() as any;
+  try {
+    const update = this.getUpdate() as any;
+    const blog = await this.model.findOne(this.getQuery());
 
-  const title = update?.title ?? update?.$set?.title;
-  if (!title) return next();
+    if (!blog) {
+      return next();
+    }
 
-  const blog = await this.model.findOne(this.getQuery());
-  if (!blog) return next();
+    const newTitle = update?.title ?? update?.$set?.title;
+    const newIsDraft = update?.isDraft ?? update?.$set?.isDraft;
 
-  const newSlug = await generateUniqueSlug(
-    this.model,
-    title,
-    blog._id.toString(),
-  );
+    // Slug:
+    // Only update slug when title changes AND the blog is/will be published.
+    if (
+      newTitle !== undefined &&
+      newTitle !== blog.title &&
+      newIsDraft !== true
+    ) {
+      const newSlug = await generateUniqueSlug(
+        this.model,
+        newTitle,
+        blog._id.toString(),
+      );
 
-  if (update.$set) {
-    update.$set.slug = newSlug;
-  } else {
-    update.slug = newSlug;
+      update.$set = {
+        ...update.$set,
+        slug: newSlug,
+      };
+    }
+
+    // First publish:
+    // draft -> published and pub_date is still null
+    if (blog.isDraft === true && newIsDraft === false && !blog.pub_date) {
+      update.$set = {
+        ...update.$set,
+        pub_date: new Date(),
+      };
+    }
+
+    next();
+  } catch (error) {
+    next(error as Error);
   }
 });
 

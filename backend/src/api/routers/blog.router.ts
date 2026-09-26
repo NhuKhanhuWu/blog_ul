@@ -22,8 +22,12 @@ import {
   deleteBlogLimiter,
   updateBlogLimiter,
 } from "../middlewares/blog.middleware";
-import { updateBlogSchema } from "../validation/blog.validation";
+import {
+  publishBlogSchema,
+  updateBlogSchema,
+} from "../validation/blog.validation";
 import { createCmtParamsSchema } from "../validation/comment.validation";
+import { publishBlog } from "../controllers/blog/publish-blog.controller";
 
 const blogRouter = express.Router();
 
@@ -47,6 +51,11 @@ blogRouter
     updateBlog,
   ) // update blog
   .delete(deleteBlogLimiter, protect, deleteBlog);
+
+// publish blog
+blogRouter
+  .route("/:id/publish")
+  .patch(protect, validateRequest(publishBlogSchema), publishBlog);
 
 // ------------ CMTS ------------
 blogRouter

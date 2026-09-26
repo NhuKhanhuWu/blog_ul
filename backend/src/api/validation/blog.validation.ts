@@ -149,16 +149,16 @@ export const contentValidator = contentBlocksValidator.nonempty(
   "Content cannot be empty",
 );
 
+export const publishBlogDataSchema = z.object({
+  title: titleValidator,
+  authors: authorsValidator,
+  categories: categoriesValidator,
+  content: contentValidator,
+  isPrivate: z.boolean().optional(),
+});
+
 export const publishBlogSchema = z.object({
-  body: z
-    .object({
-      title: titleValidator,
-      authors: authorsValidator,
-      categories: categoriesValidator,
-      content: contentValidator,
-      isPrivate: z.boolean().optional(),
-    })
-    .strict(),
+  body: publishBlogDataSchema.strict(),
 });
 
 export const updateBlogSchema = z.object({

@@ -5,7 +5,7 @@ import {
   MAX_UPLOAD_IMAGES,
   contentBlockSchema,
   contentValidator,
-} from "../api/validation/blog.validation";
+} from "../../api/validation/blog.validation";
 
 describe("Blog Content Zod Schemas Testing", () => {
   // 1. Text Block Tests
@@ -93,16 +93,22 @@ describe("Blog Content Zod Schemas Testing", () => {
     });
 
     it("should enforce embedded and uploaded image limits independently", () => {
-      expect(contentValidator.safeParse([
-        ...Array.from({ length: MAX_EMBED_IMAGES }, () => image(true)),
-        ...Array.from({ length: MAX_UPLOAD_IMAGES }, () => image(false)),
-      ]).success).toBe(true);
-      expect(contentValidator.safeParse([
-        ...Array.from({ length: MAX_EMBED_IMAGES + 1 }, () => image(true)),
-      ]).success).toBe(false);
-      expect(contentValidator.safeParse([
-        ...Array.from({ length: MAX_UPLOAD_IMAGES + 1 }, () => image(false)),
-      ]).success).toBe(false);
+      expect(
+        contentValidator.safeParse([
+          ...Array.from({ length: MAX_EMBED_IMAGES }, () => image(true)),
+          ...Array.from({ length: MAX_UPLOAD_IMAGES }, () => image(false)),
+        ]).success,
+      ).toBe(true);
+      expect(
+        contentValidator.safeParse([
+          ...Array.from({ length: MAX_EMBED_IMAGES + 1 }, () => image(true)),
+        ]).success,
+      ).toBe(false);
+      expect(
+        contentValidator.safeParse([
+          ...Array.from({ length: MAX_UPLOAD_IMAGES + 1 }, () => image(false)),
+        ]).success,
+      ).toBe(false);
     });
 
     it("should fail if the content array is empty", () => {
