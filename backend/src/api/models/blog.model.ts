@@ -2,7 +2,12 @@
 
 import mongoose, { Schema, Types, model } from "mongoose";
 import { BlogDocument } from "../types/blog.type";
-import { IBlogContent } from "../validation/blog.validation";
+import {
+  IBlogContent,
+  MAX_CATEGORIES,
+  MAX_EMBED_IMAGES,
+  MAX_UPLOAD_IMAGES,
+} from "../validation/blog.validation";
 import { generateUniqueSlug } from "../utils/helpers/generate-unique-slug";
 import CommentModel from "./comment.model";
 
@@ -25,12 +30,10 @@ const contentBlockSchema = new Schema<IBlogContent>(
     text: {
       type: String,
       required: function (this: any) {
-        // Text is only required when the block type is not an image
         return this.type !== "image";
       },
       validate: {
         validator: function (this: any, v: string) {
-          // If type is image, text must not be present
           if (this.type === "image") return !v;
           return true;
         },
@@ -40,15 +43,13 @@ const contentBlockSchema = new Schema<IBlogContent>(
     img: {
       type: String,
       required: function (this: any) {
-        // Image is required when the block type is 'image'
         return this.type === "image";
       },
       validate: {
         validator: function (this: any, v: string) {
-          // If it's not an image block, img must not be present
           if (this.type !== "image") return !v;
-
           if (!v) return false;
+
           try {
             new URL(v);
             return true;
@@ -64,10 +65,20 @@ const contentBlockSchema = new Schema<IBlogContent>(
       validate: {
         validator: function (this: any, v: string) {
           if (!v) return true;
-          // Note is only permitted for image blocks
           return this.type === "image";
         },
         message: "Note is only allowed for image blocks",
+      },
+    },
+    isEmbed: {
+      type: Boolean,
+      default: true,
+      validate: {
+        validator: function (this: any, v: boolean) {
+          if (this.type !== "image") return v === undefined || v === false;
+          return true;
+        },
+        message: "isEmbed is only allowed for image blocks",
       },
     },
   },
@@ -83,8 +94,10 @@ const BlogSchema = new Schema<BlogDocument>(
     },
     title: {
       type: String,
-      required: [true, "title is required"],
       trim: true,
+      required: function (this: BlogDocument) {
+        return !this.isDraft;
+      },
     },
     slug: {
       type: String,
@@ -106,41 +119,63 @@ const BlogSchema = new Schema<BlogDocument>(
 
       validate: {
         validator: function (value: Types.ObjectId[]) {
-          return value.length <= 50;
+          return value.length <= MAX_CATEGORIES;
         },
         message: "A blog can have at most 50 categories",
       },
     },
     pub_date: {
       type: Date,
+      default: null,
     },
-    content: [contentBlockSchema],
-    images: {
-      type: [String],
+    content: {
+      type: [contentBlockSchema],
       default: [],
       validate: {
-        validator: function (value: string[]) {
-          return value.length <= 5;
-        },
-        message: "A blog can have at most 5 images",
-      },
-    },
-    thumbnail: {
-      type: String,
-      trim: true,
-      validate: {
-        validator: function (v: string) {
-          if (!v) return true; // optional
-          try {
-            new URL(v);
-            return true;
-          } catch {
-            return false;
+        validator: function (blocks: any[]) {
+          if (!blocks || blocks.length === 0) return true;
+
+          let embedCount = 0;
+          let uploadCount = 0;
+
+          for (const block of blocks) {
+            if (block.type === "image") {
+              if (block.isEmbed) {
+                embedCount++;
+              } else {
+                uploadCount++;
+              }
+            }
           }
+
+          return (
+            embedCount <= MAX_EMBED_IMAGES && uploadCount <= MAX_UPLOAD_IMAGES
+          );
         },
-        message: "Thumbnail must be a valid URL",
+        message: function (props: any) {
+          const blocks = props.value || [];
+
+          const embedCount = blocks.filter(
+            (b: any) => b.type === "image" && b.isEmbed,
+          ).length;
+
+          const uploadCount = blocks.filter(
+            (b: any) => b.type === "image" && !b.isEmbed,
+          ).length;
+
+          if (embedCount > MAX_EMBED_IMAGES) {
+            return `Too many embedded images: max ${MAX_EMBED_IMAGES}, got ${embedCount}.`;
+          }
+
+          if (uploadCount > MAX_UPLOAD_IMAGES) {
+            return `Too many uploaded images: max ${MAX_UPLOAD_IMAGES}, got ${uploadCount}.`;
+          }
+
+          return "Invalid image count in content.";
+        },
       },
     },
+
     upVotes: {
       type: Number,
       default: 0,
@@ -157,11 +192,9 @@ const BlogSchema = new Schema<BlogDocument>(
       type: Number,
       default: 0,
     },
-    createdAt: {
-      type: Date,
-    },
-    updatedAt: {
-      type: Date,
+    isDraft: {
+      type: Boolean,
+      default: true,
     },
   },
   {
@@ -171,24 +204,29 @@ const BlogSchema = new Schema<BlogDocument>(
 
 BlogSchema.index({ title: "text" }); // text index for searching in title
 BlogSchema.index({ categories: 1 });
-BlogSchema.index({ slug: 1 });
 BlogSchema.index({ createdAt: 1 });
 BlogSchema.index({ updatedAt: 1 });
+BlogSchema.index({ isDraft: 1 });
 
 // add & pub_date slug before saving
 BlogSchema.pre("save", async function (next) {
-  if (!this.isModified("title")) return next();
+  // Generate slug only when title exists and is modified
+  if (this.title && this.isModified("title")) {
+    const BlogModel = this.constructor as mongoose.Model<any>;
 
-  // Use this.constructor to access the Model from the Document
-  const BlogModel = this.constructor as mongoose.Model<any>;
-  const slug = await generateUniqueSlug(
-    BlogModel,
-    this.title,
-    this._id.toString(),
-  );
+    const slug = await generateUniqueSlug(
+      BlogModel,
+      this.title,
+      this._id.toString(),
+    );
 
-  this.slug = slug;
-  this.pub_date = new Date();
+    this.slug = slug;
+  }
+
+  // Set publication date only on first publish
+  if (!this.isDraft && !this.pub_date) {
+    this.pub_date = new Date();
+  }
 
   next();
 });
@@ -220,7 +258,6 @@ BlogSchema.post("findOneAndDelete", function (doc) {
   if (doc) {
     const blogId = doc._id;
 
-    // IMPORTANT: Do not use await here => push to wait queue => free main thread
     CommentModel.deleteMany({ blogId: blogId })
       .then((result) => {
         console.log(`${result.deletedCount} comments deleted in background`);

@@ -13,7 +13,12 @@ export const updateBlog = catchAsync(async (req, res) => {
   // update blog
   const updatedBlog = await BlogModel.findOneAndUpdate(
     { _id: blogId, userId: req.user?._id },
-    { $set: req.body },
+    {
+      $set: {
+        ...req.body,
+        isDraft: true,
+      },
+    },
     {
       new: true,
       runValidators: true,

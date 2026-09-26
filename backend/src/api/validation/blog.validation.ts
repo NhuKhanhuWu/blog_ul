@@ -4,72 +4,104 @@ import { z } from "zod";
 import { objectIdSchema } from "./general.validation";
 
 /* -----------------------------------
-  Base field validators (reusable)
+  Base field validators
 ----------------------------------- */
 
-// Title
 export const titleValidator = z
   .string("Title must be string")
   .min(1, "Title cannot be empty")
   .max(150, "Title cannot exceed 150 characters");
 
-// Author (single)
 export const authorValidator = z
   .string("Author name must be string")
   .min(1, "Author name cannot be empty")
   .max(50, "Author name cannot exceed 50 characters");
 
-// Authors array
 export const authorsValidator = z
   .array(authorValidator)
   .max(10, "You can specify up to 10 authors");
 
-// Category (single)
 export const categoryValidator = objectIdSchema;
 
-// Categories array
+export const MAX_CATEGORIES = 50;
+
 export const categoriesValidator = z
   .array(categoryValidator)
-  .max(40, "You can specify up to 40 categories")
+  .max(MAX_CATEGORIES, `You can specify up to ${MAX_CATEGORIES} categories`)
   .optional();
 
-const textBlockSchema = z.object({
-  type: z.enum(["paragraph", "title", "section", "quote", "highlight", "meta"]),
-  text: z
-    .string("Text content is required")
-    .min(1, "Text is required")
-    .max(10000, "Text block is too long (max 10,000 characters)"),
-  // Ensure that text blocks strictly do not contain img or note fields
-  img: z.undefined().optional(),
-  note: z.undefined().optional(),
-});
+/* -----------------------------------
+   Image limits
+----------------------------------- */
 
-// 2. Schema specifically for image blocks
-const imageBlockSchema = z.object({
-  type: z.literal("image"), // Explicitly restrict type to "image"
-  img: z.string("Image URL is required").url("Image must be a valid URL"),
-  note: z.string().max(500, "Note too long").optional(),
-  // Ensure that image blocks strictly do not contain text fields
-  text: z.undefined().optional(),
-});
+export const MAX_EMBED_IMAGES = 100;
+export const MAX_UPLOAD_IMAGES = 5;
 
 /* -----------------------------------
-   🧾 Content block validators
+   Content block validators
 ----------------------------------- */
-// Union of both types
+
+const textBlockSchema = z
+  .object({
+    type: z.enum([
+      "paragraph",
+      "title",
+      "section",
+      "quote",
+      "highlight",
+      "meta",
+    ]),
+
+    text: z
+      .string("Text content is required")
+      .min(1, "Text is required")
+      .max(10000, "Text block is too long (max 10,000 characters)"),
+
+    img: z.undefined().optional(),
+    note: z.undefined().optional(),
+    isEmbed: z.undefined().optional(),
+  })
+  .strict();
+
+const imageBlockSchema = z
+  .object({
+    type: z.literal("image"),
+
+    img: z.string("Image URL is required").url("Image must be a valid URL"),
+
+    note: z.string().max(500, "Note too long").optional(),
+
+    // true  = embed image
+    // false = uploaded image
+    isEmbed: z.boolean().optional().default(false),
+
+    text: z.undefined().optional(),
+  })
+  .strict();
+
 export const contentBlockSchema = z.union([textBlockSchema, imageBlockSchema]);
 
 export type IBlogContent = z.infer<typeof contentBlockSchema>;
 
-// Content array with total length limit (≤ 50,000 chars)
-export const contentValidator = z
+/* -----------------------------------
+   Content validator
+   - Empty content is allowed for draft
+   - Image limits always apply
+   - Total content length limit always applies
+----------------------------------- */
+
+export const contentBlocksValidator = z
   .array(contentBlockSchema)
-  .nonempty("Content cannot be empty")
   .superRefine((blocks, ctx) => {
     const totalLength = blocks.reduce((acc, block) => {
-      if ("text" in block) return acc + (block.text?.length || 0);
-      if ("img" in block)
+      if ("text" in block && block.text) {
+        return acc + block.text.length;
+      }
+
+      if ("img" in block && block.img) {
         return acc + block.img.length + (block.note?.length || 0);
+      }
+
       return acc;
     }, 0);
 
@@ -79,13 +111,45 @@ export const contentValidator = z
         message: `Total content length exceeds 50,000 characters (currently ${totalLength}).`,
       });
     }
+
+    let embedCount = 0;
+    let uploadCount = 0;
+
+    for (const block of blocks) {
+      if (block.type !== "image") continue;
+
+      if (block.isEmbed) {
+        embedCount++;
+      } else {
+        uploadCount++;
+      }
+    }
+
+    if (embedCount > MAX_EMBED_IMAGES) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Too many embedded images: max ${MAX_EMBED_IMAGES}, got ${embedCount}.`,
+      });
+    }
+
+    if (uploadCount > MAX_UPLOAD_IMAGES) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Too many uploaded images: max ${MAX_UPLOAD_IMAGES}, got ${uploadCount}.`,
+      });
+    }
   });
 
-/* -----------------------------------
-   🧩 Blog Schemas
------------------------------------ */
+/**
+ * Used when publishing.
+ *
+ * Content must contain at least one block.
+ */
+export const contentValidator = contentBlocksValidator.nonempty(
+  "Content cannot be empty",
+);
 
-export const createBlogSchema = z.object({
+export const publishBlogSchema = z.object({
   body: z
     .object({
       title: titleValidator,
@@ -103,9 +167,10 @@ export const updateBlogSchema = z.object({
       title: titleValidator.optional(),
       authors: authorsValidator.optional(),
       categories: categoriesValidator.optional(),
-      content: contentValidator.optional(),
+      content: contentBlocksValidator.optional(),
       isPrivate: z.boolean().optional(),
     })
+    .strict()
     .refine((data) => Object.keys(data).length > 0, {
       message: "Request body cannot be empty",
     }),

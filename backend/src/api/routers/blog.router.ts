@@ -3,7 +3,7 @@
 import express from "express";
 import {
   getMultBlog,
-  getOneBlogById,
+  getMyBlogById,
   getOneBlogBySlug,
 } from "../controllers/blog/get-blog.controller";
 import { createBlog } from "../controllers/blog/create-blog.controller";
@@ -22,10 +22,7 @@ import {
   deleteBlogLimiter,
   updateBlogLimiter,
 } from "../middlewares/blog.middleware";
-import {
-  createBlogSchema,
-  updateBlogSchema,
-} from "../validation/blog.validation";
+import { updateBlogSchema } from "../validation/blog.validation";
 import { createCmtParamsSchema } from "../validation/comment.validation";
 
 const blogRouter = express.Router();
@@ -38,16 +35,11 @@ blogRouter.route("/slug/:slug").get(loadUser, getOneBlogBySlug);
 blogRouter
   .route("/")
   .get(getMultBlog)
-  .post(
-    protect,
-    createBlogLimiter,
-    validateRequest(createBlogSchema),
-    createBlog,
-  );
+  .post(protect, createBlogLimiter, createBlog);
 
 blogRouter
   .route("/:id")
-  .get(loadUser, getOneBlogById) //get one blog by id
+  .get(loadUser, getMyBlogById) //get mu blog by id
   .patch(
     protect,
     updateBlogLimiter,

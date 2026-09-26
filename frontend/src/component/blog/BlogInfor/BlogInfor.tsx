@@ -34,7 +34,7 @@ function BlogInfor({ blog }: { blog: NormalizedBlog }) {
   return (
     <>
       <p className={`smTxt ${styles.meta}`}>
-        {blog?.authors?.join(", ")} • {formatDate(blog?.createdAt || "")}
+        {blog?.authors?.join(", ")} • {formatDate(blog?.pub_date || "")}
       </p>
 
       <h1 className={styles.title}>{blog?.title}</h1>

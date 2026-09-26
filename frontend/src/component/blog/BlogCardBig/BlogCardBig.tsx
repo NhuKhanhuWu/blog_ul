@@ -22,14 +22,14 @@ function Authors({ blog }: BlogCard) {
 }
 
 function BlogCardBig({ blog, isList, popItems }: BlogCard) {
-  const placeholderImg = blog.img || "/placeholder-img.jpg";
+  const placeholderImg = blog.thumbnail || "/placeholder-img.jpg";
 
   return (
     <div className={`${isList && styles.listMode} ${styles.blogCard}`}>
       <Link to={`/blogs/${blog.slug}`} className={styles.imgWrapper}>
         <img
           className={styles.blogImg}
-          src={blog.img || placeholderImg}
+          src={blog.thumbnail || placeholderImg}
           alt={blog.title}
         />
       </Link>

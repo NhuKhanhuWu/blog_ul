@@ -1,6 +1,8 @@
 /** @format */
 
 import {
+  MAX_EMBED_IMAGES,
+  MAX_UPLOAD_IMAGES,
   contentBlockSchema,
   contentValidator,
 } from "../api/validation/blog.validation";
@@ -44,9 +46,22 @@ describe("Blog Content Zod Schemas Testing", () => {
         type: "image",
         img: "https://example.com/photo.png",
         note: "This is a photo caption",
+        isEmbed: true,
       };
       const result = contentBlockSchema.safeParse(validImageBlock);
       expect(result.success).toBe(true);
+    });
+
+    it("should default an omitted isEmbed flag to uploaded", () => {
+      const result = contentBlockSchema.safeParse({
+        type: "image",
+        img: "https://example.com/photo.png",
+      });
+
+      expect(result.success).toBe(true);
+      if (result.success && result.data.type === "image") {
+        expect(result.data.isEmbed).toBe(false);
+      }
     });
 
     it("should fail for an invalid image URL format", () => {
@@ -71,6 +86,25 @@ describe("Blog Content Zod Schemas Testing", () => {
 
   // 3. Array & SuperRefine Tests (contentValidator)
   describe("Content Array Validator", () => {
+    const image = (isEmbed: boolean) => ({
+      type: "image" as const,
+      img: "https://example.com/photo.png",
+      isEmbed,
+    });
+
+    it("should enforce embedded and uploaded image limits independently", () => {
+      expect(contentValidator.safeParse([
+        ...Array.from({ length: MAX_EMBED_IMAGES }, () => image(true)),
+        ...Array.from({ length: MAX_UPLOAD_IMAGES }, () => image(false)),
+      ]).success).toBe(true);
+      expect(contentValidator.safeParse([
+        ...Array.from({ length: MAX_EMBED_IMAGES + 1 }, () => image(true)),
+      ]).success).toBe(false);
+      expect(contentValidator.safeParse([
+        ...Array.from({ length: MAX_UPLOAD_IMAGES + 1 }, () => image(false)),
+      ]).success).toBe(false);
+    });
+
     it("should fail if the content array is empty", () => {
       const result = contentValidator.safeParse([]);
       expect(result.success).toBe(false);

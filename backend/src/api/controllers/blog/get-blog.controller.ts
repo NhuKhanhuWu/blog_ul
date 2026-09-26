@@ -5,8 +5,6 @@ import { BlogModel } from "../../models/blog.model";
 import ApiQueryHelper from "../../utils/core/api-query-helper";
 import AppError from "../../utils/error/app-error";
 import catchAsync from "../../utils/error/catch-async";
-import VoteModel from "../../models/vote.model";
-import { Request } from "express";
 import { BlogWithVote } from "../../types/blog.type";
 
 // interface
@@ -22,14 +20,58 @@ const SELECTED_FIELDS = {
   slug: 1,
   upVotes: 1,
   userId: 1,
-  preview: { $arrayElemAt: ["$content", 0] },
-  image: { $arrayElemAt: ["$images", 0] },
+
+  // First non-image block's text
+  preview: {
+    $let: {
+      vars: {
+        firstTextBlock: {
+          $arrayElemAt: [
+            {
+              $filter: {
+                input: "$content",
+                as: "block",
+                cond: {
+                  $ne: ["$$block.type", "image"],
+                },
+              },
+            },
+            0,
+          ],
+        },
+      },
+      in: "$$firstTextBlock.text",
+    },
+  },
+
+  // First image block's img URL
+  thumbnail: {
+    $let: {
+      vars: {
+        firstImage: {
+          $arrayElemAt: [
+            {
+              $filter: {
+                input: "$content",
+                as: "block",
+                cond: {
+                  $eq: ["$$block.type", "image"],
+                },
+              },
+            },
+            0,
+          ],
+        },
+      },
+      in: "$$firstImage.img",
+    },
+  },
 };
 
 // Fields allowed for sorting
 const SORT_FIELDS = [
-  "-createdAt", // newest/oldest
-  "createdAt",
+  "-pub_date", // newest/oldest
+  "pub_date",
   "-upVotes", // alphabetical"title",
 ];
 
@@ -83,8 +125,24 @@ function applyCategoryFilter(
 function getPipeline(
   criteria: BlogMatchCriteria,
   currentUserId?: string | Types.ObjectId,
+  draftOwnerId?: string | Types.ObjectId,
 ) {
-  const matchStage: Record<string, any> = {};
+  const matchStage: Record<string, any> = {
+    isDraft: { $ne: true },
+  };
+
+  if (draftOwnerId) {
+    const ownerObjectId =
+      typeof draftOwnerId === "string"
+        ? new Types.ObjectId(draftOwnerId)
+        : draftOwnerId;
+
+    matchStage.$or = [
+      { isDraft: { $ne: true } },
+      { isDraft: true, userId: ownerObjectId },
+    ];
+    delete matchStage.isDraft;
+  }
 
   if ("_id" in criteria && criteria._id) {
     matchStage._id =
@@ -183,6 +241,7 @@ function getPipeline(
       images: 1,
       upVotes: 1,
       voteType: 1, // Added voteType field output
+      pub_date: 1,
       createdAt: 1,
       updatedAt: 1,
       authors: 1,
@@ -210,7 +269,7 @@ export const getMultBlog = catchAsync(async (req, res) => {
   }
 
   // 1. Start base query
-  let baseQuery = BlogModel.find();
+  let baseQuery = BlogModel.find({ isDraft: { $ne: true } });
 
   // 2. Apply category filter
   baseQuery = applyCategoryFilter(baseQuery, queryObject);
@@ -225,7 +284,7 @@ export const getMultBlog = catchAsync(async (req, res) => {
     .findbyUser()
     .searchByTitle()
     .filter(FILTER_FIELDS)
-    .sort(SORT_FIELDS, "-createdAt")
+    .sort(SORT_FIELDS, "-pub_date")
     .limitedFields(SELECTED_FIELDS);
 
   // Capture the count promise
@@ -255,33 +314,13 @@ export const getMultBlog = catchAsync(async (req, res) => {
   });
 });
 
-// get one blog
-const getVoteType = async (req: Request, blogId: Types.ObjectId) => {
-  const userId = req.user?._id; // get vote type
-
-  // if user login
-  // 1: upVote
-  // -1: downVote
-  // 0: not vote
-  let voteType = 0; // 0 by default
-  if (userId) {
-    const voteRecord = await VoteModel.findOne({
-      userId,
-      targetId: blogId,
-    });
-
-    if (voteRecord) voteType = voteRecord.voteType;
-  }
-
-  return voteType;
-};
-
-export const getOneBlogById = catchAsync(async (req, res) => {
+// use when user access thier blogs (owner)
+export const getMyBlogById = catchAsync(async (req, res) => {
   const { id } = req.params;
   const currentUserId = req.user?._id;
 
   const blogRes = await BlogModel.aggregate(
-    getPipeline({ _id: id || "" }, currentUserId),
+    getPipeline({ _id: id || "" }, currentUserId, currentUserId),
   );
   const blog = (blogRes[0] || null) as BlogWithVote | null;
 
@@ -290,7 +329,6 @@ export const getOneBlogById = catchAsync(async (req, res) => {
   }
 
   // add to response
-
   res.status(200).json({
     status: "success",
     data: blog,

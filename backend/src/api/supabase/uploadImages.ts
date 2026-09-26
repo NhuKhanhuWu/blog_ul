@@ -5,13 +5,35 @@ import supabase from "./supabase";
 
 const DEFAULT_AVATAR_BUCKET =
   process.env.SUPABASE_AVATAR_BUCKET_NAME || "avatars";
+
 const DEFAULT_BLOG_IMAGE_BUCKET =
   process.env.SUPABASE_BLOG_IMAGE_BUCKET_NAME || "blog-images";
 
-// Safely normalizes the name while preserving the extension
-const normalizeFileName = (fileName: string) => {
+const BLOG_TEMP_FOLDER = "temp";
+const BLOG_PUBLISH_FOLDER = "publish";
+
+export interface SignedUploadUrlOptions {
+  bucketName: string;
+  filePath: string;
+  upsert?: boolean;
+}
+
+export interface SignedUploadUrlResult {
+  signedUrl: string;
+  token: string;
+  publicUrl: string;
+  bucket: string;
+  filePath: string;
+}
+
+/**
+ * Safely normalizes a file name while preserving its extension.
+ */
+const normalizeFileName = (fileName: string): string => {
   const lastDot = fileName.lastIndexOf(".");
+
   const ext = lastDot !== -1 ? fileName.slice(lastDot).toLowerCase() : "";
+
   const name = lastDot !== -1 ? fileName.slice(0, lastDot) : fileName;
 
   const safeName = name
@@ -23,73 +45,51 @@ const normalizeFileName = (fileName: string) => {
   return `${safeName.slice(0, 80)}${ext}`;
 };
 
-// Generates RLS-friendly paths: <userId>/[folder]/<timestamp>-<random>-<filename>
-const buildStoragePath = (
-  userId: string,
-  fileName: string,
-  folder?: string,
-  prefix?: string,
-) => {
+/**
+ * Generates a unique file name.
+ *
+ * Example:
+ * 1727261234567-a8f31c2d-photo.webp
+ */
+const generateUniqueFileName = (fileName: string): string => {
   const safeFileName = normalizeFileName(fileName);
-  const randomId = Math.random().toString(36).substring(2, 10);
-  const baseName = `${Date.now()}-${randomId}-${safeFileName}`;
 
-  // Placing userId first ensures standard Supabase RLS compatibility
-  return [userId, folder, prefix, baseName]
-    .filter(Boolean)
-    .join("/")
-    .replace(/^\/+/, ""); // Strips any leading slash;
+  const randomId = Math.random().toString(36).substring(2, 10);
+
+  return `${Date.now()}-${randomId}-${safeFileName}`;
 };
 
-// helper for public URLs
-const getPublicUrl = (bucket: string, path: string): string => {
-  const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+/**
+ * Get public URL for a Supabase Storage file.
+ */
+const getPublicUrl = (bucket: string, filePath: string): string => {
+  const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
+
   if (!data?.publicUrl) {
     throw new AppError(
-      `Supabase public URL error: missing publicUrl for ${path}`,
+      `Supabase public URL error: missing publicUrl for ${filePath}`,
       500,
     );
   }
+
   return data.publicUrl;
 };
 
-export interface SignedUploadUrlOptions {
-  bucketName?: string;
-  userId: string;
-  fileName: string;
-  folder?: string;
-  prefix?: string;
-  upsert?: boolean;
-  fixedFileName?: boolean;
-}
-
-export interface SignedUploadUrlResult {
-  signedUrl: string;
-  token: string;
-  publicUrl: string;
-  bucket: string;
-  filePath: string;
-}
-
+/**
+ * Common helper.
+ *
+ * This function ONLY communicates with Supabase Storage.
+ * Path generation is handled by specific upload functions.
+ */
 export const createSignedUploadUrl = async (
   options: SignedUploadUrlOptions,
 ): Promise<SignedUploadUrlResult> => {
-  const bucket = options.bucketName || DEFAULT_AVATAR_BUCKET;
-  const filePath = options.fixedFileName
-    ? [options.userId, options.folder, options.prefix, options.fileName]
-        .filter(Boolean)
-        .join("/")
-    : buildStoragePath(
-        options.userId,
-        options.fileName,
-        options.folder,
-        options.prefix,
-      );
+  const { bucketName, filePath, upsert = false } = options;
 
   const { data, error } = await supabase.storage
-    .from(bucket)
+    .from(bucketName)
     .createSignedUploadUrl(filePath, {
-      upsert: options.upsert ?? false,
+      upsert,
     });
 
   if (error || !data) {
@@ -99,42 +99,89 @@ export const createSignedUploadUrl = async (
     );
   }
 
-  const publicUrl = getPublicUrl(bucket, filePath);
-
   return {
     signedUrl: data.signedUrl,
     token: data.token,
-    publicUrl,
-    bucket,
+    publicUrl: getPublicUrl(bucketName, filePath),
+    bucket: bucketName,
     filePath: data.path,
   };
 };
 
+/**
+ * Create signed upload URL for user avatar.
+ *
+ * Path:
+ * {userId}/avatar
+ */
 export const createAvatarSignedUploadUrl = async (
   userId: string,
-  options?: Omit<
-    SignedUploadUrlOptions,
-    "userId" | "fileName" | "bucketName" | "fixedFileName"
-  >,
 ): Promise<SignedUploadUrlResult> => {
+  const filePath = `${userId}/avatar`;
+
   return createSignedUploadUrl({
     bucketName: DEFAULT_AVATAR_BUCKET,
-    userId,
-    fileName: "avatar",
+    filePath,
     upsert: true,
-    fixedFileName: true,
-    ...options,
   });
 };
 
+/**
+ * Create signed upload URL for blog image.
+ *
+ * All newly uploaded blog images are stored in temp.
+ *
+ * Path:
+ * {userId}/{blogId}/temp/{uniqueFileName}
+ */
 export const createBlogImageSignedUploadUrl = async (
   userId: string,
+  blogId: string,
   fileName: string,
-  options?: Omit<SignedUploadUrlOptions, "userId" | "fileName" | "bucketName">,
-): Promise<SignedUploadUrlResult> =>
-  createSignedUploadUrl({
+): Promise<SignedUploadUrlResult> => {
+  const uniqueFileName = generateUniqueFileName(fileName);
+
+  const filePath = [userId, blogId, BLOG_TEMP_FOLDER, uniqueFileName].join("/");
+
+  return createSignedUploadUrl({
     bucketName: DEFAULT_BLOG_IMAGE_BUCKET,
-    userId,
-    fileName,
-    ...options,
+    filePath,
+    upsert: false,
   });
+};
+
+/**
+ * Move a blog image from temp to publish.
+ *
+ * This happens directly inside Supabase Storage.
+ * The image does NOT need to be downloaded and uploaded again.
+ *
+ * From:
+ * {userId}/{blogId}/temp/{fileName}
+ *
+ * To:
+ * {userId}/{blogId}/publish/{fileName}
+ */
+export const moveBlogImageToPublish = async (
+  userId: string,
+  blogId: string,
+  fileName: string,
+) => {
+  const fromPath = [userId, blogId, BLOG_TEMP_FOLDER, fileName].join("/");
+
+  const toPath = [userId, blogId, BLOG_PUBLISH_FOLDER, fileName].join("/");
+
+  const { error } = await supabase.storage
+    .from(DEFAULT_BLOG_IMAGE_BUCKET)
+    .move(fromPath, toPath);
+
+  if (error) {
+    throw new AppError(`Failed to move blog image: ${error.message}`, 502);
+  }
+
+  return {
+    fromPath,
+    toPath,
+    publicUrl: getPublicUrl(DEFAULT_BLOG_IMAGE_BUCKET, toPath),
+  };
+};

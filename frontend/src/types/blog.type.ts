@@ -11,7 +11,7 @@ export interface BlogSimplify {
   pub_date: Date;
   authors: string[];
   userId: string;
-  img?: string;
+  thumbnail?: string;
   preview: {
     text: string;
   };

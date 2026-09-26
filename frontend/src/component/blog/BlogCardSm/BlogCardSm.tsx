@@ -7,14 +7,14 @@ import { getDateDistance } from "../../../utils/date";
 import BlogPopOver from "../BlogPopOver/BlogPopOver";
 
 function BlogCardSm({ blog, popItems }: BlogCardProps) {
-  const placehoderImg = blog.img || "/placeholder-img.jpg";
+  const placehoderImg = blog.thumbnail || "/placeholder-img.jpg";
   // placeholder-img.jpg
 
   return (
     <div className={styles.card}>
       {/* 1. Blog Image / Thumbnail */}
       <Link to={`/blogs/${blog.slug}`} className={styles.thumbnailWrapper}>
-        <img className={styles.blogImg} src={blog.img || placehoderImg} />
+        <img className={styles.blogImg} src={blog.thumbnail || placehoderImg} />
       </Link>
 
       {/* 2. Blog Content */}
