@@ -13,13 +13,13 @@ function BlogCardSm({ blog, popItems }: BlogCardProps) {
   return (
     <div className={styles.card}>
       {/* 1. Blog Image / Thumbnail */}
-      <Link to={`/blogs/${blog.slug}`} className={styles.thumbnailWrapper}>
+      <Link to={`/blog/${blog.slug}`} className={styles.thumbnailWrapper}>
         <img className={styles.blogImg} src={blog.thumbnail || placehoderImg} />
       </Link>
 
       {/* 2. Blog Content */}
       <div className={styles.content}>
-        <Link to={`/blogs/${blog.slug}`} className={styles.title}>
+        <Link to={`/blog/${blog.slug}`} className={styles.title}>
           {blog.title}
         </Link>
 
@@ -30,8 +30,12 @@ function BlogCardSm({ blog, popItems }: BlogCardProps) {
         </p>
 
         <div className={styles.meta}>
-          <p className={styles.date}>{getDateDistance(blog.pub_date)}</p>
-          <span className={styles.separator}>•</span>
+          {blog.pub_date && (
+            <>
+              <p className={styles.date}>{getDateDistance(blog.pub_date)}</p>
+              <span className={styles.separator}>•</span>
+            </>
+          )}
 
           <div className={`vertical-center smTxt ${styles.like}`}>
             <FaRegThumbsUp />

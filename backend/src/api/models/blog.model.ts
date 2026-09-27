@@ -102,6 +102,7 @@ const BlogSchema = new Schema<BlogDocument>(
     slug: {
       type: String,
       unique: true,
+      sparse: true,
     },
     authors: {
       type: [String],
@@ -194,7 +195,7 @@ const BlogSchema = new Schema<BlogDocument>(
     },
     isDraft: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   {
@@ -211,9 +212,16 @@ BlogSchema.index({ isDraft: 1 });
 // add & pub_date slug before saving
 BlogSchema.pre("save", async function (next) {
   try {
-    if (this.isDraft) next(); // not set slug yet when the blog is draft
+    // Draft don't have slug
+    if (this.isDraft) {
+      this.set("slug", undefined);
+      return next();
+    }
 
-    if (this.isModified("title") && this.title) {
+    // Published:
+    // - just publish
+    // - or change title
+    if (!this.slug || (this.isModified("title") && this.title)) {
       const BlogModel = this.constructor as mongoose.Model<any>;
 
       this.slug = await generateUniqueSlug(
@@ -223,7 +231,8 @@ BlogSchema.pre("save", async function (next) {
       );
     }
 
-    if (!this.isDraft && !this.pub_date) {
+    // First publish
+    if (!this.pub_date) {
       this.pub_date = new Date();
     }
 
@@ -236,6 +245,14 @@ BlogSchema.pre("save", async function (next) {
 BlogSchema.pre("findOneAndUpdate", async function (next) {
   try {
     const update = this.getUpdate() as any;
+
+    const updatesTitle =
+      update?.title !== undefined || update?.$set?.title !== undefined;
+    const updatesDraftStatus =
+      update?.isDraft !== undefined || update?.$set?.isDraft !== undefined;
+
+    if (!updatesTitle && !updatesDraftStatus) return next();
+
     const blog = await this.model.findOne(this.getQuery());
 
     if (!blog) {
@@ -245,32 +262,53 @@ BlogSchema.pre("findOneAndUpdate", async function (next) {
     const newTitle = update?.title ?? update?.$set?.title;
     const newIsDraft = update?.isDraft ?? update?.$set?.isDraft;
 
-    // Slug:
-    // Only update slug when title changes AND the blog is/will be published.
-    if (
-      newTitle !== undefined &&
-      newTitle !== blog.title &&
-      newIsDraft !== true
-    ) {
+    // Final state of the blog after the update
+    const isDraft = newIsDraft ?? blog.isDraft;
+
+    update.$set ??= {};
+
+    // -----------------------------
+    // DRAFT
+    // -----------------------------
+    if (isDraft) {
+      // Drafts do not need to retain the slug and must not do so.
+      update.$unset = {
+        ...update.$unset,
+        slug: 1,
+      };
+
+      // no generate slug
+      return next();
+    }
+
+    // -----------------------------
+    // PUBLISHED
+    // -----------------------------
+
+    const title = newTitle ?? blog.title;
+
+    // Generate slug when:
+    // - draft -> published
+    // - published but title changed
+    // - published but no slug yet
+    const shouldGenerateSlug =
+      (!blog.isDraft && newTitle !== undefined && newTitle !== blog.title) ||
+      blog.isDraft ||
+      !blog.slug;
+
+    if (shouldGenerateSlug && title) {
       const newSlug = await generateUniqueSlug(
         this.model,
-        newTitle,
+        title,
         blog._id.toString(),
       );
 
-      update.$set = {
-        ...update.$set,
-        slug: newSlug,
-      };
+      update.$set.slug = newSlug;
     }
 
-    // First publish:
-    // draft -> published and pub_date is still null
-    if (blog.isDraft === true && newIsDraft === false && !blog.pub_date) {
-      update.$set = {
-        ...update.$set,
-        pub_date: new Date(),
-      };
+    // First publish
+    if (blog.isDraft && !isDraft && !blog.pub_date) {
+      update.$set.pub_date = new Date();
     }
 
     next();

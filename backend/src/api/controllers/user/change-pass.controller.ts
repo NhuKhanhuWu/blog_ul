@@ -3,7 +3,7 @@
 import UserModel from "../../models/user.model";
 import AppError from "../../utils/error/app-error";
 import catchAsync from "../../utils/error/catch-async";
-import { revokeAndRegenerateTokens } from "../../services/auth.service";
+import { revokeAndRegenerateTokens } from "../../services/auth/auth.service";
 
 export const changePass = catchAsync(async (req, res) => {
   const { password, passwordConfirm, currentPassword } = req.body;

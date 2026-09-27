@@ -10,7 +10,7 @@ export async function getCategories(
 ): Promise<ICategoriesResponse> {
   const checkedQuery = `?page=${page || 0}&name=${categoryName || ""}`;
 
-  const response = await axiosInstance.get(`/categories${checkedQuery}`, {
+  const response = await axiosInstance.get(`/category${checkedQuery}`, {
     signal,
   });
 

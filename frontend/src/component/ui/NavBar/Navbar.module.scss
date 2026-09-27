@@ -80,9 +80,9 @@
   }
 }
 
-.logoutBtn > div {
-  width: 5rem;
-  height: 5rem;
+.logoutBtn > * {
+  width: 4rem;
+  height: 4rem;
   border-radius: 999px; //  (pill)
   border: 1.5px solid var(--border-color);
   display: flex;

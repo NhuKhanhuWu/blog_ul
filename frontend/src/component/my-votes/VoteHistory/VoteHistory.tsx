@@ -18,7 +18,7 @@ interface VoteHistoryProps {
 }
 
 const getVoteUrl = (vote: MyBlogVote | MyCommentVote) => {
-  const baseUrl = `/blogs/${vote.slug}`;
+  const baseUrl = `/blog/${vote.slug}`;
 
   return "commentId" in vote ? `${baseUrl}#comment-${vote.commentId}` : baseUrl;
 };

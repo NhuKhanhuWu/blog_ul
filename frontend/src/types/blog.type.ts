@@ -8,7 +8,9 @@ export interface BlogSimplify {
   title: string;
   slug: string;
   upVotes?: number;
-  pub_date: Date;
+  pub_date?: Date;
+  isDraft?: boolean;
+  updatedAt?: Date;
   authors: string[];
   userId: string;
   thumbnail?: string;
@@ -52,7 +54,7 @@ export interface BlogDetailProps {
 
   categories: ICategory[];
 
-  pub_date?: string;
+  pub_date?: Date;
 
   content: ContentBlock[];
 
@@ -91,5 +93,13 @@ export interface GetBlogsResponse {
 
 export interface GetBlogs {
   query: string;
+  pageParam: number;
+}
+
+export type MyBlogStatus = "all" | "draft" | "published";
+
+export interface GetMyBlogs {
+  status: MyBlogStatus;
+  sort: string;
   pageParam: number;
 }

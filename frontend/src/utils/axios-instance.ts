@@ -16,8 +16,8 @@ const AUTH_WHITE_LIST = [
   /^\/auth\/signup/,
   /^\/auth\/refresh-token/,
   /^\/auth\/forgot-password/,
-  /^\/categories/,
-  /^\/blogs$/,
+  /^\/category/,
+  /^\/blog$/,
 ];
 
 const BASE_URL: string = import.meta.env.VITE_SERVER_URL || "";

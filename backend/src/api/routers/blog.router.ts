@@ -3,6 +3,7 @@
 import express from "express";
 import {
   getMultBlog,
+  getMyBlogs,
   getMyBlogById,
   getOneBlogBySlug,
 } from "../controllers/blog/get-blog.controller";
@@ -40,6 +41,8 @@ blogRouter
   .route("/")
   .get(getMultBlog)
   .post(protect, createBlogLimiter, createBlog);
+
+blogRouter.route("/me").get(protect, getMyBlogs);
 
 blogRouter
   .route("/:id")

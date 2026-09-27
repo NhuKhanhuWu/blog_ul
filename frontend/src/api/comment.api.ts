@@ -18,7 +18,7 @@ export async function getCmtByBlog({
   parentId = "",
 }: GetCmtByBlog): Promise<GetCmtRes> {
   const query = `sort=${sort}&page=${page}&parentId=${parentId}&limit=${limit}`;
-  const data = await axiosInstance.get(`/blogs/${blogId}/cmt?${query}`);
+  const data = await axiosInstance.get(`/blog/${blogId}/cmt?${query}`);
 
   return data.data;
 }
@@ -34,7 +34,7 @@ export async function createCmt({
   replyToId = undefined,
   content,
 }: CreateCmt): Promise<Cmt> {
-  const res = await axiosInstance.post(`/blogs/${blogId}/cmt`, {
+  const res = await axiosInstance.post(`/blog/${blogId}/cmt`, {
     replyToId,
     content,
   });

@@ -38,7 +38,7 @@ function CommentHistory({ comments }: CommentHistoryProps) {
             {items.map((comment) => (
               <div key={comment._id} className={styles.commentItemRow}>
                 <Link
-                  to={`/blogs/${comment.slug}#comment-${comment._id}`}
+                  to={`/blog/${comment.slug}#comment-${comment._id}`}
                   className={styles.commentLink}>
                   <div className={styles.commentDetails}>
                     <div>

@@ -47,11 +47,11 @@ app.use(globalLimiter);
 // ROUTER
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/blogs", blogRouter);
+app.use("/api/v1/blog", blogRouter);
 app.use("/api/v1/blog-list", blogListRouter);
 app.use("/api/v1/cmt", cmtRouter);
 app.use("/api/v1/votes", voteRouter);
-app.use("/api/v1/categories", categoryRouter);
+app.use("/api/v1/category", categoryRouter);
 
 // ERROR
 // must use /* not *

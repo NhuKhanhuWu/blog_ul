@@ -1,7 +1,5 @@
 /** @format */
 
-// TODO: update to delete old img & add new img in supabase
-
 import { BlogModel } from "../../models/blog.model";
 import AppError from "../../utils/error/app-error";
 import catchAsync from "../../utils/error/catch-async";

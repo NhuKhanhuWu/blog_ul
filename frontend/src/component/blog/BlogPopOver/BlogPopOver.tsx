@@ -55,12 +55,13 @@ function BlogPopOver({ blog, popItems }: BlogPopOverProps) {
           horizontal: "right",
         }}>
         <div className={styles.popContent}>
-          {/*  show save to list */}
-          <BookMark blogId={blog._id} openBtn={blogListBtn} />
+          {!blog.isDraft && (
+            <BookMark blogId={blog._id} openBtn={blogListBtn} />
+          )}
 
           {/* if this blog is belong to user => show edit */}
           {blog.userId === user._id && (
-            <Link to={`/blog/${blog.slug}/edit`} className={styles.popItem}>
+            <Link to={`/blog/edit/${blog._id}`} className={styles.popItem}>
               <MdEdit className={styles.icon} /> Edit blog
             </Link>
           )}

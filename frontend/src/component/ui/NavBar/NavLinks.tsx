@@ -5,6 +5,7 @@ import { NavLink } from "react-router-dom";
 import { useAppSelector } from "../../../hook/shared/reduxHooks";
 import styles from "./Navbar.module.scss";
 import { TbLogout } from "react-icons/tb";
+import { GoPlus } from "react-icons/go";
 
 interface INavLinks {
   isOpen?: boolean;
@@ -28,6 +29,12 @@ function NavLinks({ isOpen, setIsOpen }: INavLinks) {
       {isLogin ? (
         /* Authenticated View: User Avatar + Account Link + Logout Button */
         <>
+          {/* new blog */}
+          <NavLink to="blog/new" className={styles.logoutBtn}>
+            <GoPlus />
+          </NavLink>
+
+          {/* profile page */}
           <NavLink
             to="user/me"
             onClick={handleClose}

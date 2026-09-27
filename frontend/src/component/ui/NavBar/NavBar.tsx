@@ -72,6 +72,7 @@ function NavBarDesktop() {
 }
 
 // Main exported Navbar Wrapper
+// TODO: add create btn in the nav bar
 function NavBar() {
   return (
     <div className={styles.navContainer}>
