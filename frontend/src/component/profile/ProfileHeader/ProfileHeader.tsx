@@ -1,7 +1,7 @@
 /** @format */
 
 import { UserPublic } from "../../../types/auth.type";
-import defaultAvatar from "../../../utils/default-avatar";
+import defaultAvatar from "../../../utils/helper/default-avatar";
 import { ReactNode } from "react";
 import styles from "./ProfileHeader.module.scss";
 

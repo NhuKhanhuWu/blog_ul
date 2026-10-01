@@ -5,8 +5,8 @@ import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { deleteCmt } from "../../../api/comment.api";
 import { MyCommentHistoryItem } from "../../../types/comment.type";
-import { formatDate } from "../../../utils/date";
-import { groupDataByDate } from "../../../utils/groupItemByDate";
+import { formatDate } from "../../../utils/helper/date";
+import { groupDataByDate } from "../../../utils/helper/groupItemByDate";
 import HistoryActionPopover from "../../shared/HistoryActionPopover/HistoryActionPopover";
 import styles from "./CommentHistory.module.scss";
 

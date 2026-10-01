@@ -3,7 +3,7 @@
 import styles from "./BlogInfor.module.scss";
 import { NormalizedBlog } from "../../../types/blog.type.ts";
 import { Link } from "react-router-dom";
-import { formatDate } from "../../../utils/date.ts";
+import { formatDate } from "../../../utils/helper/date.ts";
 import BlogAction from "../BlogAction/BlogAction.tsx";
 import "@blocknote/mantine/style.css";
 import BlogContent from "../BlogContent/BlogContent.tsx";

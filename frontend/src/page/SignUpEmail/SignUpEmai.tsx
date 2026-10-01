@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import { emaiSchema } from "../../utils/form-schema";
+import { emaiSchema } from "../../utils/core/form-schema.ts";
 import AuthHeader from "../../component/auth/AuthHeader/AuthHeader";
 import AuthFooter from "../../component/auth/AuthFooter/AuthFooter";
 import useSignUpEmailStep from "../../hook/auth/useSignUpEmailStep";

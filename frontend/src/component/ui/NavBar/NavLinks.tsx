@@ -32,6 +32,7 @@ function NavLinks({ isOpen, setIsOpen }: INavLinks) {
           {/* new blog */}
           <NavLink to="blog/new" className={styles.logoutBtn}>
             <GoPlus />
+            <span className={styles.navLinkItemText}>New blog</span>
           </NavLink>
 
           {/* profile page */}
@@ -55,9 +56,7 @@ function NavLinks({ isOpen, setIsOpen }: INavLinks) {
             onClick={handleClose}
             className={styles.logoutBtn}
             title="Log out">
-            <div>
-              <TbLogout className={styles.logoutIcon} />
-            </div>
+            <TbLogout className={styles.logoutIcon} />
             <span className={styles.navLinkItemText}>Log out</span>
           </NavLink>
         </>

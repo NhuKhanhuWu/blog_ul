@@ -1,6 +1,6 @@
 /** @format */
 import { PartialBlock } from "@blocknote/core";
-import { NormalizedContent } from "../types/blog.type";
+import { NormalizedContent } from "../../types/blog.type";
 
 export function convertToBlockNoteBlocks(
   content: NormalizedContent[],
@@ -10,14 +10,14 @@ export function convertToBlockNoteBlocks(
       case "title":
         return {
           type: "heading",
-          props: { level: 2 },
+          props: { level: 1 },
           content: item.text,
         } as PartialBlock;
 
       case "section":
         return {
           type: "heading",
-          props: { level: 3 },
+          props: { level: 2 },
           content: item.text,
         } as PartialBlock;
 

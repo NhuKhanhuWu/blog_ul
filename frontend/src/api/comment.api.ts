@@ -8,7 +8,7 @@ import {
   GetCmtByUser,
   GetCmtRes,
 } from "../types/comment.type";
-import axiosInstance from "../utils/axios-instance";
+import axiosInstance from "../utils/core/axios-instance";
 
 export async function getCmtByBlog({
   blogId,

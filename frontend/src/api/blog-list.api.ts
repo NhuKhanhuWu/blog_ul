@@ -7,7 +7,7 @@ import {
   CreateListRes,
   UpdateBlogListArgs,
 } from "../types/blog-list.type";
-import axiosInstance from "../utils/axios-instance";
+import axiosInstance from "../utils/core/axios-instance";
 
 export async function getMultList(
   userId?: string,

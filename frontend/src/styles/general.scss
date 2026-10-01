@@ -1,6 +1,5 @@
 /** @format */
 
-/** @format */
 // Biến Sass tĩnh (giữ lại để tham chiếu nếu cần)
 $dark-900: #1a1a1a;
 $dark-400: #717171;
@@ -235,6 +234,10 @@ svg {
   transition: all 0.3s;
   border-radius: 5px;
   color: var(--bg-body);
+
+  svg {
+    color: var(--bg-body);
+  }
 }
 
 .btn-secondary,
@@ -242,11 +245,19 @@ svg {
   @extend .btn-primary;
   background-color: var(--bg-body);
   color: var(--text-main);
+
+  svg {
+    color: var(--text-main);
+  }
 }
 
 .btn-secondary:hover {
   background-color: var(--btn-bg-primary);
   color: var(--bg-body);
+
+  svg {
+    color: var(--bg-body);
+  }
 }
 
 .btn-reset--input {

@@ -3,7 +3,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { Link } from "react-router";
 import styles from "./Navbar.module.scss";
-import useGetLogo from "../../../utils/get-logo";
+import useGetLogo from "../../../utils/helper/get-logo";
 import NavLinks from "./NavLinks";
 import ThemeToggleButton from "./ThemeToggleButton";
 
@@ -72,7 +72,7 @@ function NavBarDesktop() {
 }
 
 // Main exported Navbar Wrapper
-// TODO: add create btn in the nav bar
+
 function NavBar() {
   return (
     <div className={styles.navContainer}>

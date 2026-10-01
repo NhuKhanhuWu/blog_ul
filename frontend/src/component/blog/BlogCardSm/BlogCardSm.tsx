@@ -3,7 +3,7 @@ import { FaRegThumbsUp } from "react-icons/fa";
 import styles from "./BlogCardSm.module.scss";
 import { BlogCardProps } from "../../../types/blog.type";
 import { Link } from "react-router-dom";
-import { getDateDistance } from "../../../utils/date";
+import { getDateDistance } from "../../../utils/helper/date";
 import BlogPopOver from "../BlogPopOver/BlogPopOver";
 
 function BlogCardSm({ blog, popItems }: BlogCardProps) {

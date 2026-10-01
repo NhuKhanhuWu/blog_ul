@@ -1,6 +1,6 @@
 /** @format */
 
-import axiosInstance from "../utils/axios-instance";
+import axiosInstance from "../utils/core/axios-instance";
 import {
   AuthResponse,
   Login,

@@ -13,15 +13,13 @@ interface BlogsTabProps {
   user?: UserPublic;
 }
 
-// TODO: add a filter in this (status: publish, draft, all)
 function BlogsTab({ user }: BlogsTabProps) {
   const [status, setStatus] = useState<MyBlogStatus>("all");
   const [sort, setSort] = useState("-updatedAt");
 
   const { data, isPending, isError, error } = useInfiniteQuery({
     queryKey: ["my-blogs", user?._id, status, sort],
-    queryFn: ({ pageParam = 0 }) =>
-      getMyBlogs({ status, sort, pageParam }),
+    queryFn: ({ pageParam = 0 }) => getMyBlogs({ status, sort, pageParam }),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.nextPage,
     enabled: Boolean(user?._id),

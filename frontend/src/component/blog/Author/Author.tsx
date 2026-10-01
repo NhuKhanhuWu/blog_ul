@@ -2,7 +2,7 @@
 
 import { Link } from "react-router-dom";
 import { NormalizedBlog } from "../../../types/blog.type";
-import defaultAvatar from "../../../utils/default-avatar";
+import defaultAvatar from "../../../utils/helper/default-avatar";
 import styles from "./Author.module.scss";
 
 function Author({ blog }: { blog: NormalizedBlog }) {

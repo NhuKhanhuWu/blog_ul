@@ -24,6 +24,7 @@ export const authorsValidator = z
 export const categoryValidator = objectIdSchema;
 
 export const MAX_CATEGORIES = 50;
+export const MAX_CHARACTERS = 50000;
 
 export const categoriesValidator = z
   .array(categoryValidator)
@@ -105,7 +106,7 @@ export const contentBlocksValidator = z
       return acc;
     }, 0);
 
-    if (totalLength > 50000) {
+    if (totalLength > MAX_CHARACTERS) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: `Total content length exceeds 50,000 characters (currently ${totalLength}).`,

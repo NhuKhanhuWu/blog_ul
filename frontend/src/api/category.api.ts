@@ -1,7 +1,7 @@
 /** @format */
 
 import { ICategoriesResponse } from "../types/category.type";
-import axiosInstance from "../utils/axios-instance";
+import axiosInstance from "../utils/core/axios-instance";
 
 export async function getCategories(
   page: number,

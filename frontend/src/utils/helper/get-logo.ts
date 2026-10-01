@@ -1,6 +1,6 @@
 /** @format */
 
-import { useAppSelector } from "../hook/shared/reduxHooks";
+import { useAppSelector } from "../../hook/shared/reduxHooks";
 
 function useGetLogo() {
   const theme = useAppSelector((state) => state.theme.theme);

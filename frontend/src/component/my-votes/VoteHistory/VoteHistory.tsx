@@ -9,7 +9,7 @@ import {
   MyBlogVote,
   MyCommentVote,
 } from "../../../types/vote.type";
-import { formatDate } from "../../../utils/date";
+import { formatDate } from "../../../utils/helper/date";
 import HistoryActionPopover from "../../shared/HistoryActionPopover/HistoryActionPopover";
 import styles from "./VoteHistory.module.scss";
 

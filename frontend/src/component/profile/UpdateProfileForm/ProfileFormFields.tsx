@@ -3,7 +3,7 @@
 import { UseFormRegister } from "react-hook-form";
 import styles from "./UpdateProfileForm.module.scss";
 import { useAppSelector } from "../../../hook/shared/reduxHooks";
-import { formatDate } from "../../../utils/date";
+import { formatDate } from "../../../utils/helper/date";
 
 interface ProfileFormValues {
   username: string;

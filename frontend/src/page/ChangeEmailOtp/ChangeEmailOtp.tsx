@@ -2,7 +2,7 @@
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import useChangeEmailOtp from "../../hook/user/useChangeEmailOtp";
-import { createOtpSchema } from "../../utils/form-schema";
+import { createOtpSchema } from "../../utils/core/form-schema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import toast from "react-hot-toast";
 import { useState } from "react";

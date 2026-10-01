@@ -37,6 +37,7 @@ export type ContentBlock =
       note?: string;
       text?: undefined;
       heading?: undefined;
+      isEmbed: boolean;
     };
 
 export interface BlogDetailProps {
@@ -55,6 +56,8 @@ export interface BlogDetailProps {
   categories: ICategory[];
 
   pub_date?: Date;
+  isDraft: boolean;
+  isPrivate: boolean;
 
   content: ContentBlock[];
 

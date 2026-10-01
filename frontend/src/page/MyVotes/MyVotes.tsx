@@ -6,7 +6,7 @@ import CommentVotes from "../../component/my-votes/CommentVotes/CommentVotes";
 import Tabs from "@mui/material/Tabs";
 import styles from "./MyVotes.module.scss";
 import Tab from "@mui/material/Tab";
-import a11yProps from "../../utils/a11yProps";
+import a11yProps from "../../utils/core/a11yProps";
 import CustomTabPanel from "../../component/ui/CustomTabPanel/CustomTabPanel";
 
 function MyVotes() {

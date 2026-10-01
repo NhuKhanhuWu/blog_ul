@@ -1,7 +1,7 @@
 /** @format */
 
 import styles from "./AuthHeader.module.scss";
-import useGetLogo from "../../../utils/get-logo";
+import useGetLogo from "../../../utils/helper/get-logo";
 
 interface Props {
   title: string;

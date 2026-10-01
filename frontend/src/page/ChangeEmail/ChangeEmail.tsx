@@ -2,7 +2,7 @@
 
 import styles from "../../styles/form-page.module.scss";
 import * as yup from "yup";
-import { emaiSchema, passwordSchema } from "../../utils/form-schema";
+import { emaiSchema, passwordSchema } from "../../utils/core/form-schema";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { PasswordField } from "../../component/input/PasswordField";
