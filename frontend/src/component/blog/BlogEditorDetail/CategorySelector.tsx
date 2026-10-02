@@ -6,16 +6,17 @@ import SelectedCategories from "../../category/SelectedCategories";
 import styles from "./BlogEditorDetail.module.scss";
 
 interface CategorySelectorProps {
-  selectedIds: string[];
-  onChange: (ids: string[]) => void;
+  selectedCategories: ICategory[];
+  onChange: (categories: ICategory[]) => void;
   maxSelected?: number;
 }
 
 function CategorySelector({
-  selectedIds,
+  selectedCategories,
   onChange,
   maxSelected = 50,
 }: CategorySelectorProps) {
+  const selectedIds = selectedCategories.map((category) => category._id);
   const {
     search,
     setSearch,
@@ -38,7 +39,7 @@ function CategorySelector({
     if (isSelected) {
       remove(category._id);
 
-      onChange(selectedIds.filter((id) => id !== category._id));
+      onChange(selectedCategories.filter((item) => item._id !== category._id));
 
       return;
     }
@@ -50,21 +51,19 @@ function CategorySelector({
 
     if (!newIds) return;
 
-    onChange(newIds);
+    onChange([...selectedCategories, category]);
   };
 
   const handleRemove = (id: string) => {
     remove(id);
 
-    onChange(selectedIds.filter((categoryId) => categoryId !== id));
+    onChange(selectedCategories.filter((category) => category._id !== id));
   };
 
   return (
     <div>
       <SelectedCategories
-        categories={categories.filter((category) =>
-          selectedIds.includes(category._id),
-        )}
+        categories={selectedCategories}
         onRemove={handleRemove}
       />
 

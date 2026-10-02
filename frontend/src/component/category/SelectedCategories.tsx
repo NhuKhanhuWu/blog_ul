@@ -9,6 +9,7 @@ interface SelectedCategoriesProps {
 }
 
 function SelectedCategories({ categories, onRemove }: SelectedCategoriesProps) {
+  console.log(categories);
   if (categories.length === 0) return null;
 
   return (

@@ -53,7 +53,7 @@ export interface BlogDetailProps {
     slug: string;
   };
 
-  categories: string[];
+  categories: Array<string | ICategory>;
 
   pub_date?: Date;
   isDraft: boolean;

@@ -1,131 +1,70 @@
 /** @format */
 
-import { useCallback, useReducer, useRef } from "react";
+import { useCallback, useEffect, useReducer, useRef } from "react";
 import { PartialBlock } from "@blocknote/core";
 
-import { BlogDetailProps, ContentBlock } from "../../types/blog.type";
+import { BlogDetailProps } from "../../types/blog.type";
 
 import useSaveDraft from "./useSaveDraft";
 import { useBlogEditorImages } from "./useBlogEditorImages";
 
-/* =========================
-   Blog state
-========================= */
+import {
+  blogReducer,
+  createInitialBlogData,
+  BlogFieldAction,
+  BlogEditorData,
+  BlogEditorState,
+} from "../../reducer/blogEditor.reducer";
 
-export interface BlogEditorData {
-  title: string;
-  content: ContentBlock[];
-  categories: string[];
-  isPrivate: boolean;
-}
+import {
+  loadBlogDraft,
+  saveBlogDraftToStorage,
+} from "../../storage/blogEditor.storage";
 
-export type SaveStatus = "saved" | "unsaved" | "saving" | "error";
-
-type BlogFieldAction = {
-  [K in keyof BlogEditorData]: {
-    type: "SET_FIELD";
-    field: K;
-    value: BlogEditorData[K];
-  };
-}[keyof BlogEditorData];
-
-interface BlogEditorState {
-  blog: BlogEditorData;
-  saveStatus: SaveStatus;
-  revision: number;
-  saveRequestId: number;
-}
-
-type BlogAction =
-  | BlogFieldAction
-  | {
-      type: "SET_BLOG";
-      payload: Partial<BlogEditorData>;
-    }
-  | { type: "SAVE_STARTED"; requestId: number }
-  | { type: "SAVE_SUCCEEDED"; requestId: number; revision: number }
-  | { type: "SAVE_FAILED"; requestId: number; revision: number };
-
-function blogReducer(
-  state: BlogEditorState,
-  action: BlogAction,
-): BlogEditorState {
-  switch (action.type) {
-    case "SET_FIELD":
-      return {
-        ...state,
-        blog: {
-          ...state.blog,
-          [action.field]: action.value,
-        },
-        saveStatus: "unsaved",
-        revision: state.revision + 1,
-      };
-
-    case "SET_BLOG":
-      return {
-        ...state,
-        blog: { ...state.blog, ...action.payload },
-        saveStatus: "unsaved",
-        revision: state.revision + 1,
-      };
-
-    case "SAVE_STARTED":
-      return {
-        ...state,
-        saveStatus: "saving",
-        saveRequestId: action.requestId,
-      };
-
-    case "SAVE_SUCCEEDED":
-    case "SAVE_FAILED":
-      if (action.requestId !== state.saveRequestId) return state;
-
-      return {
-        ...state,
-        saveStatus:
-          action.revision !== state.revision
-            ? "unsaved"
-            : action.type === "SAVE_SUCCEEDED"
-              ? "saved"
-              : "error",
-      };
-
-    default:
-      return state;
-  }
-}
-
-/* =========================
-   Hook
-========================= */
+import { convertToBlockNoteBlocks } from "../../utils/helper/convertToBlockNoteBlocks";
+import { useBlogAutosave } from "./useBlogAutosave";
 
 interface UseBlogEditorProps {
   blog: BlogDetailProps;
   initialContent: PartialBlock[];
 }
 
-export function useBlogEditor({ blog, initialContent }: UseBlogEditorProps) {
-  /* =========================
-     Blog state
-  ========================= */
+function initializeBlogEditor(blog: BlogDetailProps): BlogEditorState {
+  const initialBlog = createInitialBlogData(blog);
 
-  const [state, dispatch] = useReducer(blogReducer, {
-    blog: {
-      title: blog.title || "",
-      content: blog.content || [],
-      categories: blog.categories ?? [],
-      isPrivate: blog.isPrivate ?? false,
-    },
-    saveStatus: "saved",
+  const { blog: restoredBlog, restored } = loadBlogDraft(blog._id, initialBlog);
+
+  return {
+    blog: restoredBlog,
+    saveStatus: restored ? "unsaved" : "saved",
     revision: 0,
     saveRequestId: 0,
-  });
+  };
+}
+
+export function useBlogEditor({ blog, initialContent }: UseBlogEditorProps) {
+  /* =========================
+     Initial state
+  ========================= */
+
+  const [state, dispatch] = useReducer(blogReducer, blog, initializeBlogEditor);
 
   const saveRequestId = useRef(0);
 
   /* =========================
-     Blog field update
+     Local storage
+  ========================= */
+
+  useEffect(() => {
+    if (!blog._id || state.revision === 0) {
+      return;
+    }
+
+    saveBlogDraftToStorage(blog._id, state.blog);
+  }, [blog._id, state.blog, state.revision]);
+
+  /* =========================
+     Blog updates
   ========================= */
 
   const updateBlogField = useCallback(
@@ -147,17 +86,22 @@ export function useBlogEditor({ blog, initialContent }: UseBlogEditorProps) {
   }, []);
 
   /* =========================
-     Editor and images
+     Editor
   ========================= */
+
+  const editorContent = state.blog.content.length
+    ? convertToBlockNoteBlocks(state.blog.content)
+    : initialContent;
+
+  const editorBlog = {
+    ...blog,
+    content: state.blog.content,
+  };
 
   const { editor, imageCounts, getContent } = useBlogEditorImages({
-    blog,
-    initialContent,
+    blog: editorBlog,
+    initialContent: editorContent,
   });
-
-  /* =========================
-     Editor changes
-  ========================= */
 
   const handleEditorChange = useCallback(() => {
     updateBlogField("content", getContent());
@@ -169,47 +113,55 @@ export function useBlogEditor({ blog, initialContent }: UseBlogEditorProps) {
 
   const { mutate } = useSaveDraft();
 
+  // manually
   const saveDraft = useCallback(() => {
     const content = getContent();
 
-    const payload = {
-      blogContent: content,
-      id: blog._id,
-      categories: state.blog.categories,
-      isPrivate: state.blog.isPrivate,
-      title: state.blog.title,
-    };
+    const revision = state.revision;
 
-    const currentRevision = state.revision;
-    const currentRequestId = saveRequestId.current + 1;
-    saveRequestId.current = currentRequestId;
-    dispatch({ type: "SAVE_STARTED", requestId: currentRequestId });
+    const requestId = saveRequestId.current + 1;
+    saveRequestId.current = requestId;
 
-    mutate(payload, {
-      onSuccess: () => {
-        dispatch({
-          type: "SAVE_SUCCEEDED",
-          requestId: currentRequestId,
-          revision: currentRevision,
-        });
-      },
-      onError: () => {
-        dispatch({
-          type: "SAVE_FAILED",
-          requestId: currentRequestId,
-          revision: currentRevision,
-        });
-      },
+    dispatch({
+      type: "SAVE_STARTED",
+      requestId,
     });
-  }, [
-    blog._id,
-    getContent,
-    mutate,
-    state.blog.categories,
-    state.blog.isPrivate,
-    state.blog.title,
-    state.revision,
-  ]);
+
+    mutate(
+      {
+        id: blog._id,
+        title: state.blog.title,
+        blogContent: content,
+        categories: state.blog.categories.map((category) => category._id),
+        isPrivate: state.blog.isPrivate,
+      },
+      {
+        onSuccess: () => {
+          dispatch({
+            type: "SAVE_SUCCEEDED",
+            requestId,
+            revision,
+          });
+        },
+
+        onError: () => {
+          dispatch({
+            type: "SAVE_FAILED",
+            requestId,
+            revision,
+          });
+        },
+      },
+    );
+  }, [blog._id, getContent, mutate, state.blog, state.revision]);
+
+  // auto
+  useBlogAutosave({
+    revision: state.revision,
+    save: saveDraft,
+    debounce: 15_000,
+    maxWait: 60_000,
+  });
 
   /* =========================
      Return
@@ -217,7 +169,6 @@ export function useBlogEditor({ blog, initialContent }: UseBlogEditorProps) {
 
   return {
     blog: state.blog,
-
     isDraft: blog.isDraft,
 
     saveStatus: state.saveStatus,
@@ -227,7 +178,6 @@ export function useBlogEditor({ blog, initialContent }: UseBlogEditorProps) {
 
     editor,
     imageCounts,
-
     handleEditorChange,
 
     getContent,

@@ -12,7 +12,7 @@ function BlogEditorDetails() {
         <h3>Categories</h3>
 
         <CategorySelector
-          selectedIds={blog.categories}
+          selectedCategories={blog.categories}
           maxSelected={50}
           onChange={(categories) => updateBlogField("categories", categories)}
         />
