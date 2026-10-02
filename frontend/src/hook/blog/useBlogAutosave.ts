@@ -1,6 +1,6 @@
 /** @format */
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 interface UseAutosaveProps {
   revision: number;
@@ -20,6 +20,18 @@ export function useBlogAutosave({
   const maxWaitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const saveRef = useRef(save);
+
+  const cancelPendingSaves = useCallback(() => {
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+      debounceTimer.current = null;
+    }
+
+    if (maxWaitTimer.current) {
+      clearTimeout(maxWaitTimer.current);
+      maxWaitTimer.current = null;
+    }
+  }, []);
 
   useEffect(() => {
     saveRef.current = save;
@@ -74,14 +86,8 @@ export function useBlogAutosave({
   }, [revision, debounce, maxWait]);
 
   useEffect(() => {
-    return () => {
-      if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current);
-      }
+    return cancelPendingSaves;
+  }, [cancelPendingSaves]);
 
-      if (maxWaitTimer.current) {
-        clearTimeout(maxWaitTimer.current);
-      }
-    };
-  }, []);
+  return cancelPendingSaves;
 }

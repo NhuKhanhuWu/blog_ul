@@ -93,3 +93,9 @@ export async function saveDraft({
 
   return data.data.data;
 }
+
+export async function publishBlog(id: string): Promise<BlogDetailProps> {
+  const data = await axiosInstance.patch(`/blog/${id}/publish`);
+
+  return data.data;
+}

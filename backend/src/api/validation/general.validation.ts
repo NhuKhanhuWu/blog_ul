@@ -2,11 +2,12 @@
 import { z } from "zod";
 import { Types } from "mongoose";
 
-export const objectIdSchema = z
-  .string()
-  .refine((val) => Types.ObjectId.isValid(val), {
+export const objectIdSchema = z.union([
+  z.string().refine((val) => Types.ObjectId.isValid(val), {
     message: "Invalid MongoDB ObjectId",
-  });
+  }),
+  z.instanceof(Types.ObjectId),
+]);
 
 export const passwordSchema = z
   .string()

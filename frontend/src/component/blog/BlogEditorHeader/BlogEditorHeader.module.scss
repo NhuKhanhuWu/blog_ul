@@ -1,4 +1,5 @@
 /** @format */
+@use "../../../styles/_mixins.scss" as mixin;
 
 .header {
   min-height: 6.4rem;
@@ -90,6 +91,11 @@
   flex: 1;
 
   font-size: 1.3rem;
+}
+
+// modal
+.modalFooter {
+  @include mixin.footer;
 }
 
 @include respond(md) {

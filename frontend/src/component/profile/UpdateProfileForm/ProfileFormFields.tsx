@@ -32,7 +32,6 @@ export const ProfileFormFields = ({ register }: ProfileFormFieldsProps) => {
     (state) => state.auth.user,
   )?.usernameLastUpdated;
   const canUpdateName = canUpdateUsername(lastNameUpdate);
-  console.log(canUpdateName);
 
   return (
     <div className={styles.formGroup}>

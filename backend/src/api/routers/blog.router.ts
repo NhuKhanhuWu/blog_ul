@@ -61,9 +61,7 @@ blogRouter
   .delete(deleteBlogLimiter, protect, deleteBlog);
 
 // publish blog
-blogRouter
-  .route("/:id/publish")
-  .patch(protect, validateRequest(publishBlogSchema), publishBlog);
+blogRouter.route("/:id/publish").patch(protect, publishBlog);
 
 // ------------ CMTS ------------
 blogRouter

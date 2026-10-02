@@ -111,52 +111,53 @@ export function useBlogEditor({ blog, initialContent }: UseBlogEditorProps) {
      Save draft
   ========================= */
 
-  const { mutate } = useSaveDraft();
+  const { mutateAsync } = useSaveDraft();
+  const saveQueue = useRef<Promise<boolean>>(Promise.resolve(true));
 
   // manually
   const saveDraft = useCallback(() => {
-    const content = getContent();
+    const save = async () => {
+      const revision = state.revision;
+      const requestId = saveRequestId.current + 1;
+      saveRequestId.current = requestId;
 
-    const revision = state.revision;
+      dispatch({
+        type: "SAVE_STARTED",
+        requestId,
+      });
 
-    const requestId = saveRequestId.current + 1;
-    saveRequestId.current = requestId;
+      try {
+        await mutateAsync({
+          id: blog._id,
+          title: state.blog.title,
+          blogContent: getContent(),
+          categories: state.blog.categories.map((category) => category._id),
+          isPrivate: state.blog.isPrivate,
+        });
 
-    dispatch({
-      type: "SAVE_STARTED",
-      requestId,
-    });
+        dispatch({
+          type: "SAVE_SUCCEEDED",
+          requestId,
+          revision,
+        });
+        return true;
+      } catch {
+        dispatch({
+          type: "SAVE_FAILED",
+          requestId,
+          revision,
+        });
+        return false;
+      }
+    };
 
-    mutate(
-      {
-        id: blog._id,
-        title: state.blog.title,
-        blogContent: content,
-        categories: state.blog.categories.map((category) => category._id),
-        isPrivate: state.blog.isPrivate,
-      },
-      {
-        onSuccess: () => {
-          dispatch({
-            type: "SAVE_SUCCEEDED",
-            requestId,
-            revision,
-          });
-        },
-
-        onError: () => {
-          dispatch({
-            type: "SAVE_FAILED",
-            requestId,
-            revision,
-          });
-        },
-      },
-    );
-  }, [blog._id, getContent, mutate, state.blog, state.revision]);
+    const savePromise = saveQueue.current.then(save);
+    saveQueue.current = savePromise;
+    return savePromise;
+  }, [blog._id, getContent, mutateAsync, state.blog, state.revision]);
 
   // auto
-  useBlogAutosave({
+  const cancelPendingAutosaves = useBlogAutosave({
     revision: state.revision,
     save: saveDraft,
     debounce: 15_000,
@@ -182,5 +183,6 @@ export function useBlogEditor({ blog, initialContent }: UseBlogEditorProps) {
 
     getContent,
     saveDraft,
+    cancelPendingAutosaves,
   };
 }

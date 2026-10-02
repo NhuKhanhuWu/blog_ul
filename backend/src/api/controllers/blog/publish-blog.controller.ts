@@ -18,14 +18,9 @@ export const publishBlog = catchAsync(async (req, res) => {
 
   if (!blog) throw new AppError("Blog not found", 404);
 
-  // Validate current DB data before publishing
-  const validatedBlog = publishBlogDataSchema.safeParse({
-    title: blog.title,
-    authors: blog.authors,
-    categories: blog.categories,
-    content: blog.content,
-    isPrivate: blog.isPrivate,
-  });
+  // Validate plain data so strict content schemas do not see Mongoose internals.
+  const blogData = blog.toObject?.() ?? blog;
+  const validatedBlog = publishBlogDataSchema.safeParse(blogData);
 
   if (!validatedBlog.success) {
     return res.status(400).json({
@@ -50,6 +45,6 @@ export const publishBlog = catchAsync(async (req, res) => {
   res.status(200).json({
     status: "success",
     message: "Blog published successfully",
-    data: publishedBlog,
+    ...publishedBlog.toObject(),
   });
 });
