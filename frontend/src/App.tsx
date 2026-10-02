@@ -22,6 +22,8 @@ import Loader from "./component/ui/Loader/Loader.tsx";
 import { SignUpProvider } from "./context/SignUpContext.tsx";
 import { ForgotPasswordProvider } from "./context/ForgotPasswordContext.tsx";
 import { ChangeEmailProvider } from "./context/ChangeEmailContext.tsx";
+import CreateBlog from "./page/CreateBlog/CreateBlog.tsx";
+import EditBlog from "./page/EditBlog/EditBlog.tsx";
 
 // lazy load
 const AppLayout = lazy(() => import("./layout/AppLayout.tsx"));
@@ -85,7 +87,23 @@ const router = createBrowserRouter([
     element: <AppLayout></AppLayout>,
     children: [
       { element: <Homepage />, path: "/" },
-      { element: <BlogDetail />, path: "/blogs/:slug" },
+      {
+        path: "/blog",
+        children: [
+          {
+            path: ":slug",
+            element: <BlogDetail />,
+          },
+          {
+            path: "new",
+            element: <CreateBlog></CreateBlog>,
+          },
+          {
+            path: "edit/:id",
+            element: <EditBlog></EditBlog>,
+          },
+        ],
+      },
 
       {
         path: "/auth",

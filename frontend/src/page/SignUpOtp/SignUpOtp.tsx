@@ -7,7 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import OtpInputField from "../../component/input/OtpInput";
 import AuthHeader from "../../component/auth/AuthHeader/AuthHeader";
 import useSignUpOtpStep from "../../hook/auth/useSignUpOtpStep";
-import { createOtpSchema } from "../../utils/form-schema";
+import { createOtpSchema } from "../../utils/core/form-schema";
 import useSignUpEmailStep from "../../hook/auth/useSignUpEmailStep";
 import { useNavigate } from "react-router-dom";
 import ResendOtp from "../../component/auth/ResendOtp/ResendOtp";

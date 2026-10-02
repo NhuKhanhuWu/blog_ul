@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import styles from "./CmtItem.module.scss";
 import { Cmt } from "../../../types/comment.type";
 import { memo, useMemo, useState, ReactNode } from "react";
-import defaultAvatar from "../../../utils/default-avatar";
+import defaultAvatar from "../../../utils/helper/default-avatar";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getCmtByBlog } from "../../../api/comment.api";
 import CmtContent from "../CmtContent/CmtContent";

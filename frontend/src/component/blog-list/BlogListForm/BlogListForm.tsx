@@ -49,7 +49,7 @@ function BlogListForm({
   const {
     register,
     handleSubmit,
-    formState: { errors: formErr },
+    formState: { errors: formErr, isDirty },
   } = useForm<BlogListFormFields>({
     resolver: yupResolver(blogListFormSchema) as Resolver<BlogListFormFields>,
     defaultValues: initValue,
@@ -133,9 +133,17 @@ function BlogListForm({
           </select>
         </div>
 
-        <button className={`btn-secondary ${isDisabled && styles.disabled}`}>
-          Submit
-        </button>
+        <div className={styles.footer}>
+          <button onClick={() => setIsOpening(false)} className="btn-secondary">
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            className={`btn-primary ${(isDisabled || !isDirty) && styles.disabled}`}>
+            Submit
+          </button>
+        </div>
       </form>
     </ModalOverlay>
   );

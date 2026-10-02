@@ -4,10 +4,14 @@
 .sortOption {
   @include formField;
 
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 
   label {
     margin-right: 1rem;
+  }
+
+  select {
+    margin-right: 4rem;
   }
 }
 

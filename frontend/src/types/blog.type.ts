@@ -8,10 +8,12 @@ export interface BlogSimplify {
   title: string;
   slug: string;
   upVotes?: number;
-  pub_date: Date;
+  pub_date?: Date;
+  isDraft?: boolean;
+  updatedAt?: Date;
   authors: string[];
   userId: string;
-  img?: string;
+  thumbnail?: string;
   preview: {
     text: string;
   };
@@ -35,6 +37,7 @@ export type ContentBlock =
       note?: string;
       text?: undefined;
       heading?: undefined;
+      isEmbed: boolean;
     };
 
 export interface BlogDetailProps {
@@ -50,9 +53,11 @@ export interface BlogDetailProps {
     slug: string;
   };
 
-  categories: ICategory[];
+  categories: Array<string | ICategory>;
 
-  pub_date?: string;
+  pub_date?: Date;
+  isDraft: boolean;
+  isPrivate: boolean;
 
   content: ContentBlock[];
 
@@ -79,8 +84,9 @@ export type NormalizedContent =
   | { type: "paragraph"; text: string }
   | { type: "image"; img: string; note?: string };
 
-export type NormalizedBlog = Omit<BlogDetailProps, "content"> & {
+export type NormalizedBlog = Omit<BlogDetailProps, "content" | "categories"> & {
   content: NormalizedContent[];
+  categories: ICategory[];
 };
 
 export interface GetBlogsResponse {
@@ -91,5 +97,13 @@ export interface GetBlogsResponse {
 
 export interface GetBlogs {
   query: string;
+  pageParam: number;
+}
+
+export type MyBlogStatus = "all" | "draft" | "published";
+
+export interface GetMyBlogs {
+  status: MyBlogStatus;
+  sort: string;
   pageParam: number;
 }

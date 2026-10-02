@@ -6,7 +6,7 @@ import { AxiosError } from "axios";
 import styles from "./BlogDetail.module.scss";
 import { useQuery } from "@tanstack/react-query";
 import { BlogDetailProps } from "../../types/blog.type";
-import { getBLog } from "../../api/blog.api";
+import { getOneBLogBySlug } from "../../api/blog.api";
 import NotFound from "../../component/ui/NotFound/NotFound";
 import Loader from "../../component/ui/Loader/Loader";
 import BlogInfor from "../../component/blog/BlogInfor/BlogInfor";
@@ -21,7 +21,7 @@ function BlogDetail() {
     error,
   } = useQuery<BlogDetailProps, AxiosError>({
     queryKey: ["blog", slug],
-    queryFn: () => getBLog(slug),
+    queryFn: () => getOneBLogBySlug(slug),
   });
 
   if (error?.response?.status === 404 || (!blog && !isPending))

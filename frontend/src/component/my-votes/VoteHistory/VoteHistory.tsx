@@ -9,7 +9,7 @@ import {
   MyBlogVote,
   MyCommentVote,
 } from "../../../types/vote.type";
-import { formatDate } from "../../../utils/date";
+import { formatDate } from "../../../utils/helper/date";
 import HistoryActionPopover from "../../shared/HistoryActionPopover/HistoryActionPopover";
 import styles from "./VoteHistory.module.scss";
 
@@ -18,7 +18,7 @@ interface VoteHistoryProps {
 }
 
 const getVoteUrl = (vote: MyBlogVote | MyCommentVote) => {
-  const baseUrl = `/blogs/${vote.slug}`;
+  const baseUrl = `/blog/${vote.slug}`;
 
   return "commentId" in vote ? `${baseUrl}#comment-${vote.commentId}` : baseUrl;
 };

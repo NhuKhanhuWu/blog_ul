@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import { emaiSchema } from "../../utils/form-schema";
+import { emaiSchema } from "../../utils/core/form-schema";
 import EmailField from "../../component/input/EmailField";
 import AuthHeader from "../../component/auth/AuthHeader/AuthHeader";
 import { yupResolver } from "@hookform/resolvers/yup";

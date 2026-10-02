@@ -1,7 +1,5 @@
 /** @format */
 
-// TODO: update to delete old img & add new img in supabase
-
 import { BlogModel } from "../../models/blog.model";
 import AppError from "../../utils/error/app-error";
 import catchAsync from "../../utils/error/catch-async";
@@ -13,7 +11,12 @@ export const updateBlog = catchAsync(async (req, res) => {
   // update blog
   const updatedBlog = await BlogModel.findOneAndUpdate(
     { _id: blogId, userId: req.user?._id },
-    { $set: req.body },
+    {
+      $set: {
+        ...req.body,
+        isDraft: true,
+      },
+    },
     {
       new: true,
       runValidators: true,

@@ -2,7 +2,7 @@
 
 import styles from "./CmtContent.module.scss";
 import { Link } from "react-router-dom";
-import { getDateDistance } from "../../../utils/date";
+import { getDateDistance } from "../../../utils/helper/date";
 import { ShowMoreText } from "../../ui/ShowMoreText/ShowMoreText";
 import CmtPopover from "../CmtPopover/CmtPopover";
 import { useAppSelector } from "../../../hook/shared/reduxHooks";

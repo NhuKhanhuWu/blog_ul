@@ -11,7 +11,7 @@ import Categories from "../Categories/Categories";
 import useSyncSearchForm from "../../../hook/search/useSyncSearchForm";
 import { formSchema, TSearchFormValues } from "../../../types/search.type";
 import { useSearchParams } from "react-router-dom";
-import { updateSearchUrl } from "../../../utils/update-search-url";
+import { updateSearchUrl } from "../../../utils/helper/update-search-url";
 import { Sheet } from "react-modal-sheet";
 import { MdClose } from "react-icons/md";
 import { useMediaQuery } from "react-responsive";

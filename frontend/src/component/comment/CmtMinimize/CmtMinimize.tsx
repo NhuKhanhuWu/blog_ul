@@ -1,7 +1,7 @@
 /** @format */
 import { Dispatch, SetStateAction } from "react";
 import styles from "./CmtMinimize.module.scss";
-import defaultAvatar from "../../../utils/default-avatar";
+import defaultAvatar from "../../../utils/helper/default-avatar";
 import { Cmt } from "../../../types/comment.type";
 
 export interface ICmtMinimize {

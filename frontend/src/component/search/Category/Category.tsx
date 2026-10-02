@@ -3,12 +3,22 @@
 import { useFormContext } from "react-hook-form";
 import { ICategoryInput, TSearchFormValues } from "../../../types/search.type";
 
+const MAX_CATEGORY = 5;
+
 export function Category({ category, selectedIds }: ICategoryInput) {
   const { setValue, setError, clearErrors } =
     useFormContext<TSearchFormValues>();
   const isChecked = selectedIds.includes(category._id);
 
   const handleChange = () => {
+    if (selectedIds.length >= MAX_CATEGORY) {
+      setError("categories", {
+        type: "max",
+        message: "You can only select up to 5 categories at a time",
+      });
+      return;
+    }
+
     if (isChecked) {
       // Nếu đang chọn thì bỏ chọn
       setValue(
@@ -16,14 +26,6 @@ export function Category({ category, selectedIds }: ICategoryInput) {
         selectedIds.filter((id) => id !== category._id),
       );
     } else {
-      if (selectedIds.length > 5) {
-        setError("categories", {
-          type: "max",
-          message: "You can only select up to 5 categories at a time",
-        });
-        return;
-      }
-
       // Nếu chưa chọn thì thêm vào
       setValue("categories", [...selectedIds, category._id]);
       clearErrors("categories");

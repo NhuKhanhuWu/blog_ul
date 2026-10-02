@@ -1,7 +1,7 @@
 /** @format */
 
 import { IToggleVote, IVoteResponse } from "../types/vote.type";
-import axiosInstance from "../utils/axios-instance";
+import axiosInstance from "../utils/core/axios-instance";
 
 export async function toggleVote({
   targetId,

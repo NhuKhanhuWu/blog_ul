@@ -3,23 +3,23 @@ import { FaRegThumbsUp } from "react-icons/fa";
 import styles from "./BlogCardSm.module.scss";
 import { BlogCardProps } from "../../../types/blog.type";
 import { Link } from "react-router-dom";
-import { getDateDistance } from "../../../utils/date";
+import { getDateDistance } from "../../../utils/helper/date";
 import BlogPopOver from "../BlogPopOver/BlogPopOver";
 
 function BlogCardSm({ blog, popItems }: BlogCardProps) {
-  const placehoderImg = blog.img || "/placeholder-img.jpg";
+  const placehoderImg = blog.thumbnail || "/placeholder-img.jpg";
   // placeholder-img.jpg
 
   return (
     <div className={styles.card}>
       {/* 1. Blog Image / Thumbnail */}
-      <Link to={`/blogs/${blog.slug}`} className={styles.thumbnailWrapper}>
-        <img className={styles.blogImg} src={blog.img || placehoderImg} />
+      <Link to={`/blog/${blog.slug}`} className={styles.thumbnailWrapper}>
+        <img className={styles.blogImg} src={blog.thumbnail || placehoderImg} />
       </Link>
 
       {/* 2. Blog Content */}
       <div className={styles.content}>
-        <Link to={`/blogs/${blog.slug}`} className={styles.title}>
+        <Link to={`/blog/${blog.slug}`} className={styles.title}>
           {blog.title}
         </Link>
 
@@ -30,8 +30,12 @@ function BlogCardSm({ blog, popItems }: BlogCardProps) {
         </p>
 
         <div className={styles.meta}>
-          <p className={styles.date}>{getDateDistance(blog.pub_date)}</p>
-          <span className={styles.separator}>•</span>
+          {blog.pub_date && (
+            <>
+              <p className={styles.date}>{getDateDistance(blog.pub_date)}</p>
+              <span className={styles.separator}>•</span>
+            </>
+          )}
 
           <div className={`vertical-center smTxt ${styles.like}`}>
             <FaRegThumbsUp />

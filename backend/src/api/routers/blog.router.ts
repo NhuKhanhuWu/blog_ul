@@ -3,7 +3,8 @@
 import express from "express";
 import {
   getMultBlog,
-  getOneBlogById,
+  getMyBlogs,
+  getMyBlogById,
   getOneBlogBySlug,
 } from "../controllers/blog/get-blog.controller";
 import { createBlog } from "../controllers/blog/create-blog.controller";
@@ -23,10 +24,12 @@ import {
   updateBlogLimiter,
 } from "../middlewares/blog.middleware";
 import {
-  createBlogSchema,
+  publishBlogSchema,
   updateBlogSchema,
 } from "../validation/blog.validation";
 import { createCmtParamsSchema } from "../validation/comment.validation";
+import { publishBlog } from "../controllers/blog/publish-blog.controller";
+import { getBlogImgUploadUrl } from "../controllers/blog/get-blog-img-upload-url.controller";
 
 const blogRouter = express.Router();
 
@@ -38,16 +41,17 @@ blogRouter.route("/slug/:slug").get(loadUser, getOneBlogBySlug);
 blogRouter
   .route("/")
   .get(getMultBlog)
-  .post(
-    protect,
-    createBlogLimiter,
-    validateRequest(createBlogSchema),
-    createBlog,
-  );
+  .post(protect, createBlogLimiter, createBlog);
+
+blogRouter.route("/me").get(protect, getMyBlogs);
+
+blogRouter
+  .route("/:blogId/image-upload-url")
+  .post(protect, getBlogImgUploadUrl);
 
 blogRouter
   .route("/:id")
-  .get(loadUser, getOneBlogById) //get one blog by id
+  .get(loadUser, getMyBlogById) //get mu blog by id
   .patch(
     protect,
     updateBlogLimiter,
@@ -55,6 +59,9 @@ blogRouter
     updateBlog,
   ) // update blog
   .delete(deleteBlogLimiter, protect, deleteBlog);
+
+// publish blog
+blogRouter.route("/:id/publish").patch(protect, publishBlog);
 
 // ------------ CMTS ------------
 blogRouter

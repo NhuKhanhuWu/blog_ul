@@ -1,7 +1,7 @@
 /** @format */
 
 import { ICategoriesResponse } from "../types/category.type";
-import axiosInstance from "../utils/axios-instance";
+import axiosInstance from "../utils/core/axios-instance";
 
 export async function getCategories(
   page: number,
@@ -10,7 +10,7 @@ export async function getCategories(
 ): Promise<ICategoriesResponse> {
   const checkedQuery = `?page=${page || 0}&name=${categoryName || ""}`;
 
-  const response = await axiosInstance.get(`/categories${checkedQuery}`, {
+  const response = await axiosInstance.get(`/category${checkedQuery}`, {
     signal,
   });
 

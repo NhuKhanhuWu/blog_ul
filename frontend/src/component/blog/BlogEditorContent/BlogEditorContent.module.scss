@@ -1,0 +1,173 @@
+/** @format */
+
+.page {
+  min-height: 100vh;
+}
+
+/* =========================================
+   Main layout
+   ========================================= */
+
+.layout {
+  display: flex;
+  flex-direction: column;
+
+  gap: 1.2rem;
+
+  width: 100%;
+  max-width: 100%;
+
+  margin: 0 auto;
+  padding: 0.8rem;
+}
+
+.editorContainer {
+  width: 100%;
+  min-width: 0;
+}
+
+/* =========================================
+   Editor
+   ========================================= */
+
+.editorCard {
+  min-height: calc(100vh - 15rem);
+
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+
+  padding: 1.8rem 1.2rem;
+}
+
+.titleInput {
+  width: 100%;
+
+  border: 0;
+  outline: 0;
+
+  font-family: "Forum", serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.subtitle {
+  margin: 0.8rem 0 1.6rem;
+
+  color: var(--text-muted);
+  font-size: 1.3rem;
+}
+
+.divider {
+  border-top: 1px solid #edf1f2;
+}
+
+.blockEditor {
+  margin-top: 1.2rem;
+
+  font-family: "Parkinsans", sans-serif;
+}
+
+/* =========================================
+   Small mobile: >= 480px
+   ========================================= */
+
+@include respond(sm) {
+  .layout {
+    padding: 1rem;
+  }
+
+  .editorCard {
+    padding: 2rem 1.4rem;
+  }
+
+  .titleInput {
+    font-size: 2.8rem;
+  }
+
+  .subtitle {
+    font-size: 1.4rem;
+  }
+}
+
+/* =========================================
+   Tablet: >= 768px
+   ========================================= */
+
+@include respond(md) {
+  .layout {
+    gap: 1.6rem;
+    padding: 1.6rem;
+  }
+
+  .editorCard {
+    padding: 2.4rem 3rem;
+  }
+
+  .titleInput {
+    font-size: 3.2rem;
+  }
+
+  .subtitle {
+    font-size: 1.5rem;
+  }
+
+  .blockEditor {
+    margin-top: 1.4rem;
+  }
+
+  .blockEditor :global(.bn-editor) {
+    padding: 1rem 0 3.5rem;
+  }
+}
+
+/* =========================================
+   Desktop: >= 1024px
+   ========================================= */
+
+@include respond(lg) {
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 39rem;
+
+    gap: 1.8rem;
+
+    max-width: 150rem;
+
+    padding: 1.8rem;
+  }
+
+  .editorCard {
+    padding: 2.8rem 4.4rem;
+
+    min-height: calc(100vh - 15rem);
+  }
+
+  .titleInput {
+    font-size: 3.6rem;
+  }
+
+  .subtitle {
+    margin: 0.8rem 0 2rem;
+    font-size: 1.6rem;
+  }
+
+  .blockEditor {
+    margin-top: 1.6rem;
+  }
+
+  .publishBox {
+    margin-top: 2rem;
+    padding: 1.8rem;
+  }
+}
+
+/* =========================================
+   Large desktop: >= 1280px
+   ========================================= */
+
+@include respond(xl) {
+  .layout {
+    padding: 1.8rem;
+  }
+}

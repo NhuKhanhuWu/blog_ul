@@ -6,25 +6,21 @@ import { IBlogContent } from "../validation/blog.validation";
 export interface BlogInput {
   userId: Types.ObjectId;
   title: string;
-  content: IBlogContent;
+  content: IBlogContent[];
   authors: string[];
   categories: Types.Array<Types.ObjectId>;
 }
 
-// export interface IBlogDocument extends IBlogInput {}
 export interface BlogDocument extends BlogInput {
   url?: string;
   slug: string;
   pub_date: Date;
   isPrivate: boolean;
-  images: [String];
-  upVotes: Number;
-  downVotes: Number;
+  upVotes: number;
+  downVotes: number;
   totalCmts: number;
   totalParentCmts: number;
-  createdAt: Date;
-  updatedAt: Date;
-  thumbnail: string;
+  isDraft: boolean;
 }
 
 export interface BlogWithVote extends FlattenMaps<BlogDocument> {

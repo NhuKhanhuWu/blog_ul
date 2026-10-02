@@ -14,7 +14,6 @@ function useForgotPasswordOtp() {
     },
     onSuccess: (response) => {
       // save verify token and mark OTP as verified
-      console.log(response);
       setFields({ token: response.token, isOtpVerified: true });
     },
   });

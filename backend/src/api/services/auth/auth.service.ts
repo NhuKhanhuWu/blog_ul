@@ -1,13 +1,13 @@
 /** @format */
 
 import { Request, Response } from "express";
-import { UserDocument } from "../types/user.type";
+import { UserDocument } from "../../types/user.type";
 import {
   createAccessToken,
   createRefreshToken,
-} from "../utils/token/create-token";
-import RefreshToken from "../models/refresh-token.model";
-import { redisClient } from "../utils/redis";
+} from "../../utils/token/create-token";
+import RefreshToken from "../../models/refresh-token.model";
+import { redisClient } from "../../utils/redis";
 
 interface RevokeAndRegenerateTokensOptions {
   forceLogoutOthers?: boolean;
