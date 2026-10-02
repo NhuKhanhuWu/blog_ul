@@ -53,7 +53,7 @@ export interface BlogDetailProps {
     slug: string;
   };
 
-  categories: ICategory[];
+  categories: string[];
 
   pub_date?: Date;
   isDraft: boolean;
@@ -84,8 +84,9 @@ export type NormalizedContent =
   | { type: "paragraph"; text: string }
   | { type: "image"; img: string; note?: string };
 
-export type NormalizedBlog = Omit<BlogDetailProps, "content"> & {
+export type NormalizedBlog = Omit<BlogDetailProps, "content" | "categories"> & {
   content: NormalizedContent[];
+  categories: ICategory[];
 };
 
 export interface GetBlogsResponse {

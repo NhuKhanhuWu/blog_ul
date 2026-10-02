@@ -6,7 +6,7 @@ import { BlockNoteEditor } from "@blocknote/core";
 import { BlockNoteView } from "@blocknote/mantine";
 import { useCreateBlockNote } from "@blocknote/react";
 import { useAppSelector } from "../../../hook/shared/reduxHooks";
-import { convertToBlockNoteBlocks } from "../../../utils/helper/convertToBlockNoteSchema";
+import { convertToBlockNoteBlocks } from "../../../utils/helper/convertToBlockNoteBlocks";
 import styles from "./BlogContent.module.scss";
 
 interface BlogContentProps {

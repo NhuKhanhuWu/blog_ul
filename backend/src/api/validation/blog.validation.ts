@@ -17,10 +17,6 @@ export const authorValidator = z
   .min(1, "Author name cannot be empty")
   .max(50, "Author name cannot exceed 50 characters");
 
-export const authorsValidator = z
-  .array(authorValidator)
-  .max(10, "You can specify up to 10 authors");
-
 export const categoryValidator = objectIdSchema;
 
 export const MAX_CATEGORIES = 50;
@@ -152,7 +148,6 @@ export const contentValidator = contentBlocksValidator.nonempty(
 
 export const publishBlogDataSchema = z.object({
   title: titleValidator,
-  authors: authorsValidator,
   categories: categoriesValidator,
   content: contentValidator,
   isPrivate: z.boolean().optional(),
@@ -166,7 +161,6 @@ export const updateBlogSchema = z.object({
   body: z
     .object({
       title: titleValidator.optional(),
-      authors: authorsValidator.optional(),
       categories: categoriesValidator.optional(),
       content: contentBlocksValidator.optional(),
       isPrivate: z.boolean().optional(),

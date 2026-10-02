@@ -89,7 +89,7 @@ export const getMyBlogById = catchAsync(async (req, res) => {
   // add to response
   res.status(200).json({
     status: "success",
-    data: blog,
+    ...blog,
   });
 });
 

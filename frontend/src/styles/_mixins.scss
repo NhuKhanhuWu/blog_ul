@@ -25,6 +25,17 @@
 }
 
 // ==== SEARCH BAR: START ====
+@mixin footer {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+
+  margin-top: 2rem;
+}
+
 @mixin formField {
   label {
     font-size: 1.6rem;
@@ -34,6 +45,26 @@
     @include respond(lg) {
       font-size: 1.2rem;
     }
+  }
+}
+
+@mixin categories {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 1rem;
+  max-height: 45vh;
+  overflow-y: scroll;
+  row-gap: 0.5rem;
+  column-gap: 2rem;
+
+  @include respond(md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* ===== DESKTOP ===== */
+  @include respond(lg) {
+    grid-template-columns: 1fr;
+    font-size: 1.2rem;
   }
 }
 // ==== SEARCH BAR: END ====

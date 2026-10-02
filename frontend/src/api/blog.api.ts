@@ -9,12 +9,11 @@ import {
 } from "../types/blog.type";
 import axios from "axios";
 import axiosInstance from "../utils/core/axios-instance";
-import { ICategories } from "../types/category.type";
 
 interface SaveDraftProps {
   id: string;
   title?: string;
-  categories?: ICategories;
+  categories?: string[];
   blogContent?: ContentBlock[];
   isPrivate?: boolean;
 }
@@ -92,5 +91,5 @@ export async function saveDraft({
     isPrivate,
   });
 
-  return data.data;
+  return data.data.data;
 }

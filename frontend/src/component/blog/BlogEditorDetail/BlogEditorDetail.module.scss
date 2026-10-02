@@ -1,4 +1,6 @@
 /** @format */
+/** @format */
+@use "../../../styles/_mixins.scss" as mixin;
 
 .sidebar {
   width: 100%;
@@ -19,9 +21,7 @@
 }
 
 .sidebar section {
-  padding: 1.6rem 0;
-
-  border-top: 1.5px solid var(--border-color);
+  padding: 1rem 0;
 }
 
 .sidebar h3 {
@@ -30,12 +30,8 @@
   font-size: 1.4rem;
 }
 
-.authorList,
 .categories {
-  display: flex;
-  flex-wrap: wrap;
-
-  gap: 0.6rem;
+  @include mixin.categories;
 }
 
 .author {
@@ -106,7 +102,7 @@
 
 @include respond(md) {
   .sidebar {
-    padding: 2rem;
+    padding: 1rem;
   }
 
   .sidebar > h2 {
@@ -114,7 +110,7 @@
   }
 
   .sidebar section {
-    padding: 1.8rem 0;
+    padding-bottom: 2rem;
   }
 }
 
@@ -123,15 +119,11 @@
     position: sticky;
     top: 0;
 
-    padding: 2.2rem;
-  }
-
-  .sidebar > h2 {
-    margin-bottom: 2rem;
+    padding: 1rem 2.2rem;
   }
 
   .sidebar section {
-    padding: 2rem 0;
+    padding-bottom: 2rem;
   }
 
   .sidebar h3 {

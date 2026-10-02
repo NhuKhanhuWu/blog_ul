@@ -1,142 +1,236 @@
 /** @format */
 
-import { useCallback, useRef, useState } from "react";
-import { BlockNoteEditor, PartialBlock } from "@blocknote/core";
-import { useCreateBlockNote } from "@blocknote/react";
-import { BlogDetailProps, ContentBlock } from "../../types/blog.type";
-import { uploadBlogImage } from "../../api/blog.api";
-import { reconcileImageMetadata } from "../../utils/helper/reconcileImageMetadata";
-import { convertBlockNoteToBlogContent } from "../../utils/helper/convertBlockNoteToBlogContent";
+import { useCallback, useReducer, useRef } from "react";
+import { PartialBlock } from "@blocknote/core";
 
-export interface ImageMetadata {
-  url: string;
-  isEmbed: boolean;
+import { BlogDetailProps, ContentBlock } from "../../types/blog.type";
+
+import useSaveDraft from "./useSaveDraft";
+import { useBlogEditorImages } from "./useBlogEditorImages";
+
+/* =========================
+   Blog state
+========================= */
+
+export interface BlogEditorData {
+  title: string;
+  content: ContentBlock[];
+  categories: string[];
+  isPrivate: boolean;
 }
+
+export type SaveStatus = "saved" | "unsaved" | "saving" | "error";
+
+type BlogFieldAction = {
+  [K in keyof BlogEditorData]: {
+    type: "SET_FIELD";
+    field: K;
+    value: BlogEditorData[K];
+  };
+}[keyof BlogEditorData];
+
+interface BlogEditorState {
+  blog: BlogEditorData;
+  saveStatus: SaveStatus;
+  revision: number;
+  saveRequestId: number;
+}
+
+type BlogAction =
+  | BlogFieldAction
+  | {
+      type: "SET_BLOG";
+      payload: Partial<BlogEditorData>;
+    }
+  | { type: "SAVE_STARTED"; requestId: number }
+  | { type: "SAVE_SUCCEEDED"; requestId: number; revision: number }
+  | { type: "SAVE_FAILED"; requestId: number; revision: number };
+
+function blogReducer(
+  state: BlogEditorState,
+  action: BlogAction,
+): BlogEditorState {
+  switch (action.type) {
+    case "SET_FIELD":
+      return {
+        ...state,
+        blog: {
+          ...state.blog,
+          [action.field]: action.value,
+        },
+        saveStatus: "unsaved",
+        revision: state.revision + 1,
+      };
+
+    case "SET_BLOG":
+      return {
+        ...state,
+        blog: { ...state.blog, ...action.payload },
+        saveStatus: "unsaved",
+        revision: state.revision + 1,
+      };
+
+    case "SAVE_STARTED":
+      return {
+        ...state,
+        saveStatus: "saving",
+        saveRequestId: action.requestId,
+      };
+
+    case "SAVE_SUCCEEDED":
+    case "SAVE_FAILED":
+      if (action.requestId !== state.saveRequestId) return state;
+
+      return {
+        ...state,
+        saveStatus:
+          action.revision !== state.revision
+            ? "unsaved"
+            : action.type === "SAVE_SUCCEEDED"
+              ? "saved"
+              : "error",
+      };
+
+    default:
+      return state;
+  }
+}
+
+/* =========================
+   Hook
+========================= */
 
 interface UseBlogEditorProps {
   blog: BlogDetailProps;
   initialContent: PartialBlock[];
-  setSaved: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function useBlogEditor({
-  blog,
-  initialContent,
-  setSaved,
-}: UseBlogEditorProps) {
-  const [title, setTitle] = useState(blog.title || "");
-  const [imageCounts, setImageCounts] = useState(() => ({
-    embedded: 0,
-    uploaded: 0,
-  }));
+export function useBlogEditor({ blog, initialContent }: UseBlogEditorProps) {
+  /* =========================
+     Blog state
+  ========================= */
 
-  const pendingUploads = useRef(new Map<string, number>());
-  const imageMetadata = useRef<Map<string, ImageMetadata> | null>(null);
-
-  const uploadFile = useCallback(
-    async (file: File) => {
-      const url = await uploadBlogImage(blog._id, file);
-
-      pendingUploads.current.set(
-        url,
-        (pendingUploads.current.get(url) ?? 0) + 1,
-      );
-
-      return url;
+  const [state, dispatch] = useReducer(blogReducer, {
+    blog: {
+      title: blog.title || "",
+      content: blog.content || [],
+      categories: blog.categories ?? [],
+      isPrivate: blog.isPrivate ?? false,
     },
-    [blog._id],
-  );
-
-  const editor: BlockNoteEditor = useCreateBlockNote({
-    initialContent,
-    uploadFile,
+    saveStatus: "saved",
+    revision: 0,
+    saveRequestId: 0,
   });
 
-  // Initialize image metadata once
-  if (imageMetadata.current === null) {
-    const sourceImages =
-      blog.content?.filter(
-        (block): block is Extract<ContentBlock, { type: "image" }> =>
-          block.type === "image",
-      ) ?? [];
+  const saveRequestId = useRef(0);
 
-    const editorImages = editor.document.filter(
-      (block) => block.type === "image",
-    );
+  /* =========================
+     Blog field update
+  ========================= */
 
-    const metadata = new Map<string, ImageMetadata>();
-
-    editorImages.forEach((block, index) => {
-      const source = sourceImages[index];
-      const url = block.props.url;
-
-      if (!source || !url) return;
-
-      metadata.set(block.id, {
-        url,
-        isEmbed: source.isEmbed,
-      });
-    });
-
-    imageMetadata.current = metadata;
-  }
-
-  const reconcileImages = useCallback(() => {
-    const counts = reconcileImageMetadata(
-      editor,
-      imageMetadata.current!,
-      pendingUploads.current,
-    );
-
-    setImageCounts(counts);
-
-    return counts;
-  }, [editor]);
-
-  const handleEditorChange = useCallback(() => {
-    setSaved(false);
-    reconcileImages();
-  }, [reconcileImages, setSaved]);
-
-  const handleTitleChange = useCallback(
-    (value: string) => {
-      setTitle(value);
-      setSaved(false);
+  const updateBlogField = useCallback(
+    <K extends keyof BlogEditorData>(field: K, value: BlogEditorData[K]) => {
+      dispatch({
+        type: "SET_FIELD",
+        field,
+        value,
+      } as BlogFieldAction);
     },
-    [setSaved],
+    [],
   );
 
-  const getContent = useCallback(() => {
-    reconcileImages();
+  const updateBlog = useCallback((data: Partial<BlogEditorData>) => {
+    dispatch({
+      type: "SET_BLOG",
+      payload: data,
+    });
+  }, []);
 
-    return convertBlockNoteToBlogContent(
-      editor.document,
-      imageMetadata.current!,
-    );
-  }, [editor, reconcileImages]);
+  /* =========================
+     Editor and images
+  ========================= */
 
-  const saveDraft = useCallback(async () => {
+  const { editor, imageCounts, getContent } = useBlogEditorImages({
+    blog,
+    initialContent,
+  });
+
+  /* =========================
+     Editor changes
+  ========================= */
+
+  const handleEditorChange = useCallback(() => {
+    updateBlogField("content", getContent());
+  }, [getContent, updateBlogField]);
+
+  /* =========================
+     Save draft
+  ========================= */
+
+  const { mutate } = useSaveDraft();
+
+  const saveDraft = useCallback(() => {
     const content = getContent();
 
-    console.log("title:", title);
-    console.log("content:", content);
+    const payload = {
+      blogContent: content,
+      id: blog._id,
+      categories: state.blog.categories,
+      isPrivate: state.blog.isPrivate,
+      title: state.blog.title,
+    };
 
-    // TODO: handle save draft
-    // await updateBlog(blog._id, {
-    //   title,
-    //   content,
-    // });
+    const currentRevision = state.revision;
+    const currentRequestId = saveRequestId.current + 1;
+    saveRequestId.current = currentRequestId;
+    dispatch({ type: "SAVE_STARTED", requestId: currentRequestId });
 
-    setSaved(true);
-  }, [blog._id, getContent, title, setSaved]);
+    mutate(payload, {
+      onSuccess: () => {
+        dispatch({
+          type: "SAVE_SUCCEEDED",
+          requestId: currentRequestId,
+          revision: currentRevision,
+        });
+      },
+      onError: () => {
+        dispatch({
+          type: "SAVE_FAILED",
+          requestId: currentRequestId,
+          revision: currentRevision,
+        });
+      },
+    });
+  }, [
+    blog._id,
+    getContent,
+    mutate,
+    state.blog.categories,
+    state.blog.isPrivate,
+    state.blog.title,
+    state.revision,
+  ]);
+
+  /* =========================
+     Return
+  ========================= */
 
   return {
+    blog: state.blog,
+
+    isDraft: blog.isDraft,
+
+    saveStatus: state.saveStatus,
+
+    updateBlogField,
+    updateBlog,
+
     editor,
-    title,
-    setTitle: handleTitleChange,
     imageCounts,
+
     handleEditorChange,
-    saveDraft,
+
     getContent,
+    saveDraft,
   };
 }

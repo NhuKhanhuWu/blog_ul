@@ -72,7 +72,7 @@ const contentBlockSchema = new Schema<IBlogContent>(
     },
     isEmbed: {
       type: Boolean,
-      default: true,
+      default: false,
       validate: {
         validator: function (this: any, v: boolean) {
           if (this.type !== "image") return v === undefined || v === false;

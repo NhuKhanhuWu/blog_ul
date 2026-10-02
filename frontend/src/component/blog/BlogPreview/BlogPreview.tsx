@@ -66,11 +66,11 @@ function BlogPreviewContent({
           </article>
         </div>
 
-        <footer className={styles.footer}>
+        {/* <footer className={styles.footer}>
           <button type="button" onClick={onClose}>
             Back to editor
           </button>
-        </footer>
+        </footer> */}
       </div>
     </div>
   );

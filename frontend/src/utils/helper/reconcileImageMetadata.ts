@@ -1,7 +1,7 @@
 /** @format */
 
 import { BlockNoteEditor } from "@blocknote/core";
-import { ImageMetadata } from "../../component/blog/BlogEditorContent/BlogEditorContent";
+import type { ImageMetadata } from "./convertBlockNoteToBlogContent";
 import { EditorImageCounts } from "../../component/blog/EditorFooter/EditorFooter";
 
 export function reconcileImageMetadata(

@@ -2,6 +2,14 @@
 import { PartialBlock } from "@blocknote/core";
 import { NormalizedContent } from "../../types/blog.type";
 
+export const DEFAULT_BLOG = {
+  id: "",
+  title: "",
+  isPrivate: false,
+  content: [],
+  categories: [],
+};
+
 export function convertToBlockNoteBlocks(
   content: NormalizedContent[],
 ): PartialBlock[] {

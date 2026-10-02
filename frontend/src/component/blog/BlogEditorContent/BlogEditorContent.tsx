@@ -2,69 +2,45 @@
 
 import { BlockNoteView } from "@blocknote/mantine";
 import { SuggestionMenuController } from "@blocknote/react";
-import { filterSuggestionItems, PartialBlock } from "@blocknote/core";
+import { filterSuggestionItems } from "@blocknote/core";
 
-import { BlogDetailProps } from "../../../types/blog.type";
 import { getBlogSlashMenuItems } from "../../../utils/helper/getBlogSlashMenuItems";
 
 import BlogPreview from "../BlogPreview/BlogPreview";
 import EditorFooter from "../EditorFooter/EditorFooter";
-import BlogDetails from "../BlogEditDetail/BlogEditDetails";
-import BlogEditorHeader from "./BlogEditorHeader";
+import BlogEditorHeader from "../BlogEditorHeader/BlogEditorHeader";
 
 import styles from "./BlogEditorContent.module.scss";
-import { useBlogEditor } from "../../../hook/blog/useBlogEditor";
+import { useBlogEditorContext } from "../../../context/BlogEditorContext";
+import BlogEditorDetails from "../BlogEditorDetail/BlogEditorDetails";
 
 interface BlogEditorContentProps {
-  blog: BlogDetailProps;
-  initialContent: PartialBlock[];
   theme: "light" | "dark";
   previewOpen: boolean;
   setPreviewOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  saved: boolean;
-  setSaved: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function BlogEditorContent({
-  blog,
-  initialContent,
   theme,
   previewOpen,
   setPreviewOpen,
-  saved,
-  setSaved,
 }: BlogEditorContentProps) {
-  const {
-    editor,
-    title,
-    setTitle,
-    imageCounts,
-    handleEditorChange,
-    saveDraft,
-  } = useBlogEditor({
-    blog,
-    initialContent,
-    setSaved,
-  });
+  const { editor, blog, updateBlogField, imageCounts, handleEditorChange } =
+    useBlogEditorContext();
 
   return (
     <>
       <div className={styles.page}>
-        <BlogEditorHeader
-          saved={saved}
-          onPreview={() => setPreviewOpen(true)}
-          onSave={saveDraft}
-          onPublish={() => {
-            // TODO: publish
-          }}
-        />
+        <BlogEditorHeader onPreview={() => setPreviewOpen(true)} />
 
         <div className={styles.layout}>
           <main className={styles.editorContainer}>
             <div className={styles.editorCard}>
               <input
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
+                value={blog.title}
+                onChange={(event) =>
+                  updateBlogField("title", event.target.value)
+                }
                 className={styles.titleInput}
                 placeholder="Write your title..."
               />
@@ -94,13 +70,13 @@ function BlogEditorContent({
             <EditorFooter editor={editor} imageCounts={imageCounts} />
           </main>
 
-          <BlogDetails blog={blog} />
+          <BlogEditorDetails />
         </div>
       </div>
 
       {previewOpen && (
         <BlogPreview
-          title={title}
+          title={blog.title}
           editor={editor}
           theme={theme}
           onClose={() => setPreviewOpen(false)}
