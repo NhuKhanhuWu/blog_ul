@@ -35,3 +35,36 @@ export const updateBlog = catchAsync(async (req, res) => {
     data: updatedBlog,
   });
 });
+
+export const draftBlog = catchAsync(async (req, res) => {
+  // get blog from db
+  const { id: blogId } = req.params;
+  const userId = req.user?.id;
+
+  // find and update blog
+  const blog = await BlogModel.findOneAndUpdate(
+    {
+      _id: blogId,
+      userId,
+    },
+    {
+      $set: {
+        isDraft: true,
+      },
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+
+  if (!blog) {
+    throw new AppError("Blog not found", 404);
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: "Blog status turned to draft successfully",
+    ...blog,
+  });
+});

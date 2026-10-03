@@ -3,20 +3,24 @@
 
 .sortOption {
   @include formField;
+  display: flex;
+  justify-content: space-between;
 
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 
   label {
     margin-right: 1rem;
   }
 
-  select {
-    margin-right: 4rem;
+  @include respond(sm-xl) {
+    justify-content: unset;
+    gap: 5rem;
   }
 }
 
 .blogsContainer {
   @include responsiveBlogLayout;
+  grid-template-columns: 1fr, 1fr;
 
   @include respond(md) {
     grid-template-columns: repeat(3, 1fr);

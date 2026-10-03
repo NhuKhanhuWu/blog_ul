@@ -47,6 +47,7 @@ export interface MyCommentHistoryItem {
   title: string;
   slug: string;
   createdAt: Date;
+  blogExists: boolean;
 }
 
 export interface GetCmtByUser {

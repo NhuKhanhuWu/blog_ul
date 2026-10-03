@@ -3,6 +3,8 @@ import { useBlogEditorContext } from "../../../context/BlogEditorContext";
 import styles from "./BlogEditorDetail.module.scss";
 import CategorySelector from "./CategorySelector";
 
+// TODO: handle hide private blog
+// now private blog will be hidden from search result
 function BlogEditorDetails() {
   const { blog, updateBlogField } = useBlogEditorContext();
 

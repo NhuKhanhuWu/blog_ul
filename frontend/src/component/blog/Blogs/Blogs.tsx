@@ -14,6 +14,8 @@ import NotFound from "../../ui/NotFound/NotFound.tsx";
 import { useMemo, useState } from "react";
 import { FaList } from "react-icons/fa";
 import { FiGrid } from "react-icons/fi";
+import { useMediaQuery } from "react-responsive";
+import BlogCardSm from "../BlogCardSm/BlogCardSm.tsx";
 
 function getQuery(state: SearchState) {
   const { title, sort, categories, logic } = state;
@@ -56,6 +58,11 @@ function Blogs() {
   // view mode
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
 
+  // responsive
+  const isMobile = useMediaQuery({
+    query: "(max-width: 520px)",
+  });
+
   if (isPending) return <Loader />;
   if (isError) return <Error />;
 
@@ -84,11 +91,17 @@ function Blogs() {
       <div
         className={`${styles.blogsContainer} ${viewMode === "list" && styles.listMode}`}>
         {blogs?.map((blog) => (
-          <BlogCardBig
-            isList={viewMode === "list"}
-            blog={blog}
-            key={blog._id}
-          />
+          <>
+            {isMobile ? (
+              <BlogCardSm blog={blog} key={blog._id} />
+            ) : (
+              <BlogCardBig
+                isList={viewMode === "list"}
+                blog={blog}
+                key={blog._id}
+              />
+            )}
+          </>
         ))}
 
         <InfinityObserver lastElementRef={lastElementRef}>

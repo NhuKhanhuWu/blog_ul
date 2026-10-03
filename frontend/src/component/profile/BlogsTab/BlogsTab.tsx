@@ -8,9 +8,51 @@ import { useMemo, useState } from "react";
 import BlogCardBig from "../../blog/BlogCardBig/BlogCardBig";
 import styles from "./BlogsTab.module.scss";
 import Loader from "../../ui/Loader/Loader";
+import { useMediaQuery } from "react-responsive";
+import BlogCardSm from "../../blog/BlogCardSm/BlogCardSm";
 
 interface BlogsTabProps {
   user?: UserPublic;
+}
+
+interface SortOptionsProps {
+  status: MyBlogStatus;
+  setStatus: (status: MyBlogStatus) => void;
+  setSort: (sort: string) => void;
+  sort: string;
+}
+
+function SortOptions({ status, setStatus, setSort, sort }: SortOptionsProps) {
+  return (
+    <div className={styles.sortOption}>
+      <div>
+        <label htmlFor="blog-status">Show</label>
+        <select
+          id="blog-status"
+          value={status}
+          onChange={(event) => {
+            const nextStatus = event.target.value as MyBlogStatus;
+            setStatus(nextStatus);
+            if (nextStatus === "draft") setSort("-updatedAt");
+          }}>
+          <option value="all">All blogs</option>
+          <option value="published">Published</option>
+          <option value="draft">Drafts</option>
+        </select>
+      </div>
+
+      <div>
+        <label htmlFor="blog-sort">Sort by</label>
+        <select
+          id="blog-sort"
+          value={sort}
+          onChange={(event) => setSort(event.target.value)}>
+          <option value="-updatedAt">Recently updated</option>
+          {status !== "draft" && <option value="-upVotes">Popular</option>}
+        </select>
+      </div>
+    </div>
+  );
 }
 
 function BlogsTab({ user }: BlogsTabProps) {
@@ -30,32 +72,19 @@ function BlogsTab({ user }: BlogsTabProps) {
     [data?.pages],
   );
 
+  // responsive
+  const isMobile = useMediaQuery({
+    query: "(max-width: 520px)",
+  });
+
   return (
     <div>
-      <div className={styles.sortOption}>
-        <label htmlFor="blog-status">Show</label>
-        <select
-          id="blog-status"
-          value={status}
-          onChange={(event) => {
-            const nextStatus = event.target.value as MyBlogStatus;
-            setStatus(nextStatus);
-            if (nextStatus === "draft") setSort("-updatedAt");
-          }}>
-          <option value="all">All blogs</option>
-          <option value="published">Published</option>
-          <option value="draft">Drafts</option>
-        </select>
-
-        <label htmlFor="blog-sort">Sort by</label>
-        <select
-          id="blog-sort"
-          value={sort}
-          onChange={(event) => setSort(event.target.value)}>
-          <option value="-updatedAt">Recently updated</option>
-          {status !== "draft" && <option value="-upVotes">Popular</option>}
-        </select>
-      </div>
+      <SortOptions
+        setSort={setSort}
+        setStatus={setStatus}
+        sort={sort}
+        status={status}
+      />
 
       <div className={styles.blogsContainer}>
         {isPending && <Loader />}
@@ -63,7 +92,13 @@ function BlogsTab({ user }: BlogsTabProps) {
         {!isPending && !isError && blogs.length === 0 && <p>No blogs found.</p>}
 
         {blogs.map((blog) => (
-          <BlogCardBig blog={blog} key={blog._id} />
+          <>
+            {isMobile ? (
+              <BlogCardSm blog={blog} key={blog._id} />
+            ) : (
+              <BlogCardBig blog={blog} key={blog._id} />
+            )}
+          </>
         ))}
       </div>
     </div>

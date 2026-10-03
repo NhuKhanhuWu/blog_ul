@@ -68,6 +68,10 @@
     font-size: 1.5rem;
     font-weight: 500;
     line-height: 1.4;
+
+    &.deleted {
+      color: var(--text-muted);
+    }
   }
 
   p {

@@ -198,13 +198,13 @@ svg {
   display: flex;
   gap: 1rem;
   flex: 1;
-  min-height: 3rem;
+  min-height: 4.4rem;
   border-radius: 5px;
   border-width: 1.5px;
   transition: all 0.3s;
 
   @include respond(lg) {
-    height: 3.4rem;
+    min-height: 3.4rem;
   }
 }
 
@@ -238,6 +238,13 @@ svg {
   svg {
     color: var(--bg-body);
   }
+
+  &:disabled {
+    color: $dark-600;
+    pointer-events: none;
+    cursor: not-allowed;
+    background-color: var(--border-color);
+  }
 }
 
 .btn-secondary,
@@ -248,6 +255,13 @@ svg {
 
   svg {
     color: var(--text-main);
+  }
+
+  &:disabled {
+    color: $dark-600;
+    pointer-events: none;
+    cursor: not-allowed;
+    background-color: var(--border-color);
   }
 }
 

@@ -8,7 +8,7 @@ import catchAsync from "../../utils/error/catch-async";
 export const getBlogImgUploadUrl = catchAsync(async (req, res) => {
   const userId = req.user?._id.toString();
   const fileName = req.body?.fileName;
-  const { blogId } = req.params;
+  const { id: blogId } = req.params;
 
   if (!userId) throw new AppError("Not authenticated!", 401);
   if (typeof fileName !== "string" || !fileName.trim()) {

@@ -101,7 +101,6 @@ const BlogSchema = new Schema<BlogDocument>(
     },
     slug: {
       type: String,
-      unique: true,
       sparse: true,
     },
     authors: {
@@ -207,6 +206,16 @@ const BlogSchema = new Schema<BlogDocument>(
   },
 );
 
+// only require unique when type is string
+BlogSchema.index(
+  { slug: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      slug: { $type: "string" },
+    },
+  },
+);
 BlogSchema.index({ title: "text" }); // text index for searching in title
 BlogSchema.index({ categories: 1 });
 BlogSchema.index({ createdAt: 1 });
@@ -322,18 +331,18 @@ BlogSchema.pre("findOneAndUpdate", async function (next) {
 });
 
 // delete cmt after delete blog
-BlogSchema.post("findOneAndDelete", function (doc) {
-  if (doc) {
-    const blogId = doc._id;
+// BlogSchema.post("findOneAndDelete", function (doc) {
+//   if (doc) {
+//     const blogId = doc._id;
 
-    CommentModel.deleteMany({ blogId: blogId })
-      .then((result) => {
-        console.log(`${result.deletedCount} comments deleted in background`);
-      })
-      .catch((err) => {
-        console.error("Error occur when deleting comment in background", err);
-      });
-  }
-});
+//     CommentModel.deleteMany({ blogId: blogId })
+//       .then((result) => {
+//         console.log(`${result.deletedCount} comments deleted in background`);
+//       })
+//       .catch((err) => {
+//         console.error("Error occur when deleting comment in background", err);
+//       });
+//   }
+// });
 
 export const BlogModel = model<BlogDocument>("Blog", BlogSchema);
