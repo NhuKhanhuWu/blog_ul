@@ -43,4 +43,8 @@
   .disabled {
     @include mixin.disabled;
   }
+
+  .footer {
+    @include mixin.footer;
+  }
 }

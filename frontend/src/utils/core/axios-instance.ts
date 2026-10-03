@@ -1,10 +1,10 @@
 /** @format */
 
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
-import { store } from "../redux/store";
-import { setAccessToken } from "../redux/auth.slice";
-import { refreshToken } from "../api/auth.api";
-import { deviceId as getUserDeviceId } from "./deviceId";
+import { store } from "../../redux/store";
+import { setAccessToken } from "../../redux/auth.slice";
+import { refreshToken } from "../../api/auth.api";
+import { deviceId as getUserDeviceId } from "../helper/deviceId";
 
 interface IRetryAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -16,8 +16,8 @@ const AUTH_WHITE_LIST = [
   /^\/auth\/signup/,
   /^\/auth\/refresh-token/,
   /^\/auth\/forgot-password/,
-  /^\/categories/,
-  /^\/blogs$/,
+  /^\/category/,
+  /^\/blog$/,
 ];
 
 const BASE_URL: string = import.meta.env.VITE_SERVER_URL || "";
@@ -124,18 +124,6 @@ axiosInstance.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  },
-);
-
-// ====== GET ERROR MESSAGE FROM SERVER ======
-axiosInstance.interceptors.response.use(
-  (response) => response, // Thành công thì cho qua
-  (error) => {
-    // get message from server
-    const serverMessage = error.response?.data?.message || error.message;
-
-    // throw new Error object contain this message
-    return Promise.reject(new Error(serverMessage));
   },
 );
 

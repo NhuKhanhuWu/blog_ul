@@ -7,7 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 
 import { useAppSelector } from "../../../hook/shared/reduxHooks";
 import styles from "./CmtEditForm.module.scss";
-import defaultAvatar from "../../../utils/default-avatar";
+import defaultAvatar from "../../../utils/helper/default-avatar";
 import { useCmtItem } from "../../../context/CmtItemContext";
 import useEditCmt from "../../../hook/cmt/useEditCmt";
 import toast from "react-hot-toast";

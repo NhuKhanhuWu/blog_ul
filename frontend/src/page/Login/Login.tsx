@@ -5,7 +5,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link, useNavigate } from "react-router-dom";
 
-import { emaiSchema, passwordSchema } from "../../utils/form-schema";
+import { emaiSchema, passwordSchema } from "../../utils/core/form-schema";
 import AuthHeader from "../../component/auth/AuthHeader/AuthHeader";
 import AuthFooter from "../../component/auth/AuthFooter/AuthFooter";
 import { useAppDispatch, useAppSelector } from "../../hook/shared/reduxHooks";

@@ -3,7 +3,7 @@
 import { UseFormRegister } from "react-hook-form";
 import styles from "./UpdateProfileForm.module.scss";
 import { useAppSelector } from "../../../hook/shared/reduxHooks";
-import { formatDate } from "../../../utils/date";
+import { formatDate } from "../../../utils/helper/date";
 
 interface ProfileFormValues {
   username: string;
@@ -32,7 +32,6 @@ export const ProfileFormFields = ({ register }: ProfileFormFieldsProps) => {
     (state) => state.auth.user,
   )?.usernameLastUpdated;
   const canUpdateName = canUpdateUsername(lastNameUpdate);
-  console.log(canUpdateName);
 
   return (
     <div className={styles.formGroup}>

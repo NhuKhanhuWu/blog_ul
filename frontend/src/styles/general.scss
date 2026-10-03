@@ -1,6 +1,5 @@
 /** @format */
 
-/** @format */
 // Biến Sass tĩnh (giữ lại để tham chiếu nếu cần)
 $dark-900: #1a1a1a;
 $dark-400: #717171;
@@ -199,13 +198,13 @@ svg {
   display: flex;
   gap: 1rem;
   flex: 1;
-  min-height: 3rem;
+  min-height: 4.4rem;
   border-radius: 5px;
   border-width: 1.5px;
   transition: all 0.3s;
 
   @include respond(lg) {
-    height: 3.4rem;
+    min-height: 3.4rem;
   }
 }
 
@@ -235,6 +234,17 @@ svg {
   transition: all 0.3s;
   border-radius: 5px;
   color: var(--bg-body);
+
+  svg {
+    color: var(--bg-body);
+  }
+
+  &:disabled {
+    color: $dark-600;
+    pointer-events: none;
+    cursor: not-allowed;
+    background-color: var(--border-color);
+  }
 }
 
 .btn-secondary,
@@ -242,11 +252,26 @@ svg {
   @extend .btn-primary;
   background-color: var(--bg-body);
   color: var(--text-main);
+
+  svg {
+    color: var(--text-main);
+  }
+
+  &:disabled {
+    color: $dark-600;
+    pointer-events: none;
+    cursor: not-allowed;
+    background-color: var(--border-color);
+  }
 }
 
 .btn-secondary:hover {
   background-color: var(--btn-bg-primary);
   color: var(--bg-body);
+
+  svg {
+    color: var(--bg-body);
+  }
 }
 
 .btn-reset--input {

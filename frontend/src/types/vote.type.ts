@@ -19,6 +19,8 @@ export type MyBlogVote = {
   title: string;
   slug: string;
   createdAt: Date;
+  blogExists: boolean;
+  commentExists?: boolean;
 };
 
 export type MyCommentVote = {

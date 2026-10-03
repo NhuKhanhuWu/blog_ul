@@ -97,6 +97,7 @@ $spacing-lg: 2.4rem;
   --shadow-dark: #{map.get($colors, "dark", 100)};
   --shadow-light: #{map.get($colors, "light", 500)};
   --error-color: #{map.get($colors, "error")};
+  --warning-color: #ffecd3;
 }
 
 [data-theme="dark"] {
@@ -116,4 +117,5 @@ $spacing-lg: 2.4rem;
   --shadow-dark: #{map.get($colors, "dark", 500)};
   --shadow-light: #{map.get($colors, "dark", 600)};
   --error-color: #ff6b6b;
+  --warning-color: #a4855b;
 }

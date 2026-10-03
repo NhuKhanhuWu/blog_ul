@@ -3,7 +3,7 @@
 import { FaRegThumbsUp } from "react-icons/fa";
 import { BlogCardProps } from "../../../types/blog.type";
 import styles from "./BlogCardBig.module.scss";
-import { formatDate } from "../../../utils/date";
+import { formatDate } from "../../../utils/helper/date";
 import { Link } from "react-router-dom";
 import BlogPopOver from "../BlogPopOver/BlogPopOver";
 
@@ -22,24 +22,34 @@ function Authors({ blog }: BlogCard) {
 }
 
 function BlogCardBig({ blog, isList, popItems }: BlogCard) {
-  const placeholderImg = blog.img || "/placeholder-img.jpg";
+  const placeholderImg = blog.thumbnail || "/placeholder-img.jpg";
+  const blogPath = blog.isDraft
+    ? `/blog/edit/${blog._id}`
+    : `/blog/${blog.slug}`;
+  const dateLabel = blog.isDraft
+    ? blog.updatedAt
+      ? `Draft · Updated ${formatDate(blog.updatedAt)}`
+      : "Draft"
+    : blog.pub_date
+      ? formatDate(blog.pub_date)
+      : "";
 
   return (
     <div className={`${isList && styles.listMode} ${styles.blogCard}`}>
-      <Link to={`/blogs/${blog.slug}`} className={styles.imgWrapper}>
+      <Link to={blogPath} className={styles.imgWrapper}>
         <img
           className={styles.blogImg}
-          src={blog.img || placeholderImg}
+          src={blog.thumbnail || placeholderImg}
           alt={blog.title}
         />
       </Link>
 
       <div className={styles.blogTxt}>
-        <Link to={`/blogs/${blog.slug}`}>
+        <Link to={blogPath}>
           <div className={styles.metaRow}>
             <Authors blog={blog} />
             <span className={styles.separator}>•</span>
-            <p className={styles.dateTxt}>{formatDate(blog.pub_date)}</p>
+            <p className={styles.dateTxt}>{dateLabel}</p>
           </div>
 
           <h3 className={`font-serif ${styles.title}`}>{blog.title}</h3>
@@ -47,10 +57,12 @@ function BlogCardBig({ blog, isList, popItems }: BlogCard) {
         </Link>
 
         <div className={styles.engagementRow}>
-          <div className={styles.upVote}>
-            <FaRegThumbsUp />
-            <span className={styles.voteCount}>{blog.upVotes || 0}</span>
-          </div>
+          {!blog.isDraft && (
+            <div className={styles.upVote}>
+              <FaRegThumbsUp />
+              <span className={styles.voteCount}>{blog.upVotes || 0}</span>
+            </div>
+          )}
 
           <div className={styles.popOver}>
             <BlogPopOver blog={blog} popItems={popItems} />

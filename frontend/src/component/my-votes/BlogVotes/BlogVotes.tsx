@@ -6,7 +6,7 @@ import { useMemo } from "react";
 import { useIntersectionObserver } from "../../../hook/shared/useIntersectionObserver";
 import InfinityObserver from "../../ui/InfinityObserver/InfinityObserver";
 import Loader from "../../ui/Loader/Loader";
-import { groupDataByDate } from "../../../utils/groupItemByDate";
+import { groupDataByDate } from "../../../utils/helper/groupItemByDate";
 import VoteHistory from "../VoteHistory/VoteHistory";
 
 function BlogVotes() {

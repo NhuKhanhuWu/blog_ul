@@ -1,0 +1,46 @@
+/** @format */
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 0.8rem;
+
+  padding: 1rem 0.6rem;
+
+  font-size: 1.1rem;
+}
+
+.stats {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  gap: 1rem;
+}
+
+.loading,
+.error {
+  padding: 5rem;
+
+  text-align: center;
+}
+
+@include respond(md) {
+  .footer {
+    flex-direction: row;
+    align-items: center;
+
+    padding: 1.2rem 1rem;
+
+    font-size: 1.2rem;
+  }
+
+  .stats {
+    width: auto;
+    gap: 2rem;
+  }
+}

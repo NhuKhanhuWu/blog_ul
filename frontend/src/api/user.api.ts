@@ -11,7 +11,7 @@ import {
   GetMyBlogVotesResponse,
   GetMyCmtVotesResponse,
 } from "../types/vote.type";
-import axiosInstance from "../utils/axios-instance";
+import axiosInstance from "../utils/core/axios-instance";
 
 interface QueryWithPageArgs {
   page: number;

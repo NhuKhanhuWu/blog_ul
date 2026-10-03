@@ -7,7 +7,7 @@ import {
   passwordConfirmSchema,
   passwordSchema,
   usernameSchema,
-} from "../../utils/form-schema";
+} from "../../utils/core/form-schema";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import useSignUpSetupStep from "../../hook/auth/useSignUpSetupStep";

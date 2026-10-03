@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { useForgotPassword } from "../../context/ForgotPasswordContext";
 import useForgotPasswordOtp from "../../hook/auth/useForgotPasswordOtp";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { createOtpSchema } from "../../utils/form-schema";
+import { createOtpSchema } from "../../utils/core/form-schema";
 import { useNavigate } from "react-router-dom";
 import AuthHeader from "../../component/auth/AuthHeader/AuthHeader";
 import OtpInputField from "../../component/input/OtpInput";

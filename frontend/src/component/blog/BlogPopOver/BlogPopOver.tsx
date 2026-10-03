@@ -8,10 +8,11 @@ import { useAppSelector } from "../../../hook/shared/reduxHooks";
 import { BlogSimplify } from "../../../types/blog.type";
 import Popover from "@mui/material/Popover";
 import BookMark from "../BookMark/BookMark";
-import { Link } from "react-router-dom";
-import { MdEdit, MdOutlineBookmarkBorder } from "react-icons/md";
+import { MdOutlineBookmarkBorder } from "react-icons/md";
+import EditBlogBtn from "./EditBlogBtn";
+import DeleteBlogBtn from "./DeleteBlogBtn";
 
-interface BlogPopOverProps {
+export interface BlogPopOverProps {
   blog: BlogSimplify;
   popItems?: ReactNode;
 }
@@ -55,14 +56,16 @@ function BlogPopOver({ blog, popItems }: BlogPopOverProps) {
           horizontal: "right",
         }}>
         <div className={styles.popContent}>
-          {/*  show save to list */}
-          <BookMark blogId={blog._id} openBtn={blogListBtn} />
+          {!blog.isDraft && (
+            <BookMark blogId={blog._id} openBtn={blogListBtn} />
+          )}
 
           {/* if this blog is belong to user => show edit */}
           {blog.userId === user._id && (
-            <Link to={`/blog/${blog.slug}/edit`} className={styles.popItem}>
-              <MdEdit className={styles.icon} /> Edit blog
-            </Link>
+            <>
+              <EditBlogBtn blog={blog} />
+              <DeleteBlogBtn blog={blog} />
+            </>
           )}
 
           {popItems && <>{popItems}</>}

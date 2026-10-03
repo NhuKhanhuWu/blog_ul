@@ -5,8 +5,10 @@ import NavBar from "../component/ui/NavBar/NavBar.tsx";
 import { useAppDispatch, useAppSelector } from "../hook/shared/reduxHooks.ts";
 import { useEffect, useState } from "react";
 import { getMeThunk, refreshThunk } from "../redux/auth.slice";
-import "../styles/general.scss";
 import Loader from "../component/ui/Loader/Loader";
+import "../styles/general.scss";
+import "@blocknote/mantine/style.css";
+import "../styles/_blocknote.scss";
 
 function AppLayout() {
   // auto login when reload/open website
@@ -52,8 +54,6 @@ function AppLayout() {
       <main>
         <Outlet></Outlet>
       </main>
-
-      {/* TODO: footer here */}
     </div>
   );
 }

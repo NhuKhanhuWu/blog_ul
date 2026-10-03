@@ -9,7 +9,7 @@ import {
   MyBlogVote,
   MyCommentVote,
 } from "../../../types/vote.type";
-import { formatDate } from "../../../utils/date";
+import { formatDate } from "../../../utils/helper/date";
 import HistoryActionPopover from "../../shared/HistoryActionPopover/HistoryActionPopover";
 import styles from "./VoteHistory.module.scss";
 
@@ -17,25 +17,33 @@ interface VoteHistoryProps {
   groupedVotes: GroupedVotes;
 }
 
+interface VoteHistoryItemProps {
+  vote: MyBlogVote | MyCommentVote;
+}
+
 const getVoteUrl = (vote: MyBlogVote | MyCommentVote) => {
-  const baseUrl = `/blogs/${vote.slug}`;
+  const baseUrl = `/blog/${vote.slug}`;
 
   return "commentId" in vote ? `${baseUrl}#comment-${vote.commentId}` : baseUrl;
 };
 
-function VoteHistory({ groupedVotes }: VoteHistoryProps) {
+function VoteHistoryItem({ vote }: VoteHistoryItemProps) {
   const queryClient = useQueryClient();
 
   const { mutate: removeVote } = useMutation({
     mutationFn: toggleVote,
     onSuccess: () => {
       toast.success("Vote removed");
-      queryClient.invalidateQueries({ queryKey: ["my-blog-votes"] });
-      queryClient.invalidateQueries({ queryKey: ["my-cmt-votes"] });
+
+      queryClient.invalidateQueries({
+        queryKey: ["my-blog-votes"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["my-cmt-votes"],
+      });
     },
   });
-
-  const groupedEntries = Object.entries(groupedVotes);
 
   const handleDeleteVote = (vote: MyBlogVote | MyCommentVote) => {
     const targetId = "commentId" in vote ? vote.commentId : vote._id;
@@ -48,6 +56,59 @@ function VoteHistory({ groupedVotes }: VoteHistoryProps) {
     });
   };
 
+  const isCommentVote = "commentId" in vote;
+  const isCommentDeleted = isCommentVote && vote.commentExists === false;
+  const isBlogDeleted = vote.blogExists === false;
+
+  const voteContent = (
+    <>
+      <div className={styles.voteDetails}>
+        <div>
+          <h4
+            className={isBlogDeleted || isCommentDeleted ? styles.deleted : ""}>
+            {isCommentDeleted
+              ? "This comment has been deleted"
+              : isBlogDeleted
+                ? "This blog has been deleted"
+                : vote.title}
+          </h4>
+
+          {isCommentVote && !isCommentDeleted && <p>{vote.commentContent}</p>}
+        </div>
+      </div>
+
+      <span
+        className={`${styles.badge} ${
+          vote.voteType === 1 ? styles.upvoted : styles.downvoted
+        }`}>
+        {vote.voteType === 1 ? "↑ Upvoted" : "↓ Downvoted"}
+      </span>
+    </>
+  );
+
+  return (
+    <div className={styles.voteItemRow}>
+      {isCommentDeleted || isBlogDeleted ? (
+        <div className={styles.voteLink}>{voteContent}</div>
+      ) : (
+        <Link to={getVoteUrl(vote)} className={styles.voteLink}>
+          {voteContent}
+        </Link>
+      )}
+
+      <div className={styles.voteAction}>
+        <HistoryActionPopover
+          deleteLabel="Remove vote"
+          onDelete={() => handleDeleteVote(vote)}
+        />
+      </div>
+    </div>
+  );
+}
+
+function VoteHistory({ groupedVotes }: VoteHistoryProps) {
+  const groupedEntries = Object.entries(groupedVotes);
+
   return (
     <div className={styles.container}>
       {groupedEntries.map(([dateKey, votes]) => (
@@ -56,27 +117,9 @@ function VoteHistory({ groupedVotes }: VoteHistoryProps) {
 
           <div className={styles.votesListCard}>
             {votes.map((vote) => (
-              <div key={vote._id} className={styles.voteItemRow}>
-                <Link to={getVoteUrl(vote)} className={styles.voteLink}>
-                  <div className={styles.voteDetails}>
-                    <div>
-                      <h4>{vote.title}</h4>
-
-                      {"commentContent" in vote && <p>{vote.commentContent}</p>}
-                    </div>
-                  </div>
-
-                  <span
-                    className={`${styles.badge} ${vote.voteType === 1 ? styles.upvoted : styles.downvoted}`}>
-                    {vote.voteType === 1 ? "↑ Upvoted" : "↓ Downvoted"}
-                  </span>
-                </Link>
-
-                <HistoryActionPopover
-                  deleteLabel="Remove vote"
-                  onDelete={() => handleDeleteVote(vote)}
-                />
-              </div>
+              <>
+                <VoteHistoryItem vote={vote} key={vote._id} />
+              </>
             ))}
           </div>
         </div>

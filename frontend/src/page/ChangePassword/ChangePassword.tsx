@@ -8,7 +8,7 @@ import {
   basePasswordSchema,
   passwordConfirmSchema,
   passwordSchema,
-} from "../../utils/form-schema";
+} from "../../utils/core/form-schema";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { PasswordConfirmField } from "../../component/input/PasswordConfirmField";

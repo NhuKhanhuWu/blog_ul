@@ -5,7 +5,7 @@ import Tab from "@mui/material/Tab";
 import BlogListsTab from "../../component/profile/BlogListsTab/BlogListTab";
 import BlogsTab from "../../component/profile/BlogsTab/BlogsTab";
 import { useState } from "react";
-import a11yProps from "../../utils/a11yProps";
+import a11yProps from "../../utils/core/a11yProps";
 import CustomTabPanel from "../../component/ui/CustomTabPanel/CustomTabPanel";
 import { useAppSelector } from "../../hook/shared/reduxHooks";
 import ProfileHeader from "../../component/profile/ProfileHeader/ProfileHeader";

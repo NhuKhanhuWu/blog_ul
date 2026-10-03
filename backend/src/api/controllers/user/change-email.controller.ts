@@ -6,7 +6,7 @@ import catchAsync from "../../utils/error/catch-async";
 import { sendTokenEmail } from "../../utils/email/email-service";
 import { changeEmailEmail } from "../../utils/email/email-template";
 import { redisClient } from "../../utils/redis";
-import { revokeAndRegenerateTokens } from "../../services/auth.service";
+import { revokeAndRegenerateTokens } from "../../services/auth/auth.service";
 import { OtpCache } from "../../types/auth.type";
 
 interface OtpChangeEmail extends OtpCache {

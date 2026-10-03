@@ -1,7 +1,10 @@
 /** @format */
 
 import * as yup from "yup";
-import { passwordConfirmSchema, passwordSchema } from "../../utils/form-schema";
+import {
+  passwordConfirmSchema,
+  passwordSchema,
+} from "../../utils/core/form-schema";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import AuthHeader from "../../component/auth/AuthHeader/AuthHeader";

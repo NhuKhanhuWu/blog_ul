@@ -7,7 +7,7 @@ import { useObjectUrl } from "../shared/useObjectUrl";
 import useUpdateAccount from "./useUpdateAccount";
 import useUploadAvatar from "./useUploadAvatar";
 import { useAppDispatch } from "../shared/reduxHooks";
-import { getCroppedImg } from "../../utils/imageCrop";
+import { getCroppedImg } from "../../utils/helper/imageCrop";
 import { getMeThunk } from "../../redux/auth.slice";
 
 interface UseEditProfileProps {

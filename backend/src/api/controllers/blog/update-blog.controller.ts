@@ -1,7 +1,5 @@
 /** @format */
 
-// TODO: update to delete old img & add new img in supabase
-
 import { BlogModel } from "../../models/blog.model";
 import AppError from "../../utils/error/app-error";
 import catchAsync from "../../utils/error/catch-async";
@@ -13,7 +11,12 @@ export const updateBlog = catchAsync(async (req, res) => {
   // update blog
   const updatedBlog = await BlogModel.findOneAndUpdate(
     { _id: blogId, userId: req.user?._id },
-    { $set: req.body },
+    {
+      $set: {
+        ...req.body,
+        isDraft: true,
+      },
+    },
     {
       new: true,
       runValidators: true,
@@ -30,5 +33,38 @@ export const updateBlog = catchAsync(async (req, res) => {
   res.status(200).json({
     status: "success",
     data: updatedBlog,
+  });
+});
+
+export const draftBlog = catchAsync(async (req, res) => {
+  // get blog from db
+  const { id: blogId } = req.params;
+  const userId = req.user?.id;
+
+  // find and update blog
+  const blog = await BlogModel.findOneAndUpdate(
+    {
+      _id: blogId,
+      userId,
+    },
+    {
+      $set: {
+        isDraft: true,
+      },
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+
+  if (!blog) {
+    throw new AppError("Blog not found", 404);
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: "Blog status turned to draft successfully",
+    ...blog,
   });
 });
