@@ -14,7 +14,7 @@ interface CommentHistoryProps {
   comments: MyCommentHistoryItem[];
 }
 
-function CommentHistory({ comments }: CommentHistoryProps) {
+function CommentHistoryItem({ comment }: { comment: MyCommentHistoryItem }) {
   const queryClient = useQueryClient();
 
   const { mutate: removeComment } = useMutation({
@@ -25,6 +25,32 @@ function CommentHistory({ comments }: CommentHistoryProps) {
     },
   });
 
+  return (
+    <div key={comment._id} className={styles.commentItemRow}>
+      <Link
+        to={`/blog/${comment.slug}#comment-${comment._id}`}
+        className={styles.commentLink}>
+        <div className={styles.commentDetails}>
+          <div>
+            <h4 className={!comment.blogExists ? styles.deleted : ""}>
+              {comment.blogExists
+                ? comment.title
+                : "This blog has been deleted"}
+            </h4>
+            <p>{comment.content}</p>
+          </div>
+        </div>
+      </Link>
+
+      <HistoryActionPopover
+        deleteLabel="Delete comment"
+        onDelete={() => removeComment(comment._id)}
+      />
+    </div>
+  );
+}
+
+function CommentHistory({ comments }: CommentHistoryProps) {
   const groupedComments = groupDataByDate(comments, (item) => item.createdAt);
   const groupedEntries = Object.entries(groupedComments);
 
@@ -36,23 +62,7 @@ function CommentHistory({ comments }: CommentHistoryProps) {
 
           <div className={styles.commentsListCard}>
             {items.map((comment) => (
-              <div key={comment._id} className={styles.commentItemRow}>
-                <Link
-                  to={`/blog/${comment.slug}#comment-${comment._id}`}
-                  className={styles.commentLink}>
-                  <div className={styles.commentDetails}>
-                    <div>
-                      <h4>{comment.title}</h4>
-                      <p>{comment.content}</p>
-                    </div>
-                  </div>
-                </Link>
-
-                <HistoryActionPopover
-                  deleteLabel="Delete comment"
-                  onDelete={() => removeComment(comment._id)}
-                />
-              </div>
+              <CommentHistoryItem comment={comment} />
             ))}
           </div>
         </div>

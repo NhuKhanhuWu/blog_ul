@@ -127,16 +127,4 @@ axiosInstance.interceptors.response.use(
   },
 );
 
-// ====== GET ERROR MESSAGE FROM SERVER ======
-axiosInstance.interceptors.response.use(
-  (response) => response, // Thành công thì cho qua
-  (error) => {
-    // get message from server
-    const serverMessage = error.response?.data?.message || error.message;
-
-    // throw new Error object contain this message
-    return Promise.reject(new Error(serverMessage));
-  },
-);
-
 export default axiosInstance;

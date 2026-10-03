@@ -54,8 +54,6 @@ function AppLayout() {
       <main>
         <Outlet></Outlet>
       </main>
-
-      {/* TODO: footer here */}
     </div>
   );
 }

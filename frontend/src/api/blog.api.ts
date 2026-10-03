@@ -18,6 +18,7 @@ interface SaveDraftProps {
   isPrivate?: boolean;
 }
 
+// get request
 export async function getBlogs({
   query,
   pageParam,
@@ -48,12 +49,20 @@ export async function getOneBLogBySlug(slug: string): Promise<BlogDetailProps> {
   return data.data.data;
 }
 
-export async function createBlog(): Promise<BlogDetailProps> {
-  const data = await axiosInstance.post("/blog");
+export async function getMyBlogById(id: string) {
+  const data = await axiosInstance.get(`/blog/${id}`);
 
   return data.data;
 }
 
+// create request
+export async function createBlog(): Promise<BlogDetailProps> {
+  const data = await axiosInstance.post("/blog");
+
+  return data.data.data;
+}
+
+// update request
 export async function uploadBlogImage(
   blogId: string,
   file: File,
@@ -69,12 +78,6 @@ export async function uploadBlogImage(
   });
 
   return publicUrl;
-}
-
-export async function getMyBlogById(id: string) {
-  const data = await axiosInstance.get(`/blog/${id}`);
-
-  return data.data;
 }
 
 export async function saveDraft({
@@ -98,4 +101,15 @@ export async function publishBlog(id: string): Promise<BlogDetailProps> {
   const data = await axiosInstance.patch(`/blog/${id}/publish`);
 
   return data.data;
+}
+
+export async function editExistingBlog(id: string): Promise<BlogDetailProps> {
+  const data = await axiosInstance.patch(`/blog/${id}/draft`);
+
+  return data.data;
+}
+
+// delete request
+export async function deleteBlog(id: string) {
+  await axiosInstance.delete(`/blog/${id}`);
 }

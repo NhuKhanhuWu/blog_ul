@@ -16,3 +16,21 @@
 .icon {
   @include icon;
 }
+
+.modal {
+  width: 50rem;
+
+  strong {
+    font-size: 1.6rem;
+    font-weight: 500;
+  }
+}
+
+.modalFooter {
+  @include footer;
+
+  button {
+    width: 7rem;
+    height: 4rem;
+  }
+}

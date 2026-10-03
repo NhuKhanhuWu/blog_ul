@@ -12,7 +12,6 @@ import { Provider } from "react-redux";
 import { lazy, Suspense } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { store } from "./redux/store.ts";
-import axios from "axios";
 import {
   createTheme,
   StyledEngineProvider,
@@ -24,6 +23,7 @@ import { ForgotPasswordProvider } from "./context/ForgotPasswordContext.tsx";
 import { ChangeEmailProvider } from "./context/ChangeEmailContext.tsx";
 import CreateBlog from "./page/CreateBlog/CreateBlog.tsx";
 import EditBlog from "./page/EditBlog/EditBlog.tsx";
+import { getErrorMessage } from "./utils/core/get-error-message.ts";
 
 // lazy load
 const AppLayout = lazy(() => import("./layout/AppLayout.tsx"));
@@ -191,12 +191,12 @@ const queryClient = new QueryClient({
   // show error message on toast
   queryCache: new QueryCache({
     onError: (error) => {
-      if (axios.isAxiosError(error)) {
-        const serverMessage = error.response?.data?.message || error.message;
-        toast.error(serverMessage);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      toast.error(getErrorMessage(error));
+      // if (axios.isAxiosError(error)) {
+      //   // const serverMessage = error.response?.data?.message || error.message;
+      // } else {
+      //   toast.error("An unexpected error occurred");
+      // }
     },
   }),
 
@@ -207,12 +207,12 @@ const queryClient = new QueryClient({
         return;
       }
 
-      if (axios.isAxiosError(error)) {
-        const serverMessage = error.response?.data?.message || error.message;
-        toast.error(serverMessage);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      toast.error(getErrorMessage(error));
+      // if (axios.isAxiosError(error)) {
+      //   // const serverMessage = error.response?.data?.message || error.message;
+      // } else {
+      //   toast.error("An unexpected error occurred");
+      // }
     },
   }),
 });
