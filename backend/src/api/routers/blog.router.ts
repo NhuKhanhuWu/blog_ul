@@ -30,6 +30,7 @@ import { updateBlogSchema } from "../validation/blog.validation";
 import { createCmtParamsSchema } from "../validation/comment.validation";
 import { publishBlog } from "../controllers/blog/publish-blog.controller";
 import { getBlogImgUploadUrl } from "../controllers/blog/get-blog-img-upload-url.controller";
+import { getMyBlogsSchema } from "../validation/blog-query.validation";
 
 const blogRouter = express.Router();
 
@@ -43,7 +44,9 @@ blogRouter
   .get(getMultBlog)
   .post(protect, createBlogLimiter, createBlog);
 
-blogRouter.route("/me").get(protect, getMyBlogs);
+blogRouter
+  .route("/me")
+  .get(protect, validateRequest(getMyBlogsSchema), getMyBlogs);
 
 blogRouter.route("/:id/image-upload-url").post(protect, getBlogImgUploadUrl);
 

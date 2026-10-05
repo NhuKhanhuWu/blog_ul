@@ -24,7 +24,10 @@ export const getMultBlog = catchAsync(async (req, res) => {
   }
 
   // 1. Start base query
-  let baseQuery = BlogModel.find({ isDraft: { $ne: true } });
+  let baseQuery = BlogModel.find({
+    isDraft: { $ne: true },
+    isPrivate: { $ne: true },
+  });
 
   // 2. Apply category filter
   baseQuery = applyCategoryFilter(baseQuery, queryObject);
@@ -42,21 +45,18 @@ export const getMultBlog = catchAsync(async (req, res) => {
 export const getMyBlogs = catchAsync(async (req, res) => {
   const queryObject = { ...req.query };
   const status = queryObject.status ?? "all";
+  const isDraft = queryObject.isDraft;
   delete queryObject.status;
+  delete queryObject.isDraft;
 
-  if (
-    typeof status !== "string" ||
-    !["all", "draft", "published"].includes(status)
-  ) {
-    throw new AppError("Status must be all, draft, or published", 400);
+  let statusFilter = {};
+  if (isDraft !== undefined) {
+    statusFilter = { isDraft };
+  } else if (status === "draft") {
+    statusFilter = { isDraft: true };
+  } else if (status === "published") {
+    statusFilter = { isDraft: { $ne: true } };
   }
-
-  const statusFilter =
-    status === "draft"
-      ? { isDraft: true }
-      : status === "published"
-        ? { isDraft: { $ne: true } }
-        : {};
   const baseQuery = BlogModel.find({
     userId: req.user!._id,
     ...statusFilter,
@@ -105,6 +105,13 @@ export const getOneBlogBySlug = catchAsync(async (req, res) => {
   if (!blog) {
     throw new AppError("Blog not found", 404);
   }
+
+  // check if user is permitted to see this blog
+  const blogOwner = blog.userId._id.toString();
+  const userId = req.user?._id.toString();
+
+  if (blog.isPrivate && blogOwner !== userId)
+    throw new AppError("You are not permitted to view this blog", 403);
 
   res.status(200).json({
     status: "success",

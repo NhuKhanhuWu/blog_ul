@@ -20,12 +20,11 @@ describe("createBlog", () => {
     (BlogModel.create as jest.Mock).mockResolvedValue(blog);
     const next = jest.fn();
 
-    createBlog(
+    await createBlog(
       { accessToken: "access-token", user: { id: "user-1" } } as any,
       response as any,
       next,
     );
-    await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(BlogModel.create).toHaveBeenCalledWith({
       userId: "user-1",
@@ -38,7 +37,6 @@ describe("createBlog", () => {
     expect(response.json).toHaveBeenCalledWith({
       status: "success",
       data: blog,
-      accessToken: "access-token",
     });
     expect(next).not.toHaveBeenCalled();
   });
@@ -48,8 +46,7 @@ describe("createBlog", () => {
     (BlogModel.create as jest.Mock).mockRejectedValue(error);
     const next = jest.fn();
 
-    createBlog({ user: { id: "user-1" } } as any, response as any, next);
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    await createBlog({ user: { id: "user-1" } } as any, response as any, next);
 
     expect(next).toHaveBeenCalledWith(error);
   });

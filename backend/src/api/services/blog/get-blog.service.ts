@@ -76,6 +76,7 @@ export const MY_BLOG_SELECTED_FIELDS = {
 export const SORT_FIELDS = [
   "-pub_date", // newest/oldest
   "pub_date",
+  "-updatedAt",
   "-upVotes", // alphabetical"title",
 ];
 
@@ -85,7 +86,7 @@ const FILTER_FIELDS = [
   "userId", // filter by user
 ];
 
-export const MY_BLOG_SORT_FIELDS = ["-updatedAt", "updatedAt", ...SORT_FIELDS];
+export const MY_BLOG_SORT_FIELDS = ["updatedAt", ...SORT_FIELDS];
 // -------------constants-------------
 
 // -------------helpers-------------
@@ -294,12 +295,14 @@ export function getPipeline(
       updatedAt: 1,
       authors: 1,
       totalCmts: 1,
+      isPrivate: 1,
       "categories.name": 1,
       "categories.slug": 1,
       "categories._id": 1,
       "userId.name": 1,
       "userId.slug": 1,
       "userId.avatar": 1,
+      "userId._id": 1,
     },
   });
 
