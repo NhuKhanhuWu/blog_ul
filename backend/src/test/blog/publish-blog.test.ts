@@ -21,9 +21,12 @@ describe("publishBlog", () => {
   });
 
   it("publishes an owned blog with valid content", async () => {
-    const publishedBlog = {
+    const publishedBlogData = {
       _id: "blog-1",
       isDraft: false,
+    };
+    const publishedBlog = {
+      toObject: jest.fn(() => publishedBlogData),
     };
 
     const blog = {
@@ -39,6 +42,15 @@ describe("publishBlog", () => {
       isPrivate: false,
       isDraft: true,
       pub_date: null as Date | null,
+      toObject: jest.fn(() => ({
+        title: "A valid blog",
+        authors: ["Author"],
+        categories: [],
+        content: [{ type: "paragraph", text: "Blog content" }],
+        isPrivate: false,
+        isDraft: true,
+        pub_date: null,
+      })),
       save: jest.fn().mockResolvedValue(publishedBlog),
     };
 
@@ -69,7 +81,7 @@ describe("publishBlog", () => {
     expect(response.json).toHaveBeenCalledWith({
       status: "success",
       message: "Blog published successfully",
-      data: publishedBlog,
+      ...publishedBlogData,
     });
 
     expect(next).not.toHaveBeenCalled();
