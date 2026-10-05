@@ -2,6 +2,7 @@
 
 import { getBlogImgUploadUrl } from "../../api/controllers/blog/get-blog-img-upload-url.controller";
 import { createBlogImageSignedUploadUrl } from "../../api/supabase/uploadImages";
+import { BlogModel } from "../../api/models/blog.model";
 
 jest.mock("../../api/supabase/uploadImages", () => ({
   createBlogImageSignedUploadUrl: jest.fn(),
@@ -16,6 +17,10 @@ describe("getBlogImgUploadUrl", () => {
     response.json.mockReturnValue(response);
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it("returns a signed upload URL for the user's blog image", async () => {
     const uploadData = {
       signedUrl: "https://storage.example/upload",
@@ -23,19 +28,23 @@ describe("getBlogImgUploadUrl", () => {
       publicUrl: "https://storage.example/image.jpg",
     };
     (createBlogImageSignedUploadUrl as jest.Mock).mockResolvedValue(uploadData);
+    jest.spyOn(BlogModel, "findOne").mockResolvedValue({} as any);
     const next = jest.fn();
 
-    getBlogImgUploadUrl(
+    await getBlogImgUploadUrl(
       {
         user: { _id: { toString: () => "user-1" } },
-        params: { blogId: "blog-1" },
-        body: { name: "image.jpg" },
+        params: { id: "blog-1" },
+        body: { fileName: "image.jpg" },
       } as any,
       response as any,
       next,
     );
-    await new Promise((resolve) => setTimeout(resolve, 0));
 
+    expect(BlogModel.findOne).toHaveBeenCalledWith({
+      _id: "blog-1",
+      userId: "user-1",
+    });
     expect(createBlogImageSignedUploadUrl).toHaveBeenCalledWith(
       "user-1",
       "blog-1",
@@ -52,12 +61,11 @@ describe("getBlogImgUploadUrl", () => {
   it("rejects unauthenticated upload requests", async () => {
     const next = jest.fn();
 
-    getBlogImgUploadUrl(
-      { params: { blogId: "blog-1" }, body: { name: "image.jpg" } } as any,
+    await getBlogImgUploadUrl(
+      { params: { id: "blog-1" }, body: { fileName: "image.jpg" } } as any,
       response as any,
       next,
     );
-    await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(next).toHaveBeenCalledWith(
       expect.objectContaining({ statusCode: 401 }),
@@ -69,23 +77,21 @@ describe("getBlogImgUploadUrl", () => {
     const next = jest.fn();
     const user = { _id: { toString: () => "user-1" } };
 
-    getBlogImgUploadUrl(
-      { user, params: { blogId: "blog-1" }, body: undefined } as any,
+    await getBlogImgUploadUrl(
+      { user, params: { id: "blog-1" }, body: undefined } as any,
       response as any,
       next,
     );
-    await new Promise((resolve) => setTimeout(resolve, 0));
     expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ statusCode: 400, message: "File required" }),
+      expect.objectContaining({ statusCode: 400, message: "File name required" }),
     );
 
     next.mockClear();
-    getBlogImgUploadUrl(
-      { user, params: {}, body: { name: "image.jpg" } } as any,
+    await getBlogImgUploadUrl(
+      { user, params: {}, body: { fileName: "image.jpg" } } as any,
       response as any,
       next,
     );
-    await new Promise((resolve) => setTimeout(resolve, 0));
     expect(next).toHaveBeenCalledWith(
       expect.objectContaining({ statusCode: 400, message: "Blog id required" }),
     );
