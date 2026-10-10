@@ -59,7 +59,7 @@ function BookMark({ blogId, openBtn }: BookMarkProps) {
   } = useQuery({
     queryKey: ["blog-list", blogId],
     queryFn: () => getMultList(user?._id, blogId),
-    enabled: isOpenModal,
+    enabled: isOpenModal && Boolean(user?._id),
   });
 
   // creating new list
