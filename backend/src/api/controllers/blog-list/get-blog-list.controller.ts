@@ -2,45 +2,76 @@
 
 import { BlogListModel } from "../../models/blog-list.model";
 import { BlogModel } from "../../models/blog.model";
-import { buildVisibilityFilter } from "../../utils/core/crud-factory";
+import { BLOG_LIST_PROJECTION } from "../../services/blog/get-blog.service";
+import {
+  buildVisibilityFilter,
+  getQueryObjectId,
+} from "../../utils/core/crud-factory";
 import AppError from "../../utils/error/app-error";
 import catchAsync from "../../utils/error/catch-async";
-import mongoose, { Types } from "mongoose";
+import { PipelineStage, Types } from "mongoose";
 
-// -------------controllers-------------
-export const getMultBlogList = catchAsync(async (req, res) => {
-  // get filter based on user authentication
-  const filter = buildVisibilityFilter(req, res);
+// ---------- helpers ----------
+function buildBlogListPipeline(
+  filter: Record<string, unknown>,
+  currentBlogId: Types.ObjectId | null,
+  publicOnly = false,
+): PipelineStage[] {
+  const blogLookupPipeline = publicOnly
+    ? [
+        {
+          $match: {
+            $expr: { $in: ["$_id", "$$listBlogIds"] },
+            isDraft: { $ne: true },
+            isPrivate: { $ne: true },
+          },
+        },
+        {
+          $addFields: {
+            __order: { $indexOfArray: ["$$listBlogIds", "$_id"] },
+          },
+        },
+        { $sort: { __order: 1 as const } },
+        { $project: { firstImage: { $arrayElemAt: ["$images", 0] } } },
+      ]
+    : [
+        {
+          $match: {
+            $expr: { $eq: ["$_id", "$$firstBlogId"] },
+          },
+        },
+        {
+          $project: {
+            firstImage: { $arrayElemAt: ["$images", 0] },
+          },
+        },
+      ];
 
-  const currentBlogId = (req.query.currentBlogId as string) || "";
-  const blogId =
-    currentBlogId && Types.ObjectId.isValid(currentBlogId)
-      ? new Types.ObjectId(currentBlogId)
-      : null;
-
-  // get blog lists
-  const blogLists = await BlogListModel.aggregate([
+  return [
     { $match: filter },
 
     {
       $lookup: {
-        from: "blogs", // Make sure this matches your exact MongoDB collection name for Blogs
-        let: { firstBlogId: { $arrayElemAt: ["$blogs", 0] } },
-        pipeline: [
-          { $match: { $expr: { $eq: ["$_id", "$$firstBlogId"] } } },
-          { $project: { firstImage: { $arrayElemAt: ["$images", 0] } } },
-        ],
-        as: "thumbnailBlog",
+        from: "blogs",
+        let: {
+          firstBlogId: { $arrayElemAt: ["$blogs", 0] },
+          listBlogIds: { $ifNull: ["$blogs", []] },
+        },
+        pipeline: blogLookupPipeline,
+        as: publicOnly ? "visibleBlogs" : "thumbnailBlog",
       },
     },
 
-    // Deconstruct the thumbnailBlog array
-    {
-      $unwind: {
-        path: "$thumbnailBlog",
-        preserveNullAndEmptyArrays: true, // Keeps lists that don't have any blogs yet
-      },
-    },
+    ...(publicOnly
+      ? []
+      : [
+          {
+            $unwind: {
+              path: "$thumbnailBlog",
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        ]),
 
     {
       $project: {
@@ -49,22 +80,43 @@ export const getMultBlogList = catchAsync(async (req, res) => {
         isPrivate: 1,
         isDefault: 1,
 
-        // create a new field "containsCurrentBlog" to indicate if the current blog is in the list
-        containsCurrentBlog: blogId
-          ? { $in: [blogId, { $ifNull: ["$blogs", []] }] }
+        containsCurrentBlog: currentBlogId
+          ? { $in: [currentBlogId, { $ifNull: ["$blogs", []] }] }
           : { $literal: false },
 
-        // amount of blog in this list
-        blogsCnt: { $size: { $ifNull: ["$blogs", []] } },
+        blogsCnt: publicOnly
+          ? { $size: "$visibleBlogs" }
+          : { $size: { $ifNull: ["$blogs", []] } },
 
         listAvatar: {
-          $ifNull: ["$thumbnailBlog.firstImage", null],
+          $ifNull: [
+            publicOnly
+              ? { $arrayElemAt: ["$visibleBlogs.firstImage", 0] }
+              : "$thumbnailBlog.firstImage",
+            null,
+          ],
         },
       },
     },
-  ]);
+  ];
+}
 
-  // respond
+// -------------controllers-------------
+export const getMultBlogList = catchAsync(async (req, res) => {
+  const targetUserId = getQueryObjectId(req.query.userId, "userId");
+  const publicOnly = req.query.publicOnly === "true";
+
+  const currentBlogId = req.query.currentBlogId
+    ? getQueryObjectId(req.query.currentBlogId, "currentBlogId")
+    : null;
+
+  const filter = buildVisibilityFilter(req, targetUserId);
+  if (publicOnly) filter.isPrivate = { $ne: true };
+
+  const pipeline = buildBlogListPipeline(filter, currentBlogId, publicOnly);
+
+  const blogLists = await BlogListModel.aggregate(pipeline);
+
   res.status(200).json({
     status: "success",
     data: blogLists,
@@ -72,42 +124,41 @@ export const getMultBlogList = catchAsync(async (req, res) => {
 });
 
 export const getBlogListMeta = catchAsync(async (req, res) => {
-  // get blog list id & user id
   const blogListId = req.params.id;
   const userId = req.user?.id;
 
-  // find the blog list
-  const [blogList = null] = await BlogListModel.aggregate([
-    //  Find the specific blog list
-    { $match: { _id: new mongoose.Types.ObjectId(blogListId) } },
-
-    //  Select only the fields needed
-    {
-      $project: {
-        name: 1,
-        userId: 1,
-        description: 1,
-        isPrivate: 1,
-        blogsCnt: { $size: { $ifNull: ["$blogs", []] } },
-      },
-    },
-  ]);
-
-  // check if blog list exists
+  const blogList = await BlogListModel.findById(blogListId)
+    .select("name userId description isPrivate blogs")
+    .lean();
   if (!blogList) throw new AppError("Blog list not found", 404);
 
-  // if private, only owner can view
-  if (blogList.isPrivate && blogList.userId.toString() !== userId?.toString()) {
+  const isOwner = blogList.userId.toString() === userId?.toString();
+  if (blogList.isPrivate && !isOwner) {
     throw new AppError(
       "You do not have permission to view this blog list",
       403,
     );
   }
 
-  // respond with blog list
+  const blogIds = blogList.blogs ?? [];
+  const blogsCnt = isOwner
+    ? blogIds.length
+    : await BlogModel.countDocuments({
+        _id: { $in: blogIds },
+        isDraft: { $ne: true },
+        isPrivate: { $ne: true },
+      });
+
   res.status(200).json({
     status: "success",
-    data: blogList,
+    data: {
+      _id: blogList._id,
+      name: blogList.name,
+      userId: blogList.userId,
+      description: blogList.description,
+      isPrivate: blogList.isPrivate,
+      blogsCnt,
+    },
   });
 });
 
@@ -134,12 +185,28 @@ export const getBlogFromList = catchAsync(async (req, res) => {
     );
   }
 
-  const blogIds = blogList.blogs || [];
+  let blogIds: Types.ObjectId[] = [...(blogList.blogs || [])];
+  const isOwner = req.user?.id.toString() === blogList.userId.toString();
+
+  if (!isOwner) {
+    const visibleBlogs = await BlogModel.find({
+      _id: { $in: blogIds },
+      isDraft: { $ne: true },
+      isPrivate: { $ne: true },
+    })
+      .select("_id")
+      .lean();
+    const visibleBlogIds = new Set(
+      visibleBlogs.map((blog) => blog._id.toString()),
+    );
+    blogIds = blogIds.filter((blogId) => visibleBlogIds.has(blogId.toString()));
+  }
+
   const totalBlogs = blogIds.length;
 
   // Quick escape if the list has no blogs added yet
   if (totalBlogs === 0) {
-    res.status(200).json({
+    return res.status(200).json({
       status: "success",
       totalResult: totalBlogs,
       totalPages: 0,
@@ -147,19 +214,6 @@ export const getBlogFromList = catchAsync(async (req, res) => {
       data: [],
     });
   }
-
-  // 3. Define the aggregation selection layout as requested
-  const SELECTED_FIELDS = {
-    _id: 1,
-    title: 1,
-    authors: 1,
-    pub_date: 1,
-    slug: 1,
-    upVotes: 1,
-    userId: 1,
-    preview: { $arrayElemAt: ["$content", 0] },
-    image: { $arrayElemAt: ["$images", 0] },
-  };
 
   // 4. Run aggregation to slice, match, and project specified fields
   // We target the specified subset of IDs relevant to the current page frame
@@ -178,7 +232,7 @@ export const getBlogFromList = catchAsync(async (req, res) => {
       },
     },
     { $sort: { __order: 1 } },
-    { $project: SELECTED_FIELDS },
+    { $project: BLOG_LIST_PROJECTION },
   ]);
 
   // 5. Send back pure array context alongside pagination tracking meta

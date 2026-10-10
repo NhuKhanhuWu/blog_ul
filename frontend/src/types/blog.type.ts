@@ -48,7 +48,7 @@ export interface BlogDetailProps {
   authors: string[];
 
   userId: {
-    name: string;
+    username: string;
     avatar: string;
     slug: string;
   };

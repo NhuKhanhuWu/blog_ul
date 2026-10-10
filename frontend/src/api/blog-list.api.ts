@@ -12,12 +12,14 @@ import axiosInstance from "../utils/core/axios-instance";
 export async function getMultList(
   userId?: string,
   blogId?: string,
+  publicOnly = false,
 ): Promise<BlogListSimplify[]> {
-  let query = "";
-  if (userId) query += `userId=${userId}`;
-  if (blogId) query += `${query ? "&" : ""}currentBlogId=${blogId}`;
+  const params = new URLSearchParams();
+  if (userId) params.set("userId", userId);
+  if (blogId) params.set("currentBlogId", blogId);
+  if (publicOnly) params.set("publicOnly", "true");
 
-  const res = await axiosInstance.get(`/blog-list?${query}`);
+  const res = await axiosInstance.get(`/blog-list?${params}`);
 
   return res.data.data;
 }

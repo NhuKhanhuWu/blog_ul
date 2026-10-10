@@ -32,6 +32,9 @@ const AuthFormLayout = lazy(
 );
 const Homepage = lazy(() => import("./page/Homepage/Homepage.tsx"));
 const Me = lazy(() => import("./page/Me/Me.tsx"));
+const PublicProfile = lazy(
+  () => import("./page/PublicProfile/PublicProfile.tsx"),
+);
 
 const BlogDetail = lazy(() => import("./page/BlogDetail/BlogDetail.tsx"));
 const BlogListDetail = lazy(
@@ -167,6 +170,7 @@ const router = createBrowserRouter([
       },
 
       { element: <Me />, path: "/user/me" },
+      { element: <PublicProfile />, path: "/profile/:slug" },
       { element: <BlogListDetail />, path: "/list/:id" },
     ],
   },

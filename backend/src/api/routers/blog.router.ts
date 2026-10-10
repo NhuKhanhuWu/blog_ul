@@ -4,6 +4,7 @@ import express from "express";
 import {
   getMultBlog,
   getMyBlogs,
+  getUserBlogs,
   getMyBlogById,
   getOneBlogBySlug,
 } from "../controllers/blog/get-blog.controller";
@@ -47,6 +48,8 @@ blogRouter
 blogRouter
   .route("/me")
   .get(protect, validateRequest(getMyBlogsSchema), getMyBlogs);
+
+blogRouter.route("/user/:userId").get(getUserBlogs);
 
 blogRouter.route("/:id/image-upload-url").post(protect, getBlogImgUploadUrl);
 
