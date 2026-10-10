@@ -1,16 +1,17 @@
 /** @format */
 
 import { BlogModel } from "../../models/blog.model";
+import { Types } from "mongoose";
 import AppError from "../../utils/error/app-error";
 import catchAsync from "../../utils/error/catch-async";
 import { BlogWithVote } from "../../types/blog.type";
 import {
   MY_BLOG_SELECTED_FIELDS,
   MY_BLOG_SORT_FIELDS,
-  SELECTED_FIELDS,
+  BLOG_LIST_PROJECTION,
   SORT_FIELDS,
   applyCategoryFilter,
-  getPipeline,
+  getBlogDetailPipeline,
   sendBlogListResponse,
 } from "../../services/blog/get-blog.service";
 
@@ -36,7 +37,7 @@ export const getMultBlog = catchAsync(async (req, res) => {
     res,
     queryObject,
     baseQuery,
-    SELECTED_FIELDS,
+    BLOG_LIST_PROJECTION,
     SORT_FIELDS,
     "-pub_date",
   );
@@ -72,13 +73,37 @@ export const getMyBlogs = catchAsync(async (req, res) => {
   );
 });
 
+export const getUserBlogs = catchAsync(async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId || !Types.ObjectId.isValid(userId)) {
+    throw new AppError("Invalid user ID", 400);
+  }
+
+  const queryObject = { ...req.query };
+  const baseQuery = BlogModel.find({
+    userId: new Types.ObjectId(userId),
+    isDraft: { $ne: true },
+    isPrivate: { $ne: true },
+  });
+
+  await sendBlogListResponse(
+    res,
+    queryObject,
+    baseQuery,
+    BLOG_LIST_PROJECTION,
+    SORT_FIELDS,
+    "-updatedAt",
+  );
+});
+
 // use when user access their blogs (owner)
 export const getMyBlogById = catchAsync(async (req, res) => {
   const { id } = req.params;
   const currentUserId = req.user?._id;
 
   const blogRes = await BlogModel.aggregate(
-    getPipeline({ _id: id || "" }, currentUserId, currentUserId),
+    getBlogDetailPipeline({ _id: id || "" }, currentUserId, currentUserId),
   );
   const blog = (blogRes[0] || null) as BlogWithVote | null;
 
@@ -98,7 +123,7 @@ export const getOneBlogBySlug = catchAsync(async (req, res) => {
   const currentUserId = req.user?._id;
 
   const blogRes = await BlogModel.aggregate(
-    getPipeline({ slug: slug || "" }, currentUserId),
+    getBlogDetailPipeline({ slug: slug || "" }, currentUserId),
   );
   const blog = (blogRes[0] || null) as BlogWithVote | null;
 
@@ -107,7 +132,7 @@ export const getOneBlogBySlug = catchAsync(async (req, res) => {
   }
 
   // check if user is permitted to see this blog
-  const blogOwner = blog.userId._id.toString();
+  const blogOwner = blog.userId?._id.toString();
   const userId = req.user?._id.toString();
 
   if (blog.isPrivate && blogOwner !== userId)

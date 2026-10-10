@@ -10,7 +10,7 @@ type BlogMatchCriteria = { _id: string | Types.ObjectId } | { slug: string };
 
 // -------------constants-------------
 // Fields to project (return to client)
-export const SELECTED_FIELDS = {
+export const BLOG_LIST_PROJECTION = {
   _id: 1,
   title: 1,
   authors: 1,
@@ -67,7 +67,7 @@ export const SELECTED_FIELDS = {
 };
 
 export const MY_BLOG_SELECTED_FIELDS = {
-  ...SELECTED_FIELDS,
+  ...BLOG_LIST_PROJECTION,
   isDraft: 1,
   updatedAt: 1,
 };
@@ -171,7 +171,7 @@ export async function sendBlogListResponse(
   });
 }
 
-export function getPipeline(
+export function getBlogDetailPipeline(
   criteria: BlogMatchCriteria,
   currentUserId?: string | Types.ObjectId,
   draftOwnerId?: string | Types.ObjectId,
@@ -299,7 +299,7 @@ export function getPipeline(
       "categories.name": 1,
       "categories.slug": 1,
       "categories._id": 1,
-      "userId.name": 1,
+      "userId.username": 1,
       "userId.slug": 1,
       "userId.avatar": 1,
       "userId._id": 1,

@@ -5,6 +5,7 @@ import AppError from "../../utils/error/app-error";
 import catchAsync from "../../utils/error/catch-async";
 const GET_BY_SLUG_FIELDS = {
   username: 1,
+  _id: 1,
   slug: 1,
   avatar: 1,
 };
@@ -27,7 +28,7 @@ export const getUserBySlug = catchAsync(async (req, res) => {
 
   if (!slug) throw new AppError("User's slug required!", 400);
 
-  const user = await UserModel.find({ slug }).select(GET_BY_SLUG_FIELDS);
+  const user = await UserModel.findOne({ slug }).select(GET_BY_SLUG_FIELDS);
 
   if (!user) throw new AppError("User not found", 404);
 
