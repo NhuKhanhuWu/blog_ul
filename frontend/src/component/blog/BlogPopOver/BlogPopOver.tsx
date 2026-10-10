@@ -37,9 +37,6 @@ function BlogPopOver({ blog, popItems }: BlogPopOverProps) {
     setAnchorEl(null);
   }
 
-  // if user not login => return nothing
-  if (!user) return;
-
   return (
     <>
       <button onClick={handleClick} className={styles.popBtn}>
@@ -56,19 +53,21 @@ function BlogPopOver({ blog, popItems }: BlogPopOverProps) {
           horizontal: "right",
         }}>
         <div className={styles.popContent}>
+          {/* save to blog list */}
           {!blog.isDraft && (
             <BookMark blogId={blog._id} openBtn={blogListBtn} />
           )}
 
           {/* if this blog is belong to user => show edit */}
-          {blog.userId === user._id && (
+          {user && blog.userId === user._id && (
             <>
               <EditBlogBtn blog={blog} />
               <DeleteBlogBtn blog={blog} />
             </>
           )}
 
-          {popItems && <>{popItems}</>}
+          {/* other options */}
+          {user && blog.userId === user._id && popItems}
         </div>
       </Popover>
     </>

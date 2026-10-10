@@ -15,7 +15,11 @@ import styles from "./RecommendedBlogs.module.scss";
 
 function RecommendedBlogs({ curBlog }: { curBlog: BlogDetailProps }) {
   // query recommended blogs based on current blog's categories, using OR logic
-  const categories = curBlog.categories?.map((cat) => cat._id).join(",");
+  const categories = curBlog.categories
+    ?.map((category) =>
+      typeof category === "string" ? category : category._id,
+    )
+    .join(",");
   const query = `categories=${categories}&logic=or`;
   const {
     data,

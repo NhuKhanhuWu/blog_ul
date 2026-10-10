@@ -29,10 +29,19 @@ function BlogDetail() {
 
   if (isPending) return <Loader />;
 
+  const normalizedBlog = {
+    ...blog,
+    categories: blog.categories.map((category) =>
+      typeof category === "string"
+        ? { _id: category, name: "" }
+        : category,
+    ),
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.blogSection}>
-        <BlogInfor blog={blog} key={blog._id} />
+        <BlogInfor blog={normalizedBlog} key={blog._id} />
         <BlogCmt blogId={blog._id} totalCmts={blog.totalCmts} />
       </div>
 

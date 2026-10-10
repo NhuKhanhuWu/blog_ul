@@ -6,7 +6,7 @@ import defaultAvatar from "../../../utils/helper/default-avatar";
 import styles from "./Author.module.scss";
 
 function Author({ blog }: { blog: NormalizedBlog }) {
-  const name = blog?.userId?.name || "Unknown";
+  const name = blog?.userId?.username || "Unknown";
   const avatar = blog?.userId?.avatar || defaultAvatar(name);
 
   return (

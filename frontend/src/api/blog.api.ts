@@ -43,6 +43,26 @@ export async function getMyBlogs({
   return response.data;
 }
 
+export async function getPublicUserBlogs({
+  userId,
+  sort,
+  pageParam,
+}: {
+  userId: string;
+  sort: string;
+  pageParam: number;
+}): Promise<GetBlogsResponse> {
+  const params = new URLSearchParams({
+    sort,
+    page: String(pageParam),
+  });
+  const response = await axiosInstance.get(
+    `/blog/user/${encodeURIComponent(userId)}?${params}`,
+  );
+
+  return response.data;
+}
+
 export async function getOneBLogBySlug(slug: string): Promise<BlogDetailProps> {
   const data = await axiosInstance.get(`/blog/slug/${slug}`);
 

@@ -24,24 +24,28 @@ export const getOne =
     });
   };
 
-export function buildVisibilityFilter(req: Request, res: Response) {
-  const rawUserId = req.query.userId;
-
-  if (!rawUserId || Array.isArray(rawUserId)) {
-    throw new AppError("Invalid userId", 400);
+export function getQueryObjectId(
+  value: unknown,
+  fieldName: string,
+): Types.ObjectId {
+  if (typeof value !== "string" || !Types.ObjectId.isValid(value)) {
+    throw new AppError(`Invalid ${fieldName}`, 400);
   }
 
-  let userId: Types.ObjectId;
-  try {
-    userId = new Types.ObjectId(rawUserId as string);
-  } catch (err) {
-    throw new AppError("Invalid userId", 400);
-  }
+  return new Types.ObjectId(value);
+}
 
-  const filter: Record<string, any> = { userId };
+export function buildVisibilityFilter(
+  req: Request,
+  targetUserId: Types.ObjectId,
+): Record<string, unknown> {
+  const filter: Record<string, unknown> = {
+    userId: targetUserId,
+  };
 
-  // Not logged in / not owner → only show blogs that are not hidden
-  if (!req.user || req.user._id.toString() !== userId.toString()) {
+  const isOwner = req.user?._id.toString() === targetUserId.toString();
+
+  if (!isOwner) {
     filter.isPrivate = { $ne: true };
   }
 

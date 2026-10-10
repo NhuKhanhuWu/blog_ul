@@ -2,7 +2,7 @@
 
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { UserPublic } from "../../../types/auth.type";
-import { getMyBlogs } from "../../../api/blog.api";
+import { getMyBlogs, getPublicUserBlogs } from "../../../api/blog.api";
 import { MyBlogStatus } from "../../../types/blog.type";
 import { useMemo, useState } from "react";
 import BlogCardBig from "../../blog/BlogCardBig/BlogCardBig";
@@ -13,6 +13,7 @@ import BlogCardSm from "../../blog/BlogCardSm/BlogCardSm";
 
 interface BlogsTabProps {
   user?: UserPublic;
+  publicProfile?: boolean;
 }
 
 interface SortOptionsProps {
@@ -20,26 +21,35 @@ interface SortOptionsProps {
   setStatus: (status: MyBlogStatus) => void;
   setSort: (sort: string) => void;
   sort: string;
+  publicProfile?: boolean;
 }
 
-function SortOptions({ status, setStatus, setSort, sort }: SortOptionsProps) {
+function SortOptions({
+  status,
+  setStatus,
+  setSort,
+  sort,
+  publicProfile = false,
+}: SortOptionsProps) {
   return (
     <div className={styles.sortOption}>
-      <div>
-        <label htmlFor="blog-status">Show</label>
-        <select
-          id="blog-status"
-          value={status}
-          onChange={(event) => {
-            const nextStatus = event.target.value as MyBlogStatus;
-            setStatus(nextStatus);
-            if (nextStatus === "draft") setSort("-updatedAt");
-          }}>
-          <option value="all">All blogs</option>
-          <option value="published">Published</option>
-          <option value="draft">Drafts</option>
-        </select>
-      </div>
+      {!publicProfile && (
+        <div>
+          <label htmlFor="blog-status">Show</label>
+          <select
+            id="blog-status"
+            value={status}
+            onChange={(event) => {
+              const nextStatus = event.target.value as MyBlogStatus;
+              setStatus(nextStatus);
+              if (nextStatus === "draft") setSort("-updatedAt");
+            }}>
+            <option value="all">All blogs</option>
+            <option value="published">Published</option>
+            <option value="draft">Drafts</option>
+          </select>
+        </div>
+      )}
 
       <div>
         <label htmlFor="blog-sort">Sort by</label>
@@ -48,20 +58,35 @@ function SortOptions({ status, setStatus, setSort, sort }: SortOptionsProps) {
           value={sort}
           onChange={(event) => setSort(event.target.value)}>
           <option value="-updatedAt">Recently updated</option>
-          {status !== "draft" && <option value="-upVotes">Popular</option>}
+          {(publicProfile || status !== "draft") && (
+            <option value="-upVotes">Popular</option>
+          )}
         </select>
       </div>
     </div>
   );
 }
 
-function BlogsTab({ user }: BlogsTabProps) {
-  const [status, setStatus] = useState<MyBlogStatus>("all");
+function BlogsTab({ user, publicProfile = false }: BlogsTabProps) {
+  const [status, setStatus] = useState<MyBlogStatus>(
+    publicProfile ? "published" : "all",
+  );
   const [sort, setSort] = useState("-updatedAt");
 
   const { data, isPending, isError, error } = useInfiniteQuery({
-    queryKey: ["my-blogs", user?._id, status, sort],
-    queryFn: ({ pageParam = 0 }) => getMyBlogs({ status, sort, pageParam }),
+    queryKey: [
+      publicProfile ? "public-user-blogs" : "my-blogs",
+      user?._id,
+      status,
+      sort,
+    ],
+    queryFn: ({ pageParam = 0 }) => {
+      if (publicProfile) {
+        if (!user) throw new Error("Profile user is unavailable");
+        return getPublicUserBlogs({ userId: user._id, sort, pageParam });
+      }
+      return getMyBlogs({ status, sort, pageParam });
+    },
     initialPageParam: 0,
     getNextPageParam: (lastPage) => lastPage.nextPage,
     enabled: Boolean(user?._id),
@@ -84,6 +109,7 @@ function BlogsTab({ user }: BlogsTabProps) {
         setStatus={setStatus}
         sort={sort}
         status={status}
+        publicProfile={publicProfile}
       />
 
       <div className={styles.blogsContainer}>
@@ -91,15 +117,13 @@ function BlogsTab({ user }: BlogsTabProps) {
         {isError && <p className="error-mgs">{error.message}</p>}
         {!isPending && !isError && blogs.length === 0 && <p>No blogs found.</p>}
 
-        {blogs.map((blog) => (
-          <>
-            {isMobile ? (
-              <BlogCardSm blog={blog} key={blog._id} />
-            ) : (
-              <BlogCardBig blog={blog} key={blog._id} />
-            )}
-          </>
-        ))}
+        {blogs.map((blog) =>
+          isMobile ? (
+            <BlogCardSm blog={blog} key={blog._id} />
+          ) : (
+            <BlogCardBig blog={blog} key={blog._id} />
+          ),
+        )}
       </div>
     </div>
   );

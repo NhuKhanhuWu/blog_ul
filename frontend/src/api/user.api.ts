@@ -28,10 +28,10 @@ export async function getMe(): Promise<User> {
   return res.data.user;
 }
 
-export async function getUser(slug: string): Promise<UserPublic> {
-  const res = await axiosInstance.get(`/user/${slug}`);
+export async function getUserBySlug(slug: string): Promise<UserPublic> {
+  const res = await axiosInstance.get(`/user/${encodeURIComponent(slug)}`);
 
-  return res.data;
+  return res.data.data;
 }
 
 export async function getMyBlogVotes({
